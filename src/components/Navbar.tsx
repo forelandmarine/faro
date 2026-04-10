@@ -68,7 +68,7 @@ export default function Navbar() {
         >
           <Lighthouse
             size={20}
-            color="#0070F3"
+            color="#7EC8E3"
             className="opacity-60 group-hover:opacity-100 transition-opacity"
           />
           <span className="text-lg font-black tracking-tighter">FARO</span>

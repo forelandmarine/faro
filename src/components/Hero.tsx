@@ -49,7 +49,7 @@ export default function Hero() {
       <div ref={contentRef} className="relative z-10 w-full max-w-[90vw] px-6">
         {/* Main title */}
         <div className="hero-reveal">
-          <h1 className="text-[clamp(4rem,15vw,14rem)] font-black leading-[0.85] tracking-[-0.04em] text-white">
+          <h1 className="text-[clamp(4rem,15vw,14rem)] font-semibold leading-[0.85] tracking-[-0.04em] text-white">
             FARO
           </h1>
         </div>

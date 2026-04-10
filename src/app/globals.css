@@ -3,8 +3,8 @@
 @theme inline {
   --color-background: #000000;
   --color-foreground: #EDEDED;
-  --color-accent: #0070F3;
-  --color-accent-light: #3291FF;
+  --color-accent: #7EC8E3;
+  --color-accent-light: #A3D9EE;
   --color-muted: #5A5A5A;
   --color-surface: #0A0A0A;
   --color-surface-light: #141414;
@@ -70,12 +70,12 @@ html.lenis, html.lenis body {
 
 /* Glow effect */
 .glow {
-  box-shadow: 0 0 60px rgba(0, 112, 243, 0.12), 0 0 120px rgba(0, 112, 243, 0.04);
+  box-shadow: 0 0 60px rgba(126, 200, 227, 0.12), 0 0 120px rgba(126, 200, 227, 0.04);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(0, 112, 243, 0.3);
+  background: rgba(126, 200, 227, 0.3);
   color: #EDEDED;
 }
 

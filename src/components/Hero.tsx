@@ -74,7 +74,7 @@ export default function Hero() {
           FARO
         </h1>
 
-        <p className="hero-line text-[clamp(1.25rem,3vw,2.5rem)] font-light leading-tight text-foreground/80 max-w-3xl mx-auto">
+        <p className="hero-line text-[clamp(1.25rem,3vw,2.5rem)] font-light leading-tight text-white max-w-3xl mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
           We design websites that make
           <br />
           people stop scrolling.

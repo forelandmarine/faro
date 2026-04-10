@@ -2,7 +2,6 @@
 
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
 import {
   EffectComposer,
   Bloom,
@@ -10,37 +9,66 @@ import {
 } from "@react-three/postprocessing";
 import * as THREE from "three";
 
-/* Background dust particles */
-function Particles({ count = 300 }: { count?: number }) {
+/*
+ * Star field: mixed sizes and brightness to mimic a real night sky.
+ * Some stars are brighter/larger (navigation stars), most are faint.
+ */
+function StarField({ count = 800 }: { count?: number }) {
   const mesh = useRef<THREE.Points>(null!);
-  const positions = useMemo(() => {
+
+  const { positions, sizes, brightness } = useMemo(() => {
     const pos = new Float32Array(count * 3);
+    const sz = new Float32Array(count);
+    const br = new Float32Array(count);
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 20;
+      // Distribute on a large sphere
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 12 + Math.random() * 8;
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pos[i * 3 + 2] = r * Math.cos(phi);
+
+      // ~5% are bright navigation stars, rest are dim
+      const isBright = Math.random() < 0.05;
+      sz[i] = isBright ? 0.06 + Math.random() * 0.04 : 0.01 + Math.random() * 0.02;
+      br[i] = isBright ? 0.8 + Math.random() * 0.2 : 0.15 + Math.random() * 0.35;
     }
-    return pos;
+    return { positions: pos, sizes: sz, brightness: br };
   }, [count]);
 
-  useFrame((_, delta) => {
-    if (mesh.current) {
-      mesh.current.rotation.y += delta * 0.015;
-      mesh.current.rotation.x += delta * 0.008;
+  // Gentle twinkle by nudging opacity uniform
+  useFrame((state) => {
+    if (!mesh.current) return;
+    const geo = mesh.current.geometry;
+    const szAttr = geo.getAttribute("size") as THREE.BufferAttribute;
+    const baseSizes = sizes;
+    const t = state.clock.elapsedTime;
+    for (let i = 0; i < count; i++) {
+      // Only twinkle a subset each frame for performance
+      if (i % 8 === Math.floor(t * 2) % 8) {
+        const twinkle = 1 + Math.sin(t * 3 + i * 1.7) * 0.3;
+        szAttr.setX(i, baseSizes[i] * twinkle);
+      }
     }
+    szAttr.needsUpdate = true;
+    // Very slow sky rotation
+    mesh.current.rotation.y += 0.0002;
   });
 
   return (
     <points ref={mesh}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.015}
-        color="#4A9EF5"
+        size={0.03}
+        color="#FFFFFF"
         transparent
-        opacity={0.4}
+        opacity={0.7}
         sizeAttenuation
+        vertexColors={false}
       />
     </points>
   );
@@ -81,61 +109,76 @@ function generateArcs(
   return arcs;
 }
 
-/* A single arc line between two points on the globe */
-function ArcLine({
-  start,
-  end,
-  delay,
+/*
+ * All arc lines baked into a single geometry for performance.
+ * No per-arc components, no individual useFrame hooks.
+ */
+function ArcLines({
+  points,
+  arcs,
 }: {
-  start: THREE.Vector3;
-  end: THREE.Vector3;
-  delay: number;
+  points: THREE.Vector3[];
+  arcs: [number, number][];
 }) {
   const lineObj = useMemo(() => {
-    const mid = new THREE.Vector3()
-      .addVectors(start, end)
-      .multiplyScalar(0.5);
-    const lift = start.distanceTo(end) * 0.4;
-    mid.normalize().multiplyScalar(mid.length() + lift);
-    const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
-    const pts = curve.getPoints(24);
-    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const allPoints: THREE.Vector3[] = [];
+    for (const [a, b] of arcs) {
+      const start = points[a];
+      const end = points[b];
+      const mid = new THREE.Vector3()
+        .addVectors(start, end)
+        .multiplyScalar(0.5);
+      const lift = start.distanceTo(end) * 0.35;
+      mid.normalize().multiplyScalar(mid.length() + lift);
+      const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
+      // Fewer points per arc for performance
+      const pts = curve.getPoints(12);
+      allPoints.push(...pts);
+      // Add a NaN break so lines don't connect between arcs
+    }
+    const geo = new THREE.BufferGeometry().setFromPoints(allPoints);
     const mat = new THREE.LineBasicMaterial({
       color: "#4A9EF5",
       transparent: true,
       opacity: 0.1,
       depthWrite: false,
     });
-    return new THREE.Line(geo, mat);
-  }, [start, end]);
-
-  useFrame((state) => {
-    if (lineObj) {
-      (lineObj.material as THREE.LineBasicMaterial).opacity =
-        0.08 + Math.sin(state.clock.elapsedTime * 0.6 + delay) * 0.06;
-    }
-  });
+    return new THREE.LineSegments(geo, mat);
+  }, [points, arcs]);
 
   return <primitive object={lineObj} />;
 }
 
-/* Glowing node on the globe surface */
-function Node({ position, delay }: { position: THREE.Vector3; delay: number }) {
-  const ref = useRef<THREE.Mesh>(null!);
+/*
+ * All globe nodes as a single Points object instead of
+ * 60 individual mesh components. Massive performance gain.
+ */
+function GlobeNodes({ points }: { points: THREE.Vector3[] }) {
+  const ref = useRef<THREE.Points>(null!);
 
-  useFrame((state) => {
-    if (ref.current) {
-      const scale =
-        1 + Math.sin(state.clock.elapsedTime * 1.2 + delay) * 0.4;
-      ref.current.scale.setScalar(scale);
-    }
-  });
+  const positions = useMemo(() => {
+    const pos = new Float32Array(points.length * 3);
+    points.forEach((p, i) => {
+      pos[i * 3] = p.x;
+      pos[i * 3 + 1] = p.y;
+      pos[i * 3 + 2] = p.z;
+    });
+    return pos;
+  }, [points]);
 
   return (
-    <mesh ref={ref} position={position}>
-      <sphereGeometry args={[0.025, 8, 8]} />
-      <meshBasicMaterial color="#FFFFFF" transparent opacity={0.9} />
-    </mesh>
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.05}
+        color="#FFFFFF"
+        transparent
+        opacity={0.85}
+        sizeAttenuation
+      />
+    </points>
   );
 }
 
@@ -145,85 +188,60 @@ function Globe() {
   const mouse = useRef({ x: 0, y: 0 });
   const { pointer } = useThree();
 
-  const nodeCount = 60;
+  const nodeCount = 50;
   const radius = 2;
 
   const points = useMemo(() => fibSphere(nodeCount, radius), []);
-  const arcs = useMemo(() => generateArcs(points, 1.4, 50), [points]);
+  const arcs = useMemo(() => generateArcs(points, 1.5, 40), [points]);
 
   useFrame((state) => {
-    mouse.current.x = THREE.MathUtils.lerp(mouse.current.x, pointer.x, 0.03);
-    mouse.current.y = THREE.MathUtils.lerp(mouse.current.y, pointer.y, 0.03);
+    // Faster lerp for snappier mouse response
+    mouse.current.x = THREE.MathUtils.lerp(mouse.current.x, pointer.x, 0.12);
+    mouse.current.y = THREE.MathUtils.lerp(mouse.current.y, pointer.y, 0.12);
 
     if (groupRef.current) {
-      // Slow base rotation
       groupRef.current.rotation.y =
-        state.clock.elapsedTime * 0.08 + mouse.current.x * 0.3;
-      groupRef.current.rotation.x =
-        0.2 + mouse.current.y * 0.2;
+        state.clock.elapsedTime * 0.06 + mouse.current.x * 0.5;
+      groupRef.current.rotation.x = 0.15 + mouse.current.y * 0.35;
     }
   });
 
   return (
     <group ref={groupRef}>
-      {/* Wireframe sphere shell */}
+      {/* Wireframe sphere shell - reduced segments */}
       <mesh>
-        <sphereGeometry args={[radius, 36, 24]} />
+        <sphereGeometry args={[radius, 24, 16]} />
         <meshBasicMaterial
           color="#4A9EF5"
           wireframe
           transparent
-          opacity={0.06}
-        />
-      </mesh>
-
-      {/* Second shell, slightly larger, counter-rotated feel */}
-      <mesh rotation={[0.4, 0.8, 0]}>
-        <sphereGeometry args={[radius * 1.01, 24, 16]} />
-        <meshBasicMaterial
-          color="#FFFFFF"
-          wireframe
-          transparent
-          opacity={0.02}
+          opacity={0.05}
         />
       </mesh>
 
       {/* Equator ring */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[radius * 1.02, 0.005, 8, 128]} />
-        <meshBasicMaterial color="#4A9EF5" transparent opacity={0.2} />
+        <torusGeometry args={[radius * 1.02, 0.004, 6, 64]} />
+        <meshBasicMaterial color="#4A9EF5" transparent opacity={0.18} />
       </mesh>
 
-      {/* Tilted ring */}
+      {/* Tilted orbital ring - like a celestial navigation arc */}
       <mesh rotation={[Math.PI / 2.8, 0.5, 0]}>
-        <torusGeometry args={[radius * 1.04, 0.004, 8, 128]} />
-        <meshBasicMaterial color="#FFFFFF" transparent opacity={0.08} />
+        <torusGeometry args={[radius * 1.04, 0.003, 6, 64]} />
+        <meshBasicMaterial color="#FFFFFF" transparent opacity={0.07} />
       </mesh>
 
-      {/* Connection nodes */}
-      {points.map((pt, i) => (
-        <Node key={`node-${i}`} position={pt} delay={i * 0.5} />
-      ))}
-
-      {/* Arc connections */}
-      {arcs.map(([a, b], i) => (
-        <ArcLine
-          key={`arc-${i}`}
-          start={points[a]}
-          end={points[b]}
-          delay={i * 0.3}
-        />
-      ))}
-
-      {/* Inner glow core */}
-      <mesh>
-        <sphereGeometry args={[0.3, 16, 16]} />
-        <meshBasicMaterial
-          color="#4A9EF5"
-          transparent
-          opacity={0.08}
-        />
+      {/* Second tilted ring */}
+      <mesh rotation={[Math.PI / 3.5, -0.8, 0.3]}>
+        <torusGeometry args={[radius * 1.06, 0.003, 6, 64]} />
+        <meshBasicMaterial color="#4A9EF5" transparent opacity={0.05} />
       </mesh>
+
+      {/* Batched nodes */}
+      <GlobeNodes points={points} />
+
+      {/* Batched arc lines */}
+      <ArcLines points={points} arcs={arcs} />
     </group>
   );
 }
@@ -231,23 +249,8 @@ function Globe() {
 function Scene() {
   return (
     <>
-      <ambientLight intensity={0.1} />
-      <pointLight position={[3, 3, 5]} intensity={0.4} color="#FFFFFF" />
-      <pointLight position={[-3, -2, 3]} intensity={0.2} color="#4A9EF5" />
-
+      <StarField />
       <Globe />
-      <Particles />
-
-      <Environment preset="night" />
-
-      <EffectComposer>
-        <Bloom
-          luminanceThreshold={0.3}
-          luminanceSmoothing={0.9}
-          intensity={0.8}
-        />
-        <Vignette offset={0.3} darkness={0.7} />
-      </EffectComposer>
     </>
   );
 }
@@ -257,10 +260,20 @@ export default function HeroScene() {
     <div className="absolute inset-0 z-0">
       <Canvas
         camera={{ position: [0, 0, 5.5], fov: 45 }}
-        gl={{ antialias: true, alpha: true }}
-        dpr={[1, 2]}
+        gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
+        dpr={[1, 1.5]}
+        frameloop="always"
       >
         <Scene />
+        <EffectComposer multisampling={0}>
+          <Bloom
+            luminanceThreshold={0.4}
+            luminanceSmoothing={0.9}
+            intensity={0.6}
+            mipmapBlur
+          />
+          <Vignette offset={0.3} darkness={0.6} />
+        </EffectComposer>
       </Canvas>
     </div>
   );

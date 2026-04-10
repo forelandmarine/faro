@@ -14,12 +14,9 @@ export default function HeroScene() {
     {
       active: boolean;
       timer: number;
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      life: number;
-      maxLife: number;
+      x: number; y: number;
+      vx: number; vy: number;
+      life: number; maxLife: number;
     }[]
   >([]);
 
@@ -29,7 +26,7 @@ export default function HeroScene() {
       const isBright = Math.random() < 0.07;
       s.push({
         x: Math.random() * w,
-        y: Math.random() * h * 0.62,
+        y: Math.random() * h * 0.6,
         r: isBright ? 1.2 + Math.random() * 1.8 : 0.3 + Math.random() * 0.7,
         base: isBright ? 0.75 + Math.random() * 0.25 : 0.15 + Math.random() * 0.4,
         speed: 0.3 + Math.random() * 2,
@@ -70,12 +67,78 @@ export default function HeroScene() {
     window.addEventListener("resize", resize);
     window.addEventListener("mousemove", onMouse);
 
+    /* ── Helper: draw a small house silhouette ── */
+    const drawHouse = (
+      x: number, baseY: number,
+      bw: number, bh: number, roofH: number,
+      hasWindow: boolean, windowLit: boolean
+    ) => {
+      // Walls
+      ctx.fillStyle = "#0E1218";
+      ctx.fillRect(x - bw / 2, baseY - bh, bw, bh);
+      // Roof
+      ctx.beginPath();
+      ctx.moveTo(x - bw / 2 - 2, baseY - bh);
+      ctx.lineTo(x, baseY - bh - roofH);
+      ctx.lineTo(x + bw / 2 + 2, baseY - bh);
+      ctx.closePath();
+      ctx.fillStyle = "#0C1018";
+      ctx.fill();
+      // Moonlit roof edge
+      ctx.beginPath();
+      ctx.moveTo(x - bw / 2 - 2, baseY - bh);
+      ctx.lineTo(x, baseY - bh - roofH);
+      ctx.strokeStyle = "rgba(180, 195, 220, 0.08)";
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+      // Window
+      if (hasWindow) {
+        const winW = bw * 0.3;
+        const winH = bh * 0.35;
+        const winY = baseY - bh * 0.65;
+        if (windowLit) {
+          // Warm glow
+          const wg = ctx.createRadialGradient(x, winY, 0, x, winY, winW * 3);
+          wg.addColorStop(0, "rgba(226, 180, 100, 0.06)");
+          wg.addColorStop(1, "rgba(226, 180, 100, 0)");
+          ctx.fillStyle = wg;
+          ctx.beginPath();
+          ctx.arc(x, winY, winW * 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "rgba(226, 180, 100, 0.35)";
+        } else {
+          ctx.fillStyle = "rgba(140, 160, 190, 0.06)";
+        }
+        ctx.fillRect(x - winW / 2, winY - winH / 2, winW, winH);
+      }
+    };
+
+    /* ── Helper: draw a tree silhouette ── */
+    const drawTree = (x: number, baseY: number, h: number, spread: number) => {
+      ctx.fillStyle = "#080C12";
+      // Trunk
+      ctx.fillRect(x - 1, baseY - h * 0.3, 2, h * 0.3);
+      // Canopy (triangle)
+      ctx.beginPath();
+      ctx.moveTo(x - spread, baseY - h * 0.25);
+      ctx.lineTo(x, baseY - h);
+      ctx.lineTo(x + spread, baseY - h * 0.25);
+      ctx.closePath();
+      ctx.fill();
+      // Moonlit edge
+      ctx.beginPath();
+      ctx.moveTo(x - spread, baseY - h * 0.25);
+      ctx.lineTo(x, baseY - h);
+      ctx.strokeStyle = "rgba(180, 195, 220, 0.04)";
+      ctx.lineWidth = 0.6;
+      ctx.stroke();
+    };
+
     const draw = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
       const dt = 1 / 60;
       time += dt;
-
       ctx.clearRect(0, 0, w, h);
 
       // ── Sky ──
@@ -87,27 +150,23 @@ export default function HeroScene() {
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, w, h);
 
-      // ── Stars with parallax ──
+      // ── Stars ──
       const mx = (mouse.current.x - 0.5) * 10;
       const my = (mouse.current.y - 0.5) * 5;
-
       for (const star of stars.current) {
-        const twinkle =
-          star.base + Math.sin(time * star.speed + star.phase) * star.base * 0.35;
+        const twinkle = star.base + Math.sin(time * star.speed + star.phase) * star.base * 0.35;
         const px = star.x + mx * (star.r * 0.4);
         const py = star.y + my * (star.r * 0.25);
-
         if (star.r > 1.2) {
           const glow = ctx.createRadialGradient(px, py, 0, px, py, star.r * 5);
-          glow.addColorStop(0, `rgba(255, 255, 255, ${twinkle * 0.2})`);
-          glow.addColorStop(1, "rgba(255, 255, 255, 0)");
+          glow.addColorStop(0, `rgba(255,255,255,${twinkle * 0.2})`);
+          glow.addColorStop(1, "rgba(255,255,255,0)");
           ctx.fillStyle = glow;
           ctx.beginPath();
           ctx.arc(px, py, star.r * 5, 0, Math.PI * 2);
           ctx.fill();
         }
-
-        ctx.fillStyle = `rgba(255, 255, 255, ${twinkle})`;
+        ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
         ctx.beginPath();
         ctx.arc(px, py, star.r, 0, Math.PI * 2);
         ctx.fill();
@@ -136,119 +195,205 @@ export default function HeroScene() {
             ss.timer = 4 + Math.random() * 8;
             continue;
           }
-          const fade =
-            ss.life < 0.08
-              ? ss.life / 0.08
-              : ss.life > ss.maxLife * 0.5
-                ? (ss.maxLife - ss.life) / (ss.maxLife * 0.5)
-                : 1;
+          const fade = ss.life < 0.08 ? ss.life / 0.08
+            : ss.life > ss.maxLife * 0.5 ? (ss.maxLife - ss.life) / (ss.maxLife * 0.5) : 1;
           const tailLen = 80 * fade;
           const grad = ctx.createLinearGradient(
             ss.x, ss.y,
-            ss.x - (ss.vx / 500) * tailLen,
-            ss.y - (ss.vy / 500) * tailLen
+            ss.x - (ss.vx / 500) * tailLen, ss.y - (ss.vy / 500) * tailLen
           );
-          grad.addColorStop(0, `rgba(255, 255, 255, ${fade * 0.9})`);
-          grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+          grad.addColorStop(0, `rgba(255,255,255,${fade * 0.9})`);
+          grad.addColorStop(1, "rgba(255,255,255,0)");
           ctx.strokeStyle = grad;
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.moveTo(ss.x, ss.y);
-          ctx.lineTo(
-            ss.x - (ss.vx / 500) * tailLen,
-            ss.y - (ss.vy / 500) * tailLen
-          );
+          ctx.lineTo(ss.x - (ss.vx / 500) * tailLen, ss.y - (ss.vy / 500) * tailLen);
           ctx.stroke();
-          ctx.fillStyle = `rgba(255, 255, 255, ${fade})`;
+          ctx.fillStyle = `rgba(255,255,255,${fade})`;
           ctx.beginPath();
           ctx.arc(ss.x, ss.y, 2, 0, Math.PI * 2);
           ctx.fill();
         }
       }
 
-      // ── Horizon / Coastline ──
-      const horizonY = h * 0.68;
+      // ── Moon ──
+      const moonX = w * 0.12;
+      const moonY = h * 0.22;
+      const moonGlow = ctx.createRadialGradient(moonX, moonY, 0, moonX, moonY, 90);
+      moonGlow.addColorStop(0, "rgba(200,210,230,0.07)");
+      moonGlow.addColorStop(0.5, "rgba(160,175,200,0.02)");
+      moonGlow.addColorStop(1, "rgba(160,175,200,0)");
+      ctx.fillStyle = moonGlow;
+      ctx.beginPath();
+      ctx.arc(moonX, moonY, 90, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgba(220,225,235,0.08)";
+      ctx.beginPath();
+      ctx.arc(moonX, moonY, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgba(235,240,248,0.13)";
+      ctx.beginPath();
+      ctx.arc(moonX, moonY, 8, 0, Math.PI * 2);
+      ctx.fill();
 
-      // ── Coastline silhouette - rugged headland with moonlit edge ──
-      const coastPoints: [number, number][] = [
-        [0, horizonY + 8],
-        [w * 0.05, horizonY + 5],
-        [w * 0.1, horizonY - 2],
-        [w * 0.14, horizonY + 3],
-        [w * 0.18, horizonY - 8],
-        [w * 0.22, horizonY - 3],
-        [w * 0.26, horizonY - 18],
-        [w * 0.3, horizonY - 10],
-        [w * 0.34, horizonY - 25],
-        [w * 0.37, horizonY - 15],
-        [w * 0.4, horizonY - 5],
-        [w * 0.44, horizonY + 2],
-        [w * 0.5, horizonY - 10],
-        [w * 0.54, horizonY],
-        [w * 0.58, horizonY - 6],
-        [w * 0.62, horizonY + 4],
-        // Lighthouse headland - prominent rise
-        [w * 0.66, horizonY - 5],
-        [w * 0.7, horizonY - 20],
-        [w * 0.73, horizonY - 30],
-        [w * 0.76, horizonY - 35], // peak where lighthouse sits
-        [w * 0.79, horizonY - 28],
-        [w * 0.82, horizonY - 15],
-        [w * 0.86, horizonY - 5],
-        [w * 0.9, horizonY + 2],
-        [w * 0.95, horizonY + 6],
+      // ════════════════════════════════════════════
+      //  COASTLINE - harbour with channel in middle
+      // ════════════════════════════════════════════
+      const horizonY = h * 0.68;
+      const channelL = w * 0.44; // left side of harbour channel
+      const channelR = w * 0.56; // right side of harbour channel
+      const waterLevel = horizonY + 6; // water in the channel
+
+      // ── LEFT HEADLAND (hills, town) ──
+      const leftCoast: [number, number][] = [
+        [0, horizonY + 10],
+        [w * 0.03, horizonY + 5],
+        [w * 0.07, horizonY - 4],
+        [w * 0.11, horizonY + 2],
+        [w * 0.15, horizonY - 15],
+        [w * 0.19, horizonY - 8],
+        [w * 0.23, horizonY - 28],  // hilltop
+        [w * 0.27, horizonY - 22],
+        [w * 0.31, horizonY - 30],  // highest point left
+        [w * 0.35, horizonY - 18],
+        [w * 0.38, horizonY - 10],
+        [w * 0.41, horizonY - 4],
+        [channelL, waterLevel],      // drops to water at channel
+      ];
+
+      // ── RIGHT HEADLAND (lighthouse headland) ──
+      const rightCoast: [number, number][] = [
+        [channelR, waterLevel],      // rises from channel
+        [w * 0.59, horizonY - 3],
+        [w * 0.62, horizonY - 8],
+        [w * 0.65, horizonY - 15],
+        [w * 0.68, horizonY - 25],
+        [w * 0.71, horizonY - 35],
+        [w * 0.74, horizonY - 42],   // lighthouse peak
+        [w * 0.77, horizonY - 35],
+        [w * 0.80, horizonY - 22],
+        [w * 0.84, horizonY - 12],
+        [w * 0.88, horizonY - 5],
+        [w * 0.92, horizonY],
+        [w * 0.96, horizonY + 5],
         [w, horizonY + 10],
       ];
 
-      // Fill coastline solid dark
+      // Fill LEFT headland
       ctx.beginPath();
-      ctx.moveTo(coastPoints[0][0], coastPoints[0][1]);
-      for (let i = 1; i < coastPoints.length; i++) {
-        ctx.lineTo(coastPoints[i][0], coastPoints[i][1]);
-      }
-      ctx.lineTo(w, h);
+      ctx.moveTo(leftCoast[0][0], leftCoast[0][1]);
+      for (const p of leftCoast) ctx.lineTo(p[0], p[1]);
+      ctx.lineTo(channelL, h);
       ctx.lineTo(0, h);
       ctx.closePath();
       ctx.fillStyle = "#0A0E14";
       ctx.fill();
 
-      // Moonlit edge highlight along the coast ridge
+      // Fill RIGHT headland
       ctx.beginPath();
-      ctx.moveTo(coastPoints[0][0], coastPoints[0][1]);
-      for (let i = 1; i < coastPoints.length; i++) {
-        ctx.lineTo(coastPoints[i][0], coastPoints[i][1]);
-      }
-      ctx.strokeStyle = "rgba(180, 195, 220, 0.12)";
+      ctx.moveTo(rightCoast[0][0], rightCoast[0][1]);
+      for (const p of rightCoast) ctx.lineTo(p[0], p[1]);
+      ctx.lineTo(w, h);
+      ctx.lineTo(channelR, h);
+      ctx.closePath();
+      ctx.fillStyle = "#0A0E14";
+      ctx.fill();
+
+      // Moonlit edges - left
+      ctx.beginPath();
+      ctx.moveTo(leftCoast[0][0], leftCoast[0][1]);
+      for (const p of leftCoast) ctx.lineTo(p[0], p[1]);
+      ctx.strokeStyle = "rgba(180,195,220,0.12)";
       ctx.lineWidth = 1.5;
       ctx.stroke();
-
-      // Second edge line, softer
-      ctx.strokeStyle = "rgba(140, 165, 200, 0.06)";
+      ctx.strokeStyle = "rgba(140,165,200,0.05)";
       ctx.lineWidth = 3;
       ctx.stroke();
 
-      // ── Water ──
-      // Subtle shimmer lines on the water
-      for (let i = 0; i < 12; i++) {
-        const wy = horizonY + 15 + i * ((h - horizonY - 15) / 12);
-        const shimmer = Math.sin(time * 0.4 + i * 1.2) * 0.03 + 0.02;
-        ctx.strokeStyle = `rgba(150, 170, 200, ${shimmer})`;
+      // Moonlit edges - right
+      ctx.beginPath();
+      ctx.moveTo(rightCoast[0][0], rightCoast[0][1]);
+      for (const p of rightCoast) ctx.lineTo(p[0], p[1]);
+      ctx.strokeStyle = "rgba(180,195,220,0.12)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(140,165,200,0.05)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // ── Harbour channel water ──
+      const chGrad = ctx.createLinearGradient(0, waterLevel, 0, h);
+      chGrad.addColorStop(0, "#060A12");
+      chGrad.addColorStop(1, "#030508");
+      ctx.fillStyle = chGrad;
+      ctx.fillRect(channelL, waterLevel, channelR - channelL, h - waterLevel);
+
+      // Channel shimmer
+      for (let i = 0; i < 6; i++) {
+        const sy = waterLevel + 10 + i * 15;
+        const shimmer = Math.sin(time * 0.5 + i * 0.9) * 0.025 + 0.02;
+        ctx.strokeStyle = `rgba(150,170,200,${shimmer})`;
         ctx.lineWidth = 0.5;
+        const sx = channelL + 10 + Math.sin(time * 0.4 + i) * 8;
         ctx.beginPath();
-        const startX = Math.sin(time * 0.3 + i) * 30 + w * 0.1;
-        ctx.moveTo(startX, wy);
-        ctx.lineTo(startX + 40 + Math.random() * 60, wy);
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx + 20 + Math.sin(i) * 15, sy);
         ctx.stroke();
       }
 
+      // ── Trees on left hillsides ──
+      drawTree(w * 0.13, horizonY - 12, 14, 5);
+      drawTree(w * 0.16, horizonY - 6, 11, 4);
+      drawTree(w * 0.20, horizonY - 14, 16, 6);
+      drawTree(w * 0.22, horizonY - 24, 13, 5);
+      drawTree(w * 0.25, horizonY - 26, 15, 5);
+      drawTree(w * 0.28, horizonY - 23, 12, 4);
+      drawTree(w * 0.33, horizonY - 25, 14, 5);
+      drawTree(w * 0.36, horizonY - 15, 11, 4);
+      drawTree(w * 0.39, horizonY - 8, 10, 4);
+
+      // Trees on right hillside
+      drawTree(w * 0.61, horizonY - 6, 10, 4);
+      drawTree(w * 0.63, horizonY - 12, 13, 5);
+      drawTree(w * 0.66, horizonY - 20, 15, 5);
+      drawTree(w * 0.69, horizonY - 30, 14, 5);
+      drawTree(w * 0.80, horizonY - 20, 12, 4);
+      drawTree(w * 0.83, horizonY - 10, 11, 4);
+      drawTree(w * 0.86, horizonY - 4, 10, 4);
+
+      // ── Houses on left hilltops (the town) ──
+      drawHouse(w * 0.17, horizonY - 10, 8, 7, 5, true, true);
+      drawHouse(w * 0.21, horizonY - 18, 7, 6, 4, true, false);
+      drawHouse(w * 0.24, horizonY - 26, 9, 8, 5, true, true);
+      drawHouse(w * 0.27, horizonY - 22, 6, 5, 4, true, false);
+      drawHouse(w * 0.30, horizonY - 27, 8, 7, 5, true, true);
+      drawHouse(w * 0.32, horizonY - 24, 7, 6, 4, true, false);
+      drawHouse(w * 0.34, horizonY - 20, 10, 8, 6, true, true);
+      drawHouse(w * 0.37, horizonY - 14, 7, 6, 4, true, false);
+      drawHouse(w * 0.40, horizonY - 6, 8, 7, 5, true, true);
+
+      // Scattered houses on right side
+      drawHouse(w * 0.60, horizonY - 5, 7, 6, 4, true, true);
+      drawHouse(w * 0.64, horizonY - 12, 8, 7, 5, true, false);
+      drawHouse(w * 0.67, horizonY - 22, 7, 6, 4, true, true);
+
+      // ── Keeper's cottage under the lighthouse ──
+      const cottageX = w * 0.74 + 14;
+      const cottageBaseY = horizonY - 35;
+      drawHouse(cottageX, cottageBaseY, 10, 8, 5, true, true);
+      // Chimney
+      ctx.fillStyle = "#0E1218";
+      ctx.fillRect(cottageX + 3, cottageBaseY - 8 - 5 - 4, 2, 6);
+
       // ── Lighthouse ──
-      const lhX = w * 0.76;
-      const lhBaseY = horizonY - 35; // sits on the peak
+      const lhX = w * 0.74;
+      const lhBaseY = horizonY - 42;
       const towerH = h * 0.12;
       const towerTopW = 4;
       const towerBotW = 7;
 
-      // Tower body
+      // Tower
       ctx.fillStyle = "#12161E";
       ctx.beginPath();
       ctx.moveTo(lhX - towerBotW, lhBaseY);
@@ -258,15 +403,15 @@ export default function HeroScene() {
       ctx.closePath();
       ctx.fill();
 
-      // Tower moonlit edge (left side highlight)
+      // Moonlit edge
       ctx.beginPath();
       ctx.moveTo(lhX - towerBotW, lhBaseY);
       ctx.lineTo(lhX - towerTopW, lhBaseY - towerH);
-      ctx.strokeStyle = "rgba(180, 195, 220, 0.15)";
+      ctx.strokeStyle = "rgba(180,195,220,0.18)";
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Gallery platform
+      // Gallery
       const galleryY = lhBaseY - towerH;
       ctx.fillStyle = "#161C26";
       ctx.fillRect(lhX - towerTopW - 4, galleryY, (towerTopW + 4) * 2, 3);
@@ -282,42 +427,42 @@ export default function HeroScene() {
       ctx.arc(lhX, galleryY - lanternH, 6, Math.PI, 0);
       ctx.fill();
 
-      // ── LIGHT - the main event ──
+      // ── LIGHT ──
       const lightY = galleryY - lanternH * 0.5;
       const pulse = 0.65 + Math.sin(time * 1.8) * 0.35;
 
-      // Large atmospheric glow
-      const atmoGlow = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 120);
-      atmoGlow.addColorStop(0, `rgba(226, 134, 75, ${0.25 * pulse})`);
-      atmoGlow.addColorStop(0.3, `rgba(226, 134, 75, ${0.08 * pulse})`);
-      atmoGlow.addColorStop(0.6, `rgba(226, 134, 75, ${0.02 * pulse})`);
-      atmoGlow.addColorStop(1, "rgba(226, 134, 75, 0)");
-      ctx.fillStyle = atmoGlow;
+      // Atmospheric glow
+      const atmo = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 130);
+      atmo.addColorStop(0, `rgba(226,134,75,${0.28 * pulse})`);
+      atmo.addColorStop(0.3, `rgba(226,134,75,${0.08 * pulse})`);
+      atmo.addColorStop(0.6, `rgba(226,134,75,${0.02 * pulse})`);
+      atmo.addColorStop(1, "rgba(226,134,75,0)");
+      ctx.fillStyle = atmo;
       ctx.beginPath();
-      ctx.arc(lhX, lightY, 120, 0, Math.PI * 2);
+      ctx.arc(lhX, lightY, 130, 0, Math.PI * 2);
       ctx.fill();
 
       // Medium glow
-      const medGlow = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 40);
-      medGlow.addColorStop(0, `rgba(255, 220, 170, ${0.5 * pulse})`);
-      medGlow.addColorStop(0.5, `rgba(226, 134, 75, ${0.15 * pulse})`);
-      medGlow.addColorStop(1, "rgba(226, 134, 75, 0)");
-      ctx.fillStyle = medGlow;
+      const med = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 40);
+      med.addColorStop(0, `rgba(255,220,170,${0.5 * pulse})`);
+      med.addColorStop(0.5, `rgba(226,134,75,${0.15 * pulse})`);
+      med.addColorStop(1, "rgba(226,134,75,0)");
+      ctx.fillStyle = med;
       ctx.beginPath();
       ctx.arc(lhX, lightY, 40, 0, Math.PI * 2);
       ctx.fill();
 
-      // Bright core
-      const coreGlow = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 8);
-      coreGlow.addColorStop(0, `rgba(255, 245, 225, ${0.95 * pulse})`);
-      coreGlow.addColorStop(0.5, `rgba(255, 200, 140, ${0.6 * pulse})`);
-      coreGlow.addColorStop(1, `rgba(226, 134, 75, ${0.2 * pulse})`);
-      ctx.fillStyle = coreGlow;
+      // Core
+      const core = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 8);
+      core.addColorStop(0, `rgba(255,245,225,${0.95 * pulse})`);
+      core.addColorStop(0.5, `rgba(255,200,140,${0.6 * pulse})`);
+      core.addColorStop(1, `rgba(226,134,75,${0.2 * pulse})`);
+      ctx.fillStyle = core;
       ctx.beginPath();
       ctx.arc(lhX, lightY, 8, 0, Math.PI * 2);
       ctx.fill();
 
-      // ── Sweeping beam ──
+      // ── Beam ──
       const beamAngle = time * 0.6;
       const beamDir = Math.cos(beamAngle);
       if (beamDir > -0.2) {
@@ -329,87 +474,71 @@ export default function HeroScene() {
         ctx.save();
         ctx.globalCompositeOperation = "lighter";
 
-        // Outer beam (wide, faint)
+        // Outer
         ctx.beginPath();
         ctx.moveTo(lhX, lightY);
-        ctx.lineTo(
-          lhX + Math.cos(baseAngle - beamSpread * 1.8) * beamLen,
-          lightY + Math.sin(baseAngle - beamSpread * 1.8) * beamLen
-        );
-        ctx.lineTo(
-          lhX + Math.cos(baseAngle + beamSpread * 1.8) * beamLen,
-          lightY + Math.sin(baseAngle + beamSpread * 1.8) * beamLen
-        );
+        ctx.lineTo(lhX + Math.cos(baseAngle - beamSpread * 1.8) * beamLen, lightY + Math.sin(baseAngle - beamSpread * 1.8) * beamLen);
+        ctx.lineTo(lhX + Math.cos(baseAngle + beamSpread * 1.8) * beamLen, lightY + Math.sin(baseAngle + beamSpread * 1.8) * beamLen);
         ctx.closePath();
-        const outerBeam = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, beamLen);
-        outerBeam.addColorStop(0, `rgba(226, 134, 75, ${beamStrength * 0.12 * pulse})`);
-        outerBeam.addColorStop(0.4, `rgba(226, 134, 75, ${beamStrength * 0.03 * pulse})`);
-        outerBeam.addColorStop(1, "rgba(226, 134, 75, 0)");
-        ctx.fillStyle = outerBeam;
+        const ob = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, beamLen);
+        ob.addColorStop(0, `rgba(226,134,75,${beamStrength * 0.12 * pulse})`);
+        ob.addColorStop(0.4, `rgba(226,134,75,${beamStrength * 0.03 * pulse})`);
+        ob.addColorStop(1, "rgba(226,134,75,0)");
+        ctx.fillStyle = ob;
         ctx.fill();
 
-        // Inner beam (narrow, brighter)
+        // Inner
         ctx.beginPath();
         ctx.moveTo(lhX, lightY);
-        ctx.lineTo(
-          lhX + Math.cos(baseAngle - beamSpread) * beamLen * 0.8,
-          lightY + Math.sin(baseAngle - beamSpread) * beamLen * 0.8
-        );
-        ctx.lineTo(
-          lhX + Math.cos(baseAngle + beamSpread) * beamLen * 0.8,
-          lightY + Math.sin(baseAngle + beamSpread) * beamLen * 0.8
-        );
+        ctx.lineTo(lhX + Math.cos(baseAngle - beamSpread) * beamLen * 0.8, lightY + Math.sin(baseAngle - beamSpread) * beamLen * 0.8);
+        ctx.lineTo(lhX + Math.cos(baseAngle + beamSpread) * beamLen * 0.8, lightY + Math.sin(baseAngle + beamSpread) * beamLen * 0.8);
         ctx.closePath();
-        const innerBeam = ctx.createRadialGradient(
-          lhX, lightY, 0, lhX, lightY, beamLen * 0.8
-        );
-        innerBeam.addColorStop(0, `rgba(255, 220, 170, ${beamStrength * 0.15 * pulse})`);
-        innerBeam.addColorStop(0.3, `rgba(226, 134, 75, ${beamStrength * 0.05 * pulse})`);
-        innerBeam.addColorStop(1, "rgba(226, 134, 75, 0)");
-        ctx.fillStyle = innerBeam;
+        const ib = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, beamLen * 0.8);
+        ib.addColorStop(0, `rgba(255,220,170,${beamStrength * 0.15 * pulse})`);
+        ib.addColorStop(0.3, `rgba(226,134,75,${beamStrength * 0.05 * pulse})`);
+        ib.addColorStop(1, "rgba(226,134,75,0)");
+        ctx.fillStyle = ib;
         ctx.fill();
 
         ctx.restore();
       }
 
       // ── Water reflection ──
-      // Main reflection column
-      const reflW = 40;
       for (let i = 0; i < 8; i++) {
-        const ry = horizonY + i * 12 + 5;
+        const ry = horizonY + i * 12 + 8;
         const rFade = 1 - i / 8;
         const shimmer = Math.sin(time * 0.8 + i * 0.7) * 0.3 + 0.7;
-        const rw = reflW * shimmer * rFade;
-        const rGrad = ctx.createRadialGradient(lhX, ry, 0, lhX, ry, rw);
-        rGrad.addColorStop(0, `rgba(226, 134, 75, ${0.08 * pulse * rFade * shimmer})`);
-        rGrad.addColorStop(1, "rgba(226, 134, 75, 0)");
-        ctx.fillStyle = rGrad;
+        const rw = 35 * shimmer * rFade;
+        const rg = ctx.createRadialGradient(lhX, ry, 0, lhX, ry, rw);
+        rg.addColorStop(0, `rgba(226,134,75,${0.06 * pulse * rFade * shimmer})`);
+        rg.addColorStop(1, "rgba(226,134,75,0)");
+        ctx.fillStyle = rg;
         ctx.beginPath();
         ctx.arc(lhX, ry, rw, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // ── Moon glow on horizon (far left) ──
-      const moonX = w * 0.12;
-      const moonY = horizonY - 60;
-      const moonGlow = ctx.createRadialGradient(moonX, moonY, 0, moonX, moonY, 80);
-      moonGlow.addColorStop(0, "rgba(200, 210, 230, 0.06)");
-      moonGlow.addColorStop(0.5, "rgba(160, 175, 200, 0.02)");
-      moonGlow.addColorStop(1, "rgba(160, 175, 200, 0)");
-      ctx.fillStyle = moonGlow;
-      ctx.beginPath();
-      ctx.arc(moonX, moonY, 80, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Moon disc
-      ctx.fillStyle = "rgba(220, 225, 235, 0.08)";
-      ctx.beginPath();
-      ctx.arc(moonX, moonY, 12, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "rgba(235, 240, 248, 0.12)";
-      ctx.beginPath();
-      ctx.arc(moonX, moonY, 8, 0, Math.PI * 2);
-      ctx.fill();
+      // ── Town lights reflected in harbour channel ──
+      const litHouses = [
+        [w * 0.17, horizonY - 10],
+        [w * 0.24, horizonY - 26],
+        [w * 0.30, horizonY - 27],
+        [w * 0.34, horizonY - 20],
+        [w * 0.40, horizonY - 6],
+        [w * 0.60, horizonY - 5],
+        [w * 0.67, horizonY - 22],
+      ];
+      for (const [hx] of litHouses) {
+        // Only reflect houses near the channel
+        if (hx > channelL - 40 && hx < channelR + 40) {
+          const ry = waterLevel + 5;
+          const rg = ctx.createLinearGradient(0, ry, 0, ry + 30);
+          rg.addColorStop(0, "rgba(226,180,100,0.025)");
+          rg.addColorStop(1, "rgba(226,180,100,0)");
+          ctx.fillStyle = rg;
+          ctx.fillRect(hx - 3, ry, 6, 30);
+        }
+      }
 
       raf = requestAnimationFrame(draw);
     };

@@ -77,9 +77,7 @@ export default function Hero() {
           FARO
         </h1>
         <p className="text-[clamp(1.1rem,2.5vw,2rem)] font-light leading-tight text-foreground/90 max-w-2xl drop-shadow-[0_2px_16px_rgba(0,0,0,0.8)]">
-          We design websites that make
-          <br />
-          people stop scrolling.
+          Brands designed to be found.
         </p>
       </div>
 

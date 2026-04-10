@@ -71,7 +71,7 @@ export default function Navbar() {
             color="#7EC8E3"
             className="opacity-60 group-hover:opacity-100 transition-opacity"
           />
-          <span className="text-lg font-black tracking-tighter">FARO</span>
+          <span className="text-lg font-semibold tracking-tighter">FARO</span>
         </a>
 
         {/* Desktop links */}
@@ -81,7 +81,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={(e) => handleClick(e, link.href)}
-              className="text-xs font-medium tracking-[0.15em] uppercase text-muted hover:text-foreground transition-colors"
+              className="text-xs font-semibold tracking-[0.15em] uppercase text-muted hover:text-foreground transition-colors"
             >
               {link.label}
             </a>
@@ -92,7 +92,7 @@ export default function Navbar() {
         <a
           href="#contact"
           onClick={(e) => handleClick(e, "#contact")}
-          className="hidden md:block text-xs font-bold tracking-[0.15em] uppercase px-5 py-2.5 border border-accent/40 rounded-full text-accent hover:bg-accent hover:text-background transition-all"
+          className="hidden md:block text-xs font-semibold tracking-[0.15em] uppercase px-5 py-2.5 border border-accent/40 rounded-full text-accent hover:bg-accent hover:text-background transition-all"
         >
           Start a project
         </a>

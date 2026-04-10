@@ -46,17 +46,17 @@ export default function Hero() {
     >
       <HeroScene />
 
-      <div ref={contentRef} className="relative z-10 w-full max-w-[90vw] px-6">
+      <div ref={contentRef} className="relative z-10 w-full max-w-7xl px-6 md:px-16 lg:px-24">
         {/* Main title */}
         <div className="hero-reveal">
-          <h1 className="font-[family-name:var(--font-display)] text-[clamp(4rem,15vw,14rem)] font-semibold leading-[0.85] tracking-[-0.04em] text-white">
+          <h1 className="text-[clamp(4rem,15vw,14rem)] font-semibold leading-[0.85] tracking-[-0.04em] text-white">
             FARO
           </h1>
         </div>
 
         {/* Tagline */}
         <div className="hero-reveal mt-4 md:mt-6">
-          <p className="text-[clamp(1rem,2.5vw,1.75rem)] font-light leading-snug text-white/70 max-w-xl">
+          <p className="text-[clamp(1rem,2.5vw,1.75rem)] font-normal leading-snug text-white/70 max-w-xl">
             Brands designed to be found.
           </p>
         </div>
@@ -70,14 +70,14 @@ export default function Hero() {
         <div className="hero-reveal mt-6 md:mt-8 flex items-center gap-6">
           <a
             href="#work"
-            className="text-[13px] font-medium tracking-[0.08em] uppercase text-white/90 hover:text-accent transition-colors"
+            className="text-sm font-medium tracking-[0.08em] uppercase text-white/90 hover:text-accent transition-colors"
           >
             View work
           </a>
           <span className="w-1 h-1 rounded-full bg-white/20" />
           <a
             href="#contact"
-            className="text-[13px] font-medium tracking-[0.08em] uppercase text-white/40 hover:text-white/80 transition-colors"
+            className="text-sm font-medium tracking-[0.08em] uppercase text-white/40 hover:text-white/80 transition-colors"
           >
             Get in touch
           </a>

@@ -1,271 +1,312 @@
 "use client";
 
-import { useRef, useMemo } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import * as THREE from "three";
+import { useEffect, useRef, useCallback } from "react";
 
-/* Shared scroll progress: written by GSAP in Hero, read here */
 export const scrollState = { progress: 0 };
 
-/* Stars: simple points, no custom shaders */
-function Stars({ count = 600 }: { count?: number }) {
-  const ref = useRef<THREE.Points>(null!);
+export default function HeroScene() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouse = useRef({ x: 0.5, y: 0.5 });
+  const stars = useRef<
+    { x: number; y: number; r: number; base: number; speed: number; phase: number }[]
+  >([]);
+  const shootingStars = useRef<
+    {
+      active: boolean;
+      timer: number;
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      life: number;
+      maxLife: number;
+    }[]
+  >([]);
 
-  const positions = useMemo(() => {
-    const p = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(Math.random()); // upper hemisphere
-      const r = 40 + Math.random() * 20;
-      p[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      p[i * 3 + 1] = r * Math.cos(phi);
-      p[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+  const init = useCallback((w: number, h: number) => {
+    // Generate stars
+    const s: typeof stars.current = [];
+    for (let i = 0; i < 400; i++) {
+      const isBright = Math.random() < 0.06;
+      s.push({
+        x: Math.random() * w,
+        y: Math.random() * h * 0.65, // upper 65% only
+        r: isBright ? 1 + Math.random() * 1.5 : 0.3 + Math.random() * 0.8,
+        base: isBright ? 0.7 + Math.random() * 0.3 : 0.15 + Math.random() * 0.4,
+        speed: 0.3 + Math.random() * 2,
+        phase: Math.random() * Math.PI * 2,
+      });
     }
-    return p;
-  }, [count]);
+    stars.current = s;
 
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial size={0.12} color="#ffffff" transparent opacity={0.7} sizeAttenuation />
-    </points>
-  );
-}
-
-/* Shooting star */
-function ShootingStar({ delay }: { delay: number }) {
-  const ref = useRef<THREE.Mesh>(null!);
-  const data = useRef({
-    active: false,
-    timer: delay,
-    start: new THREE.Vector3(),
-    dir: new THREE.Vector3(),
-    life: 0,
-  });
-
-  useFrame((_, dt) => {
-    const d = data.current;
-    if (!ref.current) return;
-
-    d.timer -= dt;
-    if (!d.active && d.timer <= 0) {
-      d.active = true;
-      d.life = 0;
-      const a = Math.random() * Math.PI * 2;
-      d.start.set(Math.cos(a) * 20, 15 + Math.random() * 15, -20 - Math.random() * 20);
-      d.dir.set(
-        (Math.random() - 0.5) * 2,
-        -0.8 - Math.random() * 0.5,
-        (Math.random() - 0.5)
-      ).normalize().multiplyScalar(30);
-    }
-
-    if (d.active) {
-      d.life += dt * 1.2;
-      if (d.life > 1) {
-        d.active = false;
-        d.timer = 5 + Math.random() * 10;
-        ref.current.visible = false;
-        return;
-      }
-      ref.current.visible = true;
-      ref.current.position.copy(d.start).addScaledVector(d.dir, d.life);
-      ref.current.lookAt(
-        ref.current.position.x + d.dir.x,
-        ref.current.position.y + d.dir.y,
-        ref.current.position.z + d.dir.z
-      );
-      const fade = d.life < 0.15 ? d.life / 0.15 : d.life > 0.6 ? (1 - d.life) / 0.4 : 1;
-      ref.current.scale.set(0.02, 0.02, fade * 1.5);
-      (ref.current.material as THREE.MeshBasicMaterial).opacity = fade * 0.9;
-    } else {
-      ref.current.visible = false;
-    }
-  });
-
-  return (
-    <mesh ref={ref} visible={false}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshBasicMaterial color="#ffffff" transparent opacity={0} />
-    </mesh>
-  );
-}
-
-/* Dark coastline silhouette - jagged ridge of triangles */
-function Coastline() {
-  const geo = useMemo(() => {
-    const shape = new THREE.Shape();
-    // Jagged headland profile from left to right
-    const points: [number, number][] = [
-      [-50, -2],
-      [-35, -1.5],
-      [-28, 1.2],
-      [-24, 0.4],
-      [-20, 2.8],
-      [-17, 1.8],
-      [-14, 3.5],
-      [-11, 2.2],
-      [-8, 4],
-      [-5, 2.5],
-      [-2, 3],
-      [0, 1.5],
-      [3, 2],
-      [6, 0.5],
-      [10, 1.2],
-      [14, 0],
-      [20, 0.8],
-      [25, -0.5],
-      [30, 0.2],
-      [40, -1],
-      [50, -2],
-      [50, -10],
-      [-50, -10],
+    // Init shooting stars
+    shootingStars.current = [
+      { active: false, timer: 3, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 0.8 },
+      { active: false, timer: 8, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 0.6 },
     ];
-    shape.moveTo(points[0][0], points[0][1]);
-    for (let i = 1; i < points.length; i++) {
-      shape.lineTo(points[i][0], points[i][1]);
-    }
-    shape.closePath();
-    const g = new THREE.ShapeGeometry(shape);
-    return g;
   }, []);
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d")!;
+    let raf: number;
+    let time = 0;
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+      ctx.scale(dpr, dpr);
+      init(window.innerWidth, window.innerHeight);
+    };
+
+    const onMouse = (e: MouseEvent) => {
+      mouse.current.x = e.clientX / window.innerWidth;
+      mouse.current.y = e.clientY / window.innerHeight;
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", onMouse);
+
+    const draw = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const dt = 1 / 60;
+      time += dt;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // ── Sky gradient ──
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+      skyGrad.addColorStop(0, "#000000");
+      skyGrad.addColorStop(0.5, "#020308");
+      skyGrad.addColorStop(0.75, "#040610");
+      skyGrad.addColorStop(1, "#060A14");
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // ── Stars with parallax ──
+      const mx = (mouse.current.x - 0.5) * 8;
+      const my = (mouse.current.y - 0.5) * 4;
+
+      for (const star of stars.current) {
+        const twinkle =
+          star.base +
+          Math.sin(time * star.speed + star.phase) * star.base * 0.35;
+        const px = star.x + mx * (star.r * 0.5);
+        const py = star.y + my * (star.r * 0.3);
+
+        // Glow halo
+        if (star.r > 1) {
+          const glow = ctx.createRadialGradient(px, py, 0, px, py, star.r * 4);
+          glow.addColorStop(0, `rgba(255, 255, 255, ${twinkle * 0.15})`);
+          glow.addColorStop(1, "rgba(255, 255, 255, 0)");
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(px, py, star.r * 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Core
+        ctx.fillStyle = `rgba(255, 255, 255, ${twinkle})`;
+        ctx.beginPath();
+        ctx.arc(px, py, star.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // ── Shooting stars ──
+      for (const ss of shootingStars.current) {
+        ss.timer -= dt;
+        if (!ss.active && ss.timer <= 0) {
+          ss.active = true;
+          ss.life = 0;
+          ss.x = Math.random() * w * 0.8 + w * 0.1;
+          ss.y = Math.random() * h * 0.3;
+          const angle = Math.PI * 0.15 + Math.random() * 0.3;
+          const speed = 400 + Math.random() * 300;
+          ss.vx = Math.cos(angle) * speed;
+          ss.vy = Math.sin(angle) * speed;
+          ss.maxLife = 0.5 + Math.random() * 0.5;
+        }
+        if (ss.active) {
+          ss.life += dt;
+          ss.x += ss.vx * dt;
+          ss.y += ss.vy * dt;
+
+          if (ss.life > ss.maxLife) {
+            ss.active = false;
+            ss.timer = 5 + Math.random() * 12;
+            continue;
+          }
+
+          const fade =
+            ss.life < 0.1
+              ? ss.life / 0.1
+              : ss.life > ss.maxLife * 0.6
+                ? (ss.maxLife - ss.life) / (ss.maxLife * 0.4)
+                : 1;
+
+          // Trail
+          const tailLen = 60 * fade;
+          const grad = ctx.createLinearGradient(
+            ss.x,
+            ss.y,
+            ss.x - (ss.vx / 500) * tailLen,
+            ss.y - (ss.vy / 500) * tailLen
+          );
+          grad.addColorStop(0, `rgba(255, 255, 255, ${fade * 0.8})`);
+          grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(ss.x, ss.y);
+          ctx.lineTo(
+            ss.x - (ss.vx / 500) * tailLen,
+            ss.y - (ss.vy / 500) * tailLen
+          );
+          ctx.stroke();
+
+          // Head
+          ctx.fillStyle = `rgba(255, 255, 255, ${fade})`;
+          ctx.beginPath();
+          ctx.arc(ss.x, ss.y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // ── Horizon line ──
+      const horizonY = h * 0.72;
+
+      // ── Water - subtle dark reflection zone ──
+      const waterGrad = ctx.createLinearGradient(0, horizonY, 0, h);
+      waterGrad.addColorStop(0, "rgba(6, 10, 20, 0.9)");
+      waterGrad.addColorStop(1, "#000000");
+      ctx.fillStyle = waterGrad;
+      ctx.fillRect(0, horizonY, w, h - horizonY);
+
+      // ── Lighthouse ──
+      const lhX = w * 0.78;
+      const lhBaseY = horizonY;
+      const towerH = h * 0.07;
+      const towerTopW = 2.5;
+      const towerBotW = 4;
+
+      // Tower silhouette
+      ctx.fillStyle = "#080810";
+      ctx.beginPath();
+      ctx.moveTo(lhX - towerBotW, lhBaseY);
+      ctx.lineTo(lhX - towerTopW, lhBaseY - towerH);
+      ctx.lineTo(lhX + towerTopW, lhBaseY - towerH);
+      ctx.lineTo(lhX + towerBotW, lhBaseY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Lantern room
+      const lanternY = lhBaseY - towerH;
+      const lanternH = towerH * 0.25;
+      ctx.fillStyle = "#0A0A14";
+      ctx.fillRect(lhX - 4, lanternY - lanternH, 8, lanternH);
+
+      // Dome
+      ctx.fillStyle = "#080810";
+      ctx.beginPath();
+      ctx.arc(lhX, lanternY - lanternH, 5, Math.PI, 0);
+      ctx.fill();
+
+      // Light glow
+      const lightY = lanternY - lanternH * 0.5;
+      const pulse = 0.6 + Math.sin(time * 2) * 0.4;
+
+      // Outer glow
+      const outerGlow = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 35);
+      outerGlow.addColorStop(0, `rgba(226, 134, 75, ${0.3 * pulse})`);
+      outerGlow.addColorStop(0.5, `rgba(226, 134, 75, ${0.08 * pulse})`);
+      outerGlow.addColorStop(1, "rgba(226, 134, 75, 0)");
+      ctx.fillStyle = outerGlow;
+      ctx.beginPath();
+      ctx.arc(lhX, lightY, 35, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Inner glow
+      const innerGlow = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 6);
+      innerGlow.addColorStop(0, `rgba(255, 235, 200, ${0.9 * pulse})`);
+      innerGlow.addColorStop(1, `rgba(226, 134, 75, ${0.4 * pulse})`);
+      ctx.fillStyle = innerGlow;
+      ctx.beginPath();
+      ctx.arc(lhX, lightY, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ── Sweeping beam ──
+      const beamAngle = time * 0.7;
+      const beamDir = Math.cos(beamAngle);
+      // Only draw when beam faces toward camera (front 180 degrees)
+      if (beamDir > -0.3) {
+        const beamOpacity = Math.max(0, beamDir) * 0.06 * pulse;
+        const beamLen = 250;
+        const beamSpread = 0.08;
+        const baseAngle = -Math.PI / 2 + Math.sin(beamAngle) * 0.8;
+
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.beginPath();
+        ctx.moveTo(lhX, lightY);
+        ctx.lineTo(
+          lhX + Math.cos(baseAngle - beamSpread) * beamLen,
+          lightY + Math.sin(baseAngle - beamSpread) * beamLen
+        );
+        ctx.lineTo(
+          lhX + Math.cos(baseAngle + beamSpread) * beamLen,
+          lightY + Math.sin(baseAngle + beamSpread) * beamLen
+        );
+        ctx.closePath();
+
+        const beamGrad = ctx.createRadialGradient(
+          lhX, lightY, 0, lhX, lightY, beamLen
+        );
+        beamGrad.addColorStop(0, `rgba(226, 134, 75, ${beamOpacity * 3})`);
+        beamGrad.addColorStop(0.3, `rgba(226, 134, 75, ${beamOpacity})`);
+        beamGrad.addColorStop(1, "rgba(226, 134, 75, 0)");
+        ctx.fillStyle = beamGrad;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // ── Water reflection of the light ──
+      const reflGrad = ctx.createLinearGradient(0, horizonY, 0, horizonY + 80);
+      reflGrad.addColorStop(0, `rgba(226, 134, 75, ${0.06 * pulse})`);
+      reflGrad.addColorStop(1, "rgba(226, 134, 75, 0)");
+      ctx.fillStyle = reflGrad;
+      ctx.fillRect(lhX - 15, horizonY, 30, 80);
+
+      // ── Faint horizon glow ──
+      const hGlow = ctx.createLinearGradient(0, horizonY - 20, 0, horizonY + 5);
+      hGlow.addColorStop(0, "rgba(15, 20, 35, 0)");
+      hGlow.addColorStop(0.5, "rgba(20, 25, 40, 0.3)");
+      hGlow.addColorStop(1, "rgba(10, 15, 25, 0)");
+      ctx.fillStyle = hGlow;
+      ctx.fillRect(0, horizonY - 20, w, 25);
+
+      raf = requestAnimationFrame(draw);
+    };
+
+    raf = requestAnimationFrame(draw);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMouse);
+    };
+  }, [init]);
+
   return (
-    <mesh position={[0, -3, -30]} geometry={geo}>
-      <meshBasicMaterial color="#050508" />
-    </mesh>
-  );
-}
-
-/* Water surface - dark plane with subtle color */
-function Water() {
-  return (
-    <mesh position={[0, -3, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeGeometry args={[200, 100]} />
-      <meshBasicMaterial color="#060810" />
-    </mesh>
-  );
-}
-
-/* Lighthouse tower - simple shapes */
-function LighthouseTower() {
-  const beamRef = useRef<THREE.Group>(null!);
-  const glowRef = useRef<THREE.Mesh>(null!);
-
-  useFrame((state) => {
-    if (beamRef.current) {
-      beamRef.current.rotation.y = state.clock.elapsedTime * 0.6;
-    }
-    if (glowRef.current) {
-      const pulse = 0.7 + Math.sin(state.clock.elapsedTime * 2) * 0.3;
-      glowRef.current.scale.setScalar(pulse);
-    }
-  });
-
-  return (
-    <group position={[-8, -3, -30]}>
-      {/* Tower base */}
-      <mesh position={[0, 2.5, 0]}>
-        <cylinderGeometry args={[0.3, 0.45, 5, 8]} />
-        <meshBasicMaterial color="#0C0C10" />
-      </mesh>
-
-      {/* Tower top / gallery */}
-      <mesh position={[0, 5.2, 0]}>
-        <cylinderGeometry args={[0.5, 0.5, 0.15, 8]} />
-        <meshBasicMaterial color="#0A0A0E" />
-      </mesh>
-
-      {/* Lantern room */}
-      <mesh position={[0, 5.7, 0]}>
-        <cylinderGeometry args={[0.28, 0.28, 0.8, 8]} />
-        <meshBasicMaterial color="#181820" transparent opacity={0.6} />
-      </mesh>
-
-      {/* Dome */}
-      <mesh position={[0, 6.25, 0]}>
-        <sphereGeometry args={[0.3, 8, 6, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshBasicMaterial color="#0A0A0E" />
-      </mesh>
-
-      {/* Light glow */}
-      <mesh ref={glowRef} position={[0, 5.7, 0]}>
-        <sphereGeometry args={[0.15, 8, 8]} />
-        <meshBasicMaterial color="#E2864B" />
-      </mesh>
-
-      {/* Rotating beam */}
-      <group ref={beamRef} position={[0, 5.7, 0]}>
-        <mesh rotation={[0, 0, Math.PI / 2]} position={[6, 0, 0]}>
-          <coneGeometry args={[2, 12, 8, 1, true]} />
-          <meshBasicMaterial
-            color="#E2864B"
-            transparent
-            opacity={0.03}
-            side={THREE.DoubleSide}
-            depthWrite={false}
-          />
-        </mesh>
-      </group>
-
-      {/* Water reflection - faint vertical streak */}
-      <mesh position={[0, -1, 0.5]}>
-        <planeGeometry args={[0.15, 3]} />
-        <meshBasicMaterial color="#E2864B" transparent opacity={0.04} depthWrite={false} />
-      </mesh>
-    </group>
-  );
-}
-
-/* Camera: scroll drives forward toward the coast */
-function CameraRig() {
-  const { camera } = useThree();
-  const pos = useRef({ z: 30, y: 2 });
-
-  useFrame(() => {
-    const p = scrollState.progress;
-    // Move from far out at sea toward the harbour
-    const targetZ = 30 - p * 35;
-    const targetY = 2 - p * 1;
-
-    pos.current.z += (targetZ - pos.current.z) * 0.06;
-    pos.current.y += (targetY - pos.current.y) * 0.06;
-
-    camera.position.set(0, pos.current.y, pos.current.z);
-    camera.lookAt(0, 1, -30);
-  });
-
-  return null;
-}
-
-function Scene() {
-  return (
-    <>
-      <Stars />
-      <ShootingStar delay={2} />
-      <ShootingStar delay={7} />
-      <ShootingStar delay={12} />
-      <Water />
-      <Coastline />
-      <LighthouseTower />
-      <CameraRig />
-    </>
-  );
-}
-
-export default function HeroScene() {
-  return (
-    <div className="absolute inset-0 z-0">
-      <Canvas
-        camera={{ fov: 60, near: 0.1, far: 100 }}
-        gl={{ antialias: true, alpha: false }}
-        dpr={[1, 2]}
-        style={{ background: "#000000" }}
-      >
-        <Scene />
-      </Canvas>
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 z-0"
+      style={{ background: "#000000" }}
+    />
   );
 }

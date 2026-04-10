@@ -17,10 +17,9 @@ export default function HeroScene() {
     let w = 0;
     let h = 0;
 
-    // Globe wireframe points
     const latLines = 12;
     const lonLines = 24;
-    const segments = 60;
+    const segs = 64;
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio, 2);
@@ -42,23 +41,17 @@ export default function HeroScene() {
     window.addEventListener("resize", resize);
     window.addEventListener("mousemove", onMouse);
 
-    // 3D rotation + perspective projection
-    const project = (x: number, y: number, z: number, ry: number, rx: number) => {
-      // Rotate Y
-      let x2 = x * Math.cos(ry) - z * Math.sin(ry);
-      let z2 = x * Math.sin(ry) + z * Math.cos(ry);
-      // Rotate X
-      let y2 = y * Math.cos(rx) - z2 * Math.sin(rx);
-      let z3 = y * Math.sin(rx) + z2 * Math.cos(rx);
-
-      const fov = 600;
-      const scale = fov / (fov + z3);
-      return {
-        sx: w / 2 + x2 * scale,
-        sy: h / 2 + y2 * scale,
-        z: z3,
-        scale,
-      };
+    const rotatePoint = (
+      x: number, y: number, z: number,
+      ry: number, rx: number
+    ): [number, number, number] => {
+      // Y rotation
+      const x1 = x * Math.cos(ry) - z * Math.sin(ry);
+      const z1 = x * Math.sin(ry) + z * Math.cos(ry);
+      // X rotation
+      const y1 = y * Math.cos(rx) - z1 * Math.sin(rx);
+      const z2 = y * Math.sin(rx) + z1 * Math.cos(rx);
+      return [x1, y1, z2];
     };
 
     const draw = () => {
@@ -70,75 +63,122 @@ export default function HeroScene() {
 
       const ry = time * 0.08 + (mouse.current.x - 0.5) * 0.8;
       const rx = (mouse.current.y - 0.5) * 0.4;
-
       const R = Math.min(w, h) * 0.32;
+      const cx = w / 2;
+      const cy = h / 2;
+      const fov = 600;
 
-      ctx.clearRect(0, 0, w, h);
+      // Clear
       ctx.fillStyle = "#000000";
       ctx.fillRect(0, 0, w, h);
 
-      // ── Draw latitude lines ──
+      // Draw latitude lines
       for (let i = 1; i < latLines; i++) {
         const phi = (i / latLines) * Math.PI;
         const ringR = R * Math.sin(phi);
         const ringY = R * Math.cos(phi);
 
+        // Front pass
+        ctx.strokeStyle = "rgba(59,123,245,0.12)";
+        ctx.lineWidth = 0.7;
         ctx.beginPath();
-        let started = false;
-        for (let j = 0; j <= segments; j++) {
-          const theta = (j / segments) * Math.PI * 2;
+        let inFront = false;
+        for (let j = 0; j <= segs; j++) {
+          const theta = (j / segs) * Math.PI * 2;
           const px = ringR * Math.cos(theta);
           const pz = ringR * Math.sin(theta);
-          const p = project(px, ringY, pz, ry, rx);
+          const [rx2, ry2, rz2] = rotatePoint(px, ringY, pz, ry, rx);
+          const s = fov / (fov + rz2);
+          const sx = cx + rx2 * s;
+          const sy = cy + ry2 * s;
 
-          // Fade lines on the back face
-          const alpha = p.z < 0 ? 0.03 : 0.1;
-          if (!started) {
-            ctx.moveTo(p.sx, p.sy);
-            started = true;
+          if (rz2 < 0) {
+            if (inFront) { ctx.stroke(); ctx.beginPath(); inFront = false; }
           } else {
-            // Draw segment by segment so we can fade back-face
-            ctx.strokeStyle = `rgba(59,123,245,${alpha})`;
-            ctx.lineWidth = 0.6;
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(p.sx, p.sy);
+            if (!inFront) { ctx.moveTo(sx, sy); inFront = true; }
+            else { ctx.lineTo(sx, sy); }
           }
-          ctx.lineTo(p.sx, p.sy);
+        }
+        ctx.stroke();
+
+        // Back pass (faint)
+        ctx.strokeStyle = "rgba(59,123,245,0.03)";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        let inBack = false;
+        for (let j = 0; j <= segs; j++) {
+          const theta = (j / segs) * Math.PI * 2;
+          const px = ringR * Math.cos(theta);
+          const pz = ringR * Math.sin(theta);
+          const [rx2, ry2, rz2] = rotatePoint(px, ringY, pz, ry, rx);
+          const s = fov / (fov + rz2);
+          const sx = cx + rx2 * s;
+          const sy = cy + ry2 * s;
+
+          if (rz2 >= 0) {
+            if (inBack) { ctx.stroke(); ctx.beginPath(); inBack = false; }
+          } else {
+            if (!inBack) { ctx.moveTo(sx, sy); inBack = true; }
+            else { ctx.lineTo(sx, sy); }
+          }
         }
         ctx.stroke();
       }
 
-      // ── Draw longitude lines ──
+      // Draw longitude lines
       for (let i = 0; i < lonLines; i++) {
         const theta = (i / lonLines) * Math.PI * 2;
 
+        // Front pass
+        ctx.strokeStyle = "rgba(59,123,245,0.12)";
+        ctx.lineWidth = 0.7;
         ctx.beginPath();
-        let started = false;
-        for (let j = 0; j <= segments; j++) {
-          const phi = (j / segments) * Math.PI;
+        let inFront = false;
+        for (let j = 0; j <= segs; j++) {
+          const phi = (j / segs) * Math.PI;
           const px = R * Math.sin(phi) * Math.cos(theta);
           const py = R * Math.cos(phi);
           const pz = R * Math.sin(phi) * Math.sin(theta);
-          const p = project(px, py, pz, ry, rx);
+          const [rx2, ry2, rz2] = rotatePoint(px, py, pz, ry, rx);
+          const s = fov / (fov + rz2);
+          const sx = cx + rx2 * s;
+          const sy = cy + ry2 * s;
 
-          const alpha = p.z < 0 ? 0.03 : 0.1;
-          if (!started) {
-            ctx.moveTo(p.sx, p.sy);
-            started = true;
+          if (rz2 < 0) {
+            if (inFront) { ctx.stroke(); ctx.beginPath(); inFront = false; }
           } else {
-            ctx.strokeStyle = `rgba(59,123,245,${alpha})`;
-            ctx.lineWidth = 0.6;
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(p.sx, p.sy);
+            if (!inFront) { ctx.moveTo(sx, sy); inFront = true; }
+            else { ctx.lineTo(sx, sy); }
           }
-          ctx.lineTo(p.sx, p.sy);
+        }
+        ctx.stroke();
+
+        // Back pass
+        ctx.strokeStyle = "rgba(59,123,245,0.03)";
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        let inBack = false;
+        for (let j = 0; j <= segs; j++) {
+          const phi = (j / segs) * Math.PI;
+          const px = R * Math.sin(phi) * Math.cos(theta);
+          const py = R * Math.cos(phi);
+          const pz = R * Math.sin(phi) * Math.sin(theta);
+          const [rx2, ry2, rz2] = rotatePoint(px, py, pz, ry, rx);
+          const s = fov / (fov + rz2);
+          const sx = cx + rx2 * s;
+          const sy = cy + ry2 * s;
+
+          if (rz2 >= 0) {
+            if (inBack) { ctx.stroke(); ctx.beginPath(); inBack = false; }
+          } else {
+            if (!inBack) { ctx.moveTo(sx, sy); inBack = true; }
+            else { ctx.lineTo(sx, sy); }
+          }
         }
         ctx.stroke();
       }
 
-      // ── Intersection dots at grid nodes ──
+      // Grid intersection dots (front face only)
       for (let i = 1; i < latLines; i++) {
         const phi = (i / latLines) * Math.PI;
         for (let j = 0; j < lonLines; j++) {
@@ -146,25 +186,27 @@ export default function HeroScene() {
           const px = R * Math.sin(phi) * Math.cos(theta);
           const py = R * Math.cos(phi);
           const pz = R * Math.sin(phi) * Math.sin(theta);
-          const p = project(px, py, pz, ry, rx);
-
-          if (p.z < -50) continue;
-          const alpha = p.z < 0 ? 0.06 : 0.2;
+          const [rx2, ry2, rz2] = rotatePoint(px, py, pz, ry, rx);
+          if (rz2 < -50) continue;
+          const s = fov / (fov + rz2);
+          const sx = cx + rx2 * s;
+          const sy = cy + ry2 * s;
+          const alpha = rz2 < 0 ? 0.04 : 0.18;
           ctx.fillStyle = `rgba(59,123,245,${alpha})`;
           ctx.beginPath();
-          ctx.arc(p.sx, p.sy, 1.2 * p.scale, 0, Math.PI * 2);
+          ctx.arc(sx, sy, 1.2 * s, 0, Math.PI * 2);
           ctx.fill();
         }
       }
 
-      // ── Subtle glow at centre ──
-      const glow = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, R * 1.2);
-      glow.addColorStop(0, "rgba(59,123,245,0.03)");
-      glow.addColorStop(0.6, "rgba(59,123,245,0.01)");
+      // Centre glow
+      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.1);
+      glow.addColorStop(0, "rgba(59,123,245,0.025)");
+      glow.addColorStop(0.6, "rgba(59,123,245,0.008)");
       glow.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(w / 2, h / 2, R * 1.2, 0, Math.PI * 2);
+      ctx.arc(cx, cy, R * 1.1, 0, Math.PI * 2);
       ctx.fill();
 
       raf = requestAnimationFrame(draw);

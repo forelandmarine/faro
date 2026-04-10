@@ -64,7 +64,7 @@ export default function Contact() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-4xl mx-auto text-center contact-content relative z-10">
-        <Lighthouse size={48} color="#3B7BF5" beam className="mx-auto mb-8" />
+        <Lighthouse size={48} color="#0070F3" beam className="mx-auto mb-8" />
 
         <h2 className="text-[clamp(2.5rem,6vw,6rem)] font-black leading-[0.9] tracking-tight">
           Let&apos;s build
@@ -82,7 +82,7 @@ export default function Contact() {
         {/* Contact form */}
         {status === "sent" ? (
           <div className="mt-16 py-16">
-            <Lighthouse size={32} color="#3B7BF5" className="mx-auto mb-4" />
+            <Lighthouse size={32} color="#0070F3" className="mx-auto mb-4" />
             <p className="text-xl font-semibold">Message sent.</p>
             <p className="text-muted font-light mt-2">
               We will be in touch shortly.

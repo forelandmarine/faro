@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useMemo } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useRef, useMemo, useCallback } from "react";
+import { Canvas, useFrame, useThree, extend } from "@react-three/fiber";
 import {
   EffectComposer,
   Bloom,
@@ -9,36 +9,282 @@ import {
 } from "@react-three/postprocessing";
 import * as THREE from "three";
 
-/* ── Shared scroll progress: written by GSAP, read by R3F ── */
 export const scrollState = { progress: 0 };
 
-/* ── Sunset sky sphere ── */
-function Sky() {
+/* ── Custom star shader: each star gets a soft glow halo + color tint ── */
+const starVertexShader = `
+  attribute float size;
+  attribute vec3 starColor;
+  attribute float brightness;
+  varying vec3 vColor;
+  varying float vBrightness;
+
+  void main() {
+    vColor = starColor;
+    vBrightness = brightness;
+    vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = size * (200.0 / -mvPos.z);
+    gl_Position = projectionMatrix * mvPos;
+  }
+`;
+
+const starFragmentShader = `
+  varying vec3 vColor;
+  varying float vBrightness;
+
+  void main() {
+    float d = length(gl_PointCoord - vec2(0.5));
+    // Soft circular falloff with bright core
+    float core = smoothstep(0.5, 0.0, d);
+    float glow = smoothstep(0.5, 0.15, d);
+    float alpha = core * 0.9 + glow * 0.3;
+    alpha *= vBrightness;
+    vec3 col = mix(vColor, vec3(1.0), core * 0.6);
+    gl_FragColor = vec4(col, alpha);
+  }
+`;
+
+/* ── Star layer: generates stars with color variation and depth ── */
+function StarLayer({
+  count,
+  depthRange,
+  parallaxFactor,
+  baseSize,
+}: {
+  count: number;
+  depthRange: [number, number];
+  parallaxFactor: number;
+  baseSize: number;
+}) {
+  const ref = useRef<THREE.Points>(null!);
+  const mouse = useRef({ x: 0, y: 0 });
+
+  const { positions, sizes, colors, brightnesses } = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    const sz = new Float32Array(count);
+    const col = new Float32Array(count * 3);
+    const br = new Float32Array(count);
+
+    // Star color palette: blue-white, white, yellow, warm orange
+    const palette = [
+      new THREE.Color("#CADCF5"), // blue-white
+      new THREE.Color("#F5F0E8"), // warm white
+      new THREE.Color("#FFF5E0"), // pale yellow
+      new THREE.Color("#FFE8C8"), // warm
+      new THREE.Color("#D0E0F5"), // cool blue
+      new THREE.Color("#FFFFFF"), // pure white
+    ];
+
+    for (let i = 0; i < count; i++) {
+      // Spread on a large sphere
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = depthRange[0] + Math.random() * (depthRange[1] - depthRange[0]);
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pos[i * 3 + 2] = r * Math.cos(phi);
+
+      // ~3% are bright feature stars
+      const isBright = Math.random() < 0.03;
+      sz[i] = isBright
+        ? baseSize * (2 + Math.random() * 3)
+        : baseSize * (0.3 + Math.random() * 1.2);
+      br[i] = isBright ? 0.85 + Math.random() * 0.15 : 0.2 + Math.random() * 0.5;
+
+      const c = palette[Math.floor(Math.random() * palette.length)];
+      col[i * 3] = c.r;
+      col[i * 3 + 1] = c.g;
+      col[i * 3 + 2] = c.b;
+    }
+
+    return { positions: pos, sizes: sz, colors: col, brightnesses: br };
+  }, [count, depthRange, baseSize]);
+
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader: starVertexShader,
+        fragmentShader: starFragmentShader,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }),
+    []
+  );
+
+  useFrame((state) => {
+    if (!ref.current) return;
+
+    // Mouse parallax
+    mouse.current.x = THREE.MathUtils.lerp(
+      mouse.current.x,
+      state.pointer.x * parallaxFactor,
+      0.04
+    );
+    mouse.current.y = THREE.MathUtils.lerp(
+      mouse.current.y,
+      state.pointer.y * parallaxFactor,
+      0.04
+    );
+    ref.current.rotation.y = mouse.current.x * 0.15;
+    ref.current.rotation.x = mouse.current.y * 0.1;
+
+    // Subtle twinkling on a subset of stars
+    const geo = ref.current.geometry;
+    const szAttr = geo.getAttribute("size") as THREE.BufferAttribute;
+    const brAttr = geo.getAttribute("brightness") as THREE.BufferAttribute;
+    const t = state.clock.elapsedTime;
+    const step = Math.floor(t * 3) % 12;
+    for (let i = step; i < count; i += 12) {
+      const baseBr = brightnesses[i];
+      const twinkle = 1 + Math.sin(t * 2.5 + i * 1.3) * 0.25;
+      brAttr.setX(i, baseBr * twinkle);
+      szAttr.setX(i, sizes[i] * (0.85 + twinkle * 0.15));
+    }
+    szAttr.needsUpdate = true;
+    brAttr.needsUpdate = true;
+  });
+
+  return (
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
+        <bufferAttribute attach="attributes-starColor" args={[colors, 3]} />
+        <bufferAttribute attach="attributes-brightness" args={[brightnesses, 1]} />
+      </bufferGeometry>
+      <primitive object={material} attach="material" />
+    </points>
+  );
+}
+
+/* ── Nebula dust: soft colored fog patches ── */
+function Nebula({
+  position,
+  color,
+  scale,
+  opacity,
+}: {
+  position: [number, number, number];
+  color: string;
+  scale: number;
+  opacity: number;
+}) {
+  const ref = useRef<THREE.Mesh>(null!);
+
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.z = state.clock.elapsedTime * 0.01;
+    }
+  });
+
+  return (
+    <mesh ref={ref} position={position}>
+      <planeGeometry args={[scale, scale]} />
+      <meshBasicMaterial
+        color={color}
+        transparent
+        opacity={opacity}
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
+  );
+}
+
+/* ── Shooting star ── */
+function ShootingStar() {
+  const ref = useRef<THREE.Mesh>(null!);
+  const state = useRef({
+    active: false,
+    timer: 3 + Math.random() * 5,
+    startPos: new THREE.Vector3(),
+    dir: new THREE.Vector3(),
+    life: 0,
+  });
+
+  useFrame((s, delta) => {
+    const st = state.current;
+    st.timer -= delta;
+
+    if (!st.active && st.timer <= 0) {
+      // Launch a new shooting star
+      st.active = true;
+      st.life = 0;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.random() * Math.PI * 0.5;
+      const r = 15;
+      st.startPos.set(
+        r * Math.sin(phi) * Math.cos(theta),
+        r * Math.cos(phi),
+        r * Math.sin(phi) * Math.sin(theta)
+      );
+      st.dir
+        .set(Math.random() - 0.5, -0.3 - Math.random() * 0.5, Math.random() - 0.5)
+        .normalize()
+        .multiplyScalar(25);
+    }
+
+    if (st.active && ref.current) {
+      st.life += delta * 1.5;
+      if (st.life > 1) {
+        st.active = false;
+        st.timer = 4 + Math.random() * 8;
+        ref.current.visible = false;
+        return;
+      }
+      ref.current.visible = true;
+      const t = st.life;
+      ref.current.position.copy(st.startPos).addScaledVector(st.dir, t);
+      ref.current.lookAt(
+        ref.current.position.x + st.dir.x,
+        ref.current.position.y + st.dir.y,
+        ref.current.position.z + st.dir.z
+      );
+      const fade = t < 0.2 ? t / 0.2 : t > 0.7 ? (1 - t) / 0.3 : 1;
+      (ref.current.material as THREE.MeshBasicMaterial).opacity = fade * 0.8;
+      ref.current.scale.set(0.015, 0.015, 0.4 + fade * 0.6);
+    } else if (ref.current) {
+      ref.current.visible = false;
+    }
+  });
+
+  return (
+    <mesh ref={ref} visible={false}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshBasicMaterial
+        color="#FFFFFF"
+        transparent
+        opacity={0}
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+      />
+    </mesh>
+  );
+}
+
+/* ── Deep background: subtle gradient sphere ── */
+function Background() {
   const mat = useMemo(
     () =>
       new THREE.ShaderMaterial({
-        uniforms: {
-          uTop: { value: new THREE.Color("#0F1923") },
-          uMid: { value: new THREE.Color("#2A1A2E") },
-          uHorizon: { value: new THREE.Color("#D4764E") },
-          uGlow: { value: new THREE.Color("#E8A85C") },
-        },
         vertexShader: `
           varying vec3 vWorldPos;
           void main() {
-            vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
-            gl_Position = projectionMatrix * viewMatrix * vec4(vWorldPos, 1.0);
+            vWorldPos = (modelMatrix * vec4(position,1.0)).xyz;
+            gl_Position = projectionMatrix * viewMatrix * vec4(vWorldPos,1.0);
           }`,
         fragmentShader: `
-          uniform vec3 uTop, uMid, uHorizon, uGlow;
           varying vec3 vWorldPos;
           void main() {
             float h = normalize(vWorldPos).y;
-            vec3 c = mix(uGlow, uHorizon, smoothstep(-0.02, 0.05, h));
-            c = mix(c, uMid, smoothstep(0.05, 0.3, h));
-            c = mix(c, uTop, smoothstep(0.3, 0.7, h));
-            // Below horizon = dark sea color
-            c = mix(vec3(0.047, 0.094, 0.133), c, smoothstep(-0.05, 0.0, h));
+            // Deep space with subtle warm horizon
+            vec3 deep = vec3(0.02, 0.03, 0.06);
+            vec3 mid = vec3(0.04, 0.03, 0.07);
+            vec3 horizon = vec3(0.08, 0.04, 0.06);
+            vec3 c = mix(horizon, mid, smoothstep(-0.1, 0.1, h));
+            c = mix(c, deep, smoothstep(0.1, 0.6, h));
             gl_FragColor = vec4(c, 1.0);
           }`,
         side: THREE.BackSide,
@@ -49,343 +295,31 @@ function Sky() {
 
   return (
     <mesh>
-      <sphereGeometry args={[60, 32, 16]} />
+      <sphereGeometry args={[50, 24, 12]} />
       <primitive object={mat} attach="material" />
     </mesh>
   );
 }
 
-/* ── Ocean surface ── */
-function Ocean() {
-  const meshRef = useRef<THREE.Mesh>(null!);
-  const basePositions = useRef<Float32Array | null>(null);
-
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    const geo = meshRef.current.geometry;
-    const pos = geo.attributes.position;
-
-    // Cache base positions on first frame
-    if (!basePositions.current) {
-      basePositions.current = new Float32Array(pos.array);
-    }
-
-    const base = basePositions.current;
-    const t = state.clock.elapsedTime;
-
-    for (let i = 0; i < pos.count; i++) {
-      const bx = base[i * 3];
-      const bz = base[i * 3 + 2];
-      // Two overlapping waves
-      const wave =
-        Math.sin(bx * 0.25 + t * 0.5) * 0.12 +
-        Math.sin(bz * 0.3 + t * 0.35) * 0.08;
-      pos.array[i * 3 + 1] = base[i * 3 + 1] + wave;
-    }
-    pos.needsUpdate = true;
-  });
-
-  return (
-    <mesh ref={meshRef} position={[0, -0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeGeometry args={[120, 120, 32, 32]} />
-      <meshStandardMaterial color="#0C1822" roughness={0.8} metalness={0.15} />
-    </mesh>
-  );
-}
-
-/* ── The lighthouse tower ── */
-function Tower() {
-  const beamRef = useRef<THREE.Group>(null!);
-
-  useFrame((state) => {
-    if (beamRef.current) {
-      beamRef.current.rotation.y = state.clock.elapsedTime * 0.5;
-    }
-  });
-
-  return (
-    <group>
-      {/* Rocky base */}
-      <mesh position={[0, 0.2, 0]}>
-        <cylinderGeometry args={[2.5, 3.2, 0.7, 8]} />
-        <meshStandardMaterial color="#1A2430" roughness={0.95} />
-      </mesh>
-      <mesh position={[1.2, 0.15, 0.8]} rotation={[0.1, 0.5, 0]}>
-        <boxGeometry args={[1.2, 0.5, 1]} />
-        <meshStandardMaterial color="#1E2B38" roughness={0.95} />
-      </mesh>
-      <mesh position={[-0.8, 0.15, -1]} rotation={[0, 0.8, 0.05]}>
-        <boxGeometry args={[1.5, 0.4, 0.8]} />
-        <meshStandardMaterial color="#182530" roughness={0.95} />
-      </mesh>
-
-      {/* Tower body - white */}
-      <mesh position={[0, 3.5, 0]}>
-        <cylinderGeometry args={[0.9, 1.3, 6.2, 16]} />
-        <meshStandardMaterial color="#E8DDD0" roughness={0.6} />
-      </mesh>
-
-      {/* Red stripe 1 */}
-      <mesh position={[0, 2.2, 0]}>
-        <cylinderGeometry args={[1.16, 1.21, 0.8, 16]} />
-        <meshStandardMaterial color="#C0503A" roughness={0.5} />
-      </mesh>
-
-      {/* Red stripe 2 */}
-      <mesh position={[0, 4.6, 0]}>
-        <cylinderGeometry args={[0.99, 1.03, 0.8, 16]} />
-        <meshStandardMaterial color="#C0503A" roughness={0.5} />
-      </mesh>
-
-      {/* Gallery platform */}
-      <mesh position={[0, 6.7, 0]}>
-        <cylinderGeometry args={[1.3, 1.3, 0.12, 16]} />
-        <meshStandardMaterial color="#2A2A2A" roughness={0.3} metalness={0.4} />
-      </mesh>
-
-      {/* Gallery railing */}
-      {Array.from({ length: 12 }).map((_, i) => {
-        const a = (i / 12) * Math.PI * 2;
-        return (
-          <mesh key={i} position={[Math.cos(a) * 1.25, 7.0, Math.sin(a) * 1.25]}>
-            <cylinderGeometry args={[0.02, 0.02, 0.5, 4]} />
-            <meshStandardMaterial color="#2A2A2A" metalness={0.5} roughness={0.3} />
-          </mesh>
-        );
-      })}
-      <mesh position={[0, 7.25, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[1.25, 0.025, 6, 32]} />
-        <meshStandardMaterial color="#2A2A2A" metalness={0.5} roughness={0.3} />
-      </mesh>
-
-      {/* Lantern room glass */}
-      <mesh position={[0, 7.6, 0]}>
-        <cylinderGeometry args={[0.8, 0.8, 1.4, 12]} />
-        <meshPhysicalMaterial
-          color="#F5D39A"
-          transmission={0.5}
-          roughness={0.15}
-          thickness={0.3}
-          transparent
-          opacity={0.3}
-        />
-      </mesh>
-
-      {/* Lantern mullions */}
-      {Array.from({ length: 8 }).map((_, i) => {
-        const a = (i / 8) * Math.PI * 2;
-        return (
-          <mesh key={`m-${i}`} position={[Math.cos(a) * 0.78, 7.6, Math.sin(a) * 0.78]}>
-            <boxGeometry args={[0.03, 1.4, 0.03]} />
-            <meshStandardMaterial color="#2A2A2A" metalness={0.4} roughness={0.3} />
-          </mesh>
-        );
-      })}
-
-      {/* Dome */}
-      <mesh position={[0, 8.55, 0]}>
-        <sphereGeometry args={[0.85, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshStandardMaterial color="#2A2A2A" metalness={0.3} roughness={0.4} />
-      </mesh>
-
-      {/* Spire */}
-      <mesh position={[0, 9.2, 0]}>
-        <coneGeometry args={[0.05, 0.6, 6]} />
-        <meshStandardMaterial color="#2A2A2A" metalness={0.5} roughness={0.3} />
-      </mesh>
-
-      {/* Light source */}
-      <mesh position={[0, 7.6, 0]}>
-        <sphereGeometry args={[0.2, 8, 8]} />
-        <meshBasicMaterial color="#FFECD2" />
-      </mesh>
-
-      {/* Rotating beam */}
-      <group ref={beamRef} position={[0, 7.6, 0]}>
-        <mesh rotation={[0, 0, Math.PI / 2]} position={[8, 0, 0]}>
-          <coneGeometry args={[3.5, 16, 12, 1, true]} />
-          <meshBasicMaterial
-            color="#F5D39A"
-            transparent
-            opacity={0.04}
-            side={THREE.DoubleSide}
-            depthWrite={false}
-            blending={THREE.AdditiveBlending}
-          />
-        </mesh>
-        <mesh rotation={[0, 0, -Math.PI / 2]} position={[-8, 0, 0]}>
-          <coneGeometry args={[3.5, 16, 12, 1, true]} />
-          <meshBasicMaterial
-            color="#F5D39A"
-            transparent
-            opacity={0.02}
-            side={THREE.DoubleSide}
-            depthWrite={false}
-            blending={THREE.AdditiveBlending}
-          />
-        </mesh>
-      </group>
-    </group>
-  );
-}
-
-/* ── Seabird ── */
-function Bird({ offset }: { offset: number }) {
-  const ref = useRef<THREE.Group>(null!);
-  const leftWing = useRef<THREE.Mesh>(null!);
-  const rightWing = useRef<THREE.Mesh>(null!);
-
-  useFrame((state) => {
-    if (!ref.current) return;
-    const t = state.clock.elapsedTime * 0.3 + offset;
-    const r = 8 + Math.sin(offset * 3) * 4;
-    ref.current.position.set(
-      Math.cos(t) * r,
-      6 + Math.sin(t * 2 + offset) * 0.8,
-      Math.sin(t) * r
-    );
-    ref.current.rotation.y = -t + Math.PI / 2;
-
-    const flap = Math.sin(state.clock.elapsedTime * 4 + offset * 5) * 0.4;
-    if (leftWing.current) leftWing.current.rotation.z = flap;
-    if (rightWing.current) rightWing.current.rotation.z = -flap;
-  });
-
-  return (
-    <group ref={ref}>
-      <mesh ref={leftWing} position={[-0.15, 0, 0]}>
-        <planeGeometry args={[0.3, 0.04]} />
-        <meshBasicMaterial color="#1A1A1A" side={THREE.DoubleSide} />
-      </mesh>
-      <mesh ref={rightWing} position={[0.15, 0, 0]}>
-        <planeGeometry args={[0.3, 0.04]} />
-        <meshBasicMaterial color="#1A1A1A" side={THREE.DoubleSide} />
-      </mesh>
-    </group>
-  );
-}
-
-/* ── Ship ── */
-function Ship({
-  baseAngle,
-  radius,
-  speed,
-  scale,
-}: {
-  baseAngle: number;
-  radius: number;
-  speed: number;
-  scale: number;
-}) {
-  const ref = useRef<THREE.Group>(null!);
-
-  useFrame((state) => {
-    if (!ref.current) return;
-    const angle = baseAngle + state.clock.elapsedTime * speed;
-    ref.current.position.set(
-      Math.cos(angle) * radius,
-      -0.05 + Math.sin(state.clock.elapsedTime * 0.5 + baseAngle) * 0.03,
-      Math.sin(angle) * radius
-    );
-    ref.current.rotation.y = -angle + Math.PI / 2;
-  });
-
-  return (
-    <group ref={ref} scale={scale}>
-      <mesh>
-        <boxGeometry args={[0.8, 0.1, 0.15]} />
-        <meshStandardMaterial color="#0E1820" roughness={0.9} />
-      </mesh>
-      <mesh position={[0.05, 0.12, 0]}>
-        <boxGeometry args={[0.25, 0.15, 0.1]} />
-        <meshStandardMaterial color="#0E1820" roughness={0.9} />
-      </mesh>
-      <mesh position={[-0.15, 0.25, 0]}>
-        <boxGeometry args={[0.015, 0.3, 0.015]} />
-        <meshStandardMaterial color="#0E1820" roughness={0.9} />
-      </mesh>
-      <mesh position={[-0.15, 0.42, 0]}>
-        <sphereGeometry args={[0.015, 4, 4]} />
-        <meshBasicMaterial color="#F5D39A" transparent opacity={0.5} />
-      </mesh>
-    </group>
-  );
-}
-
-/* ── Stars ── */
-function Stars({ count = 120 }: { count?: number }) {
-  const positions = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.random() * 0.6; // upper sky only
-      const r = 55;
-      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      pos[i * 3 + 1] = r * Math.cos(phi);
-      pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-    }
-    return pos;
-  }, [count]);
-
-  return (
-    <points>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial size={0.1} color="#F5EDE4" transparent opacity={0.3} sizeAttenuation />
-    </points>
-  );
-}
-
-/* ── Camera: helix orbit driven by scroll ── */
-function CameraRig() {
-  const { camera } = useThree();
-  const cur = useRef({ a: 0, h: 0.8, r: 14, ly: 3 });
-
-  useFrame(() => {
-    const p = scrollState.progress;
-    const target = {
-      a: p * Math.PI * 2.2,
-      h: 0.8 + p * 8.5,
-      r: 14 - p * 9,
-      ly: 3 + p * 4.5,
-    };
-
-    const c = cur.current;
-    c.a += (target.a - c.a) * 0.06;
-    c.h += (target.h - c.h) * 0.06;
-    c.r += (target.r - c.r) * 0.06;
-    c.ly += (target.ly - c.ly) * 0.06;
-
-    camera.position.set(Math.cos(c.a) * c.r, c.h, Math.sin(c.a) * c.r);
-    camera.lookAt(0, c.ly, 0);
-  });
-
-  return null;
-}
-
 function Scene() {
   return (
     <>
-      <ambientLight intensity={0.3} color="#B8C8D8" />
-      <directionalLight position={[10, 8, -5]} intensity={1} color="#E8A85C" />
-      <directionalLight position={[-5, 3, 8]} intensity={0.25} color="#8BA4B8" />
-      <pointLight position={[0, 7.6, 0]} intensity={3} color="#F5D39A" distance={15} />
+      <Background />
 
-      <Sky />
-      <Ocean />
-      <Stars />
-      <Tower />
+      {/* Three depth layers for parallax */}
+      <StarLayer count={2000} depthRange={[8, 15]} parallaxFactor={1.0} baseSize={0.8} />
+      <StarLayer count={1500} depthRange={[15, 25]} parallaxFactor={0.5} baseSize={0.6} />
+      <StarLayer count={1000} depthRange={[25, 40]} parallaxFactor={0.2} baseSize={0.4} />
 
-      {[0, 1.5, 3, 4.5, 6.2].map((o, i) => (
-        <Bird key={i} offset={o} />
-      ))}
+      {/* Nebula patches */}
+      <Nebula position={[8, 5, -20]} color="#3D2244" scale={12} opacity={0.015} />
+      <Nebula position={[-10, -3, -18]} color="#1A2844" scale={15} opacity={0.012} />
+      <Nebula position={[3, 8, -25]} color="#442233" scale={10} opacity={0.01} />
+      <Nebula position={[-6, 2, -22]} color="#223344" scale={8} opacity={0.008} />
 
-      <Ship baseAngle={0} radius={25} speed={0.02} scale={1.2} />
-      <Ship baseAngle={2} radius={30} speed={-0.015} scale={0.8} />
-      <Ship baseAngle={4} radius={22} speed={0.025} scale={1} />
-
-      <CameraRig />
+      {/* Shooting stars */}
+      <ShootingStar />
+      <ShootingStar />
     </>
   );
 }
@@ -394,14 +328,23 @@ export default function HeroScene() {
   return (
     <div className="absolute inset-0 z-0">
       <Canvas
-        camera={{ fov: 50, near: 0.1, far: 100 }}
-        gl={{ antialias: false, alpha: false, powerPreference: "high-performance" }}
-        dpr={[1, 1.5]}
+        camera={{ position: [0, 0, 0.1], fov: 75, near: 0.01, far: 100 }}
+        gl={{
+          antialias: false,
+          alpha: false,
+          powerPreference: "high-performance",
+        }}
+        dpr={[1, 2]}
       >
         <Scene />
         <EffectComposer multisampling={0}>
-          <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} intensity={0.5} mipmapBlur />
-          <Vignette offset={0.3} darkness={0.45} />
+          <Bloom
+            luminanceThreshold={0.25}
+            luminanceSmoothing={0.95}
+            intensity={0.7}
+            mipmapBlur
+          />
+          <Vignette offset={0.25} darkness={0.5} />
         </EffectComposer>
       </Canvas>
     </div>

@@ -16,37 +16,22 @@ export default function Hero() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Pin the hero
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "+=150%",
-        pin: true,
-        pinSpacing: true,
-      });
-
-      // Animate text lines
       gsap.from(".hero-line", {
-        y: 80,
+        y: 60,
         opacity: 0,
-        stagger: 0.15,
-        duration: 1,
+        stagger: 0.12,
+        duration: 0.9,
         ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-          toggleActions: "play none none none",
-        },
+        delay: 0.2,
       });
 
-      // Fade out on scroll
       gsap.to(textRef.current, {
         opacity: 0,
-        y: -60,
+        y: -40,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=100%",
+          end: "+=60%",
           scrub: 1,
         },
       });
@@ -64,17 +49,17 @@ export default function Hero() {
 
       <div ref={textRef} className="relative z-10 text-center px-6 max-w-5xl">
         <div className="flex items-center justify-center gap-3 mb-8">
-          <Lighthouse size={32} color="#4A9EF5" beam />
+          <Lighthouse size={32} beam />
           <span className="text-sm font-medium tracking-[0.3em] uppercase text-accent">
             Creative Studio
           </span>
         </div>
 
-        <h1 className="hero-line text-[clamp(3rem,8vw,9rem)] font-black leading-[0.9] tracking-tighter mb-8">
+        <h1 className="hero-line text-[clamp(3rem,8vw,9rem)] font-black leading-[0.9] tracking-tighter mb-8 drop-shadow-[0_2px_20px_rgba(0,0,0,0.6)]">
           FARO
         </h1>
 
-        <p className="hero-line text-[clamp(1.25rem,3vw,2.5rem)] font-light leading-tight text-white max-w-3xl mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
+        <p className="hero-line text-[clamp(1.25rem,3vw,2.5rem)] font-light leading-tight text-foreground max-w-3xl mx-auto drop-shadow-[0_2px_16px_rgba(0,0,0,0.8)]">
           We design websites that make
           <br />
           people stop scrolling.
@@ -83,13 +68,13 @@ export default function Hero() {
         <div className="hero-line mt-12 flex items-center justify-center gap-8">
           <a
             href="#work"
-            className="text-sm font-semibold tracking-widest uppercase border-b-2 border-accent pb-1 hover:text-accent transition-colors"
+            className="text-sm font-semibold tracking-widest uppercase border-b-2 border-accent pb-1 hover:text-accent transition-colors drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)]"
           >
             See our work
           </a>
           <a
             href="#contact"
-            className="text-sm font-semibold tracking-widest uppercase text-muted hover:text-foreground transition-colors"
+            className="text-sm font-semibold tracking-widest uppercase text-muted hover:text-foreground transition-colors drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)]"
           >
             Get in touch
           </a>

@@ -36,14 +36,13 @@ const steps = [
 
 export default function Process() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(".process-title", {
-        y: 60,
+        y: 40,
         opacity: 0,
-        duration: 1,
+        duration: 0.8,
         ease: "power3.out",
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -51,79 +50,45 @@ export default function Process() {
         },
       });
 
-      // Horizontal scroll
-      const track = trackRef.current;
-      if (!track) return;
-
-      gsap.to(track, {
-        x: () => -(track.scrollWidth - window.innerWidth + 100),
-        ease: "none",
+      gsap.from(".process-step", {
+        y: 40,
+        opacity: 0,
+        stagger: 0.08,
+        duration: 0.6,
+        ease: "power3.out",
         scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: () => `+=${track.scrollWidth}`,
-          scrub: 1,
-          pin: true,
-          pinSpacing: true,
-          invalidateOnRefresh: true,
+          trigger: ".process-grid",
+          start: "top 75%",
         },
       });
-
-      // Progress line
-      gsap.fromTo(
-        ".process-line",
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: () => `+=${track.scrollWidth}`,
-            scrub: 1,
-          },
-        }
-      );
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section id="process" ref={sectionRef} className="relative overflow-hidden">
-      <div className="h-screen flex flex-col justify-center">
-        <div className="px-6 md:px-16 lg:px-24 mb-12">
-          <div className="process-title max-w-7xl mx-auto">
-            <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
-              How we work
-            </span>
-            <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-black leading-[0.95] tracking-tight">
-              From brief to launch.
-            </h2>
-          </div>
-
-          {/* Progress line */}
-          <div className="max-w-7xl mx-auto mt-8">
-            <div className="h-px bg-foreground/10 relative">
-              <div className="process-line absolute inset-0 bg-accent origin-left" />
-            </div>
-          </div>
+    <section id="process" ref={sectionRef} className="relative py-32 px-6 md:px-16 lg:px-24">
+      <div className="max-w-7xl mx-auto">
+        <div className="process-title mb-16">
+          <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
+            How we work
+          </span>
+          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-black leading-[0.95] tracking-tight">
+            From brief to launch.
+          </h2>
         </div>
 
-        <div
-          ref={trackRef}
-          className="flex gap-8 pl-6 md:pl-16 lg:pl-24 pr-[50vw]"
-        >
+        <div className="process-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           {steps.map((step) => (
             <div
               key={step.num}
-              className="flex-shrink-0 w-[350px] md:w-[420px] p-8 md:p-10 rounded-2xl bg-surface border border-foreground/5 hover:border-accent/20 transition-colors group"
+              className="process-step p-6 rounded-xl bg-surface border border-foreground/5 hover:border-accent/20 transition-colors group"
             >
               <span className="text-accent font-mono text-sm">{step.num}</span>
-              <h3 className="text-3xl md:text-4xl font-bold mt-4 tracking-tight group-hover:text-accent transition-colors">
+              <h3 className="text-xl font-bold mt-3 tracking-tight group-hover:text-accent transition-colors">
                 {step.title}
               </h3>
-              <p className="text-muted font-light mt-4 leading-relaxed">
+              <p className="text-muted font-light mt-3 text-sm leading-relaxed">
                 {step.body}
               </p>
             </div>

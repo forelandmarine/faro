@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   EffectComposer,
@@ -9,162 +9,275 @@ import {
 } from "@react-three/postprocessing";
 import * as THREE from "three";
 
-/*
- * Star field: mixed sizes and brightness to mimic a real night sky.
- * Some stars are brighter/larger (navigation stars), most are faint.
- */
-function StarField({ count = 800 }: { count?: number }) {
-  const mesh = useRef<THREE.Points>(null!);
-
-  const { positions, sizes, brightness } = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    const sz = new Float32Array(count);
-    const br = new Float32Array(count);
-    for (let i = 0; i < count; i++) {
-      // Distribute on a large sphere
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      const r = 12 + Math.random() * 8;
-      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      pos[i * 3 + 2] = r * Math.cos(phi);
-
-      // ~5% are bright navigation stars, rest are dim
-      const isBright = Math.random() < 0.05;
-      sz[i] = isBright ? 0.06 + Math.random() * 0.04 : 0.01 + Math.random() * 0.02;
-      br[i] = isBright ? 0.8 + Math.random() * 0.2 : 0.15 + Math.random() * 0.35;
-    }
-    return { positions: pos, sizes: sz, brightness: br };
-  }, [count]);
-
-  // Gentle twinkle by nudging opacity uniform
-  useFrame((state) => {
-    if (!mesh.current) return;
-    const geo = mesh.current.geometry;
-    const szAttr = geo.getAttribute("size") as THREE.BufferAttribute;
-    const baseSizes = sizes;
-    const t = state.clock.elapsedTime;
-    for (let i = 0; i < count; i++) {
-      // Only twinkle a subset each frame for performance
-      if (i % 8 === Math.floor(t * 2) % 8) {
-        const twinkle = 1 + Math.sin(t * 3 + i * 1.7) * 0.3;
-        szAttr.setX(i, baseSizes[i] * twinkle);
-      }
-    }
-    szAttr.needsUpdate = true;
-    // Very slow sky rotation
-    mesh.current.rotation.y += 0.0002;
-  });
+/* ── Sunset sky gradient as a large background plane ── */
+function Sky() {
+  const mat = useMemo(() => {
+    return new THREE.ShaderMaterial({
+      uniforms: {
+        uTop: { value: new THREE.Color("#0F1923") },
+        uMid: { value: new THREE.Color("#2A1A2E") },
+        uHorizon: { value: new THREE.Color("#D4764E") },
+        uGlow: { value: new THREE.Color("#E8A85C") },
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 uTop;
+        uniform vec3 uMid;
+        uniform vec3 uHorizon;
+        uniform vec3 uGlow;
+        varying vec2 vUv;
+        void main() {
+          vec3 col = mix(uGlow, uHorizon, smoothstep(0.0, 0.15, vUv.y));
+          col = mix(col, uMid, smoothstep(0.15, 0.5, vUv.y));
+          col = mix(col, uTop, smoothstep(0.5, 1.0, vUv.y));
+          gl_FragColor = vec4(col, 1.0);
+        }
+      `,
+      depthWrite: false,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <points ref={mesh}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.03}
-        color="#FFFFFF"
-        transparent
-        opacity={0.7}
-        sizeAttenuation
-        vertexColors={false}
-      />
-    </points>
+    <mesh position={[0, 0, -12]} scale={[30, 15, 1]}>
+      <planeGeometry args={[1, 1]} />
+      <primitive object={mat} attach="material" />
+    </mesh>
   );
 }
 
-/* Generate points on a sphere using fibonacci distribution */
-function fibSphere(count: number, radius: number): THREE.Vector3[] {
-  const points: THREE.Vector3[] = [];
-  const goldenRatio = (1 + Math.sqrt(5)) / 2;
-  for (let i = 0; i < count; i++) {
-    const theta = (2 * Math.PI * i) / goldenRatio;
-    const phi = Math.acos(1 - (2 * (i + 0.5)) / count);
-    points.push(
-      new THREE.Vector3(
-        radius * Math.sin(phi) * Math.cos(theta),
-        radius * Math.sin(phi) * Math.sin(theta),
-        radius * Math.cos(phi)
-      )
-    );
-  }
-  return points;
+/* ── Sea surface ── */
+function Sea() {
+  const ref = useRef<THREE.Mesh>(null!);
+
+  return (
+    <mesh ref={ref} position={[0, -2.2, -4]} rotation={[-0.3, 0, 0]}>
+      <planeGeometry args={[40, 12, 1, 1]} />
+      <meshBasicMaterial
+        color="#0C1520"
+        transparent
+        opacity={0.85}
+      />
+    </mesh>
+  );
 }
 
-/* Generate arcs between nearby points */
-function generateArcs(
-  points: THREE.Vector3[],
-  maxDist: number,
-  maxArcs: number
-): [number, number][] {
-  const arcs: [number, number][] = [];
-  for (let i = 0; i < points.length && arcs.length < maxArcs; i++) {
-    for (let j = i + 1; j < points.length && arcs.length < maxArcs; j++) {
-      if (points[i].distanceTo(points[j]) < maxDist) {
-        arcs.push([i, j]);
-      }
+/* ── Horizon glow - warm band of light at the water line ── */
+function HorizonGlow() {
+  return (
+    <mesh position={[0, -1.6, -8]}>
+      <planeGeometry args={[40, 1.2, 1, 1]} />
+      <meshBasicMaterial
+        color="#E8A85C"
+        transparent
+        opacity={0.08}
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+      />
+    </mesh>
+  );
+}
+
+/* ── Rotating light beam ── */
+function LightBeam() {
+  const groupRef = useRef<THREE.Group>(null!);
+  const coneRef = useRef<THREE.Mesh>(null!);
+
+  useFrame((state) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3;
     }
-  }
-  return arcs;
+    if (coneRef.current) {
+      const mat = coneRef.current.material as THREE.MeshBasicMaterial;
+      mat.opacity = 0.06 + Math.sin(state.clock.elapsedTime * 1.5) * 0.02;
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={[0, 0.5, 0]}>
+      {/* Main beam cone */}
+      <mesh ref={coneRef} rotation={[0, 0, Math.PI / 2]} position={[5, 0, 0]}>
+        <coneGeometry args={[3, 10, 32, 1, true]} />
+        <meshBasicMaterial
+          color="#F5D39A"
+          transparent
+          opacity={0.07}
+          side={THREE.DoubleSide}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+      {/* Narrower bright core */}
+      <mesh rotation={[0, 0, Math.PI / 2]} position={[4, 0, 0]}>
+        <coneGeometry args={[1, 8, 16, 1, true]} />
+        <meshBasicMaterial
+          color="#FFECD2"
+          transparent
+          opacity={0.04}
+          side={THREE.DoubleSide}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+    </group>
+  );
 }
 
-/*
- * All arc lines baked into a single geometry for performance.
- * No per-arc components, no individual useFrame hooks.
- */
-function ArcLines({
-  points,
-  arcs,
+/* ── Light source glow at the centre ── */
+function LanternGlow() {
+  const ref = useRef<THREE.Mesh>(null!);
+
+  useFrame((state) => {
+    if (ref.current) {
+      const s = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.08;
+      ref.current.scale.setScalar(s);
+    }
+  });
+
+  return (
+    <mesh ref={ref} position={[0, 0.5, 0]}>
+      <sphereGeometry args={[0.15, 12, 12]} />
+      <meshBasicMaterial
+        color="#FFECD2"
+        transparent
+        opacity={0.9}
+      />
+    </mesh>
+  );
+}
+
+/* ── Glass mullions - vertical panes of the lantern room ── */
+function GlassPanes() {
+  const groupRef = useRef<THREE.Group>(null!);
+  const count = 16;
+  const radius = 2.5;
+
+  const bars = useMemo(() => {
+    const items = [];
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2;
+      items.push({
+        x: Math.cos(angle) * radius,
+        z: Math.sin(angle) * radius,
+        ry: -angle,
+      });
+    }
+    return items;
+  }, []);
+
+  return (
+    <group ref={groupRef} position={[0, 0.5, 0]}>
+      {/* Vertical mullion bars */}
+      {bars.map((bar, i) => (
+        <mesh key={i} position={[bar.x, 0, bar.z]} rotation={[0, bar.ry, 0]}>
+          <boxGeometry args={[0.015, 3, 0.015]} />
+          <meshBasicMaterial color="#F5EDE4" transparent opacity={0.08} />
+        </mesh>
+      ))}
+      {/* Top ring */}
+      <mesh position={[0, 1.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[radius, 0.01, 6, 48]} />
+        <meshBasicMaterial color="#F5EDE4" transparent opacity={0.1} />
+      </mesh>
+      {/* Bottom ring */}
+      <mesh position={[0, -1.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[radius, 0.01, 6, 48]} />
+        <meshBasicMaterial color="#F5EDE4" transparent opacity={0.1} />
+      </mesh>
+      {/* Mid ring */}
+      <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[radius, 0.008, 6, 48]} />
+        <meshBasicMaterial color="#F5EDE4" transparent opacity={0.05} />
+      </mesh>
+    </group>
+  );
+}
+
+/* ── Ship silhouette ── */
+function Ship({
+  baseX,
+  y,
+  z,
+  scale,
+  speed,
+  direction,
 }: {
-  points: THREE.Vector3[];
-  arcs: [number, number][];
+  baseX: number;
+  y: number;
+  z: number;
+  scale: number;
+  speed: number;
+  direction: number;
 }) {
-  const lineObj = useMemo(() => {
-    const allPoints: THREE.Vector3[] = [];
-    for (const [a, b] of arcs) {
-      const start = points[a];
-      const end = points[b];
-      const mid = new THREE.Vector3()
-        .addVectors(start, end)
-        .multiplyScalar(0.5);
-      const lift = start.distanceTo(end) * 0.35;
-      mid.normalize().multiplyScalar(mid.length() + lift);
-      const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
-      // Fewer points per arc for performance
-      const pts = curve.getPoints(12);
-      allPoints.push(...pts);
-      // Add a NaN break so lines don't connect between arcs
-    }
-    const geo = new THREE.BufferGeometry().setFromPoints(allPoints);
-    const mat = new THREE.LineBasicMaterial({
-      color: "#4A9EF5",
-      transparent: true,
-      opacity: 0.1,
-      depthWrite: false,
-    });
-    return new THREE.LineSegments(geo, mat);
-  }, [points, arcs]);
+  const groupRef = useRef<THREE.Group>(null!);
 
-  return <primitive object={lineObj} />;
+  useFrame((state) => {
+    if (groupRef.current) {
+      // Ships drift slowly across the horizon
+      const t = state.clock.elapsedTime * speed * direction;
+      groupRef.current.position.x = baseX + t;
+      // Wrap around
+      if (groupRef.current.position.x > 18) groupRef.current.position.x = -18;
+      if (groupRef.current.position.x < -18) groupRef.current.position.x = 18;
+      // Gentle bob
+      groupRef.current.position.y =
+        y + Math.sin(state.clock.elapsedTime * 0.5 + baseX) * 0.03;
+    }
+  });
+
+  return (
+    <group
+      ref={groupRef}
+      position={[baseX, y, z]}
+      scale={[scale * direction, scale, scale]}
+    >
+      {/* Hull */}
+      <mesh>
+        <boxGeometry args={[0.6, 0.08, 0.1]} />
+        <meshBasicMaterial color="#0A1018" transparent opacity={0.9} />
+      </mesh>
+      {/* Superstructure */}
+      <mesh position={[0.05, 0.1, 0]}>
+        <boxGeometry args={[0.2, 0.12, 0.08]} />
+        <meshBasicMaterial color="#0A1018" transparent opacity={0.9} />
+      </mesh>
+      {/* Mast */}
+      <mesh position={[-0.1, 0.2, 0]}>
+        <boxGeometry args={[0.01, 0.25, 0.01]} />
+        <meshBasicMaterial color="#0A1018" transparent opacity={0.8} />
+      </mesh>
+      {/* Navigation light */}
+      <mesh position={[-0.1, 0.33, 0]}>
+        <sphereGeometry args={[0.012, 6, 6]} />
+        <meshBasicMaterial color="#F5D39A" transparent opacity={0.6} />
+      </mesh>
+    </group>
+  );
 }
 
-/*
- * All globe nodes as a single Points object instead of
- * 60 individual mesh components. Massive performance gain.
- */
-function GlobeNodes({ points }: { points: THREE.Vector3[] }) {
+/* ── Stars - sparse, visible above the horizon ── */
+function Stars({ count = 200 }: { count?: number }) {
   const ref = useRef<THREE.Points>(null!);
 
   const positions = useMemo(() => {
-    const pos = new Float32Array(points.length * 3);
-    points.forEach((p, i) => {
-      pos[i * 3] = p.x;
-      pos[i * 3 + 1] = p.y;
-      pos[i * 3 + 2] = p.z;
-    });
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      // Only upper hemisphere
+      const phi = Math.random() * Math.PI * 0.4;
+      const r = 14 + Math.random() * 4;
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.cos(phi);
+      pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+    }
     return pos;
-  }, [points]);
+  }, [count]);
 
   return (
     <points ref={ref}>
@@ -172,85 +285,57 @@ function GlobeNodes({ points }: { points: THREE.Vector3[] }) {
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.05}
-        color="#FFFFFF"
+        size={0.03}
+        color="#F5EDE4"
         transparent
-        opacity={0.85}
+        opacity={0.4}
         sizeAttenuation
       />
     </points>
   );
 }
 
-/* The main wireframe globe */
-function Globe() {
-  const groupRef = useRef<THREE.Group>(null!);
+function Scene() {
+  const { camera } = useThree();
   const mouse = useRef({ x: 0, y: 0 });
-  const { pointer } = useThree();
 
-  const nodeCount = 50;
-  const radius = 2;
-
-  const points = useMemo(() => fibSphere(nodeCount, radius), []);
-  const arcs = useMemo(() => generateArcs(points, 1.5, 40), [points]);
+  useEffect(() => {
+    camera.position.set(0, 0.5, 0);
+    camera.lookAt(0, 0, -5);
+  }, [camera]);
 
   useFrame((state) => {
-    // Faster lerp for snappier mouse response
-    mouse.current.x = THREE.MathUtils.lerp(mouse.current.x, pointer.x, 0.12);
-    mouse.current.y = THREE.MathUtils.lerp(mouse.current.y, pointer.y, 0.12);
-
-    if (groupRef.current) {
-      groupRef.current.rotation.y =
-        state.clock.elapsedTime * 0.06 + mouse.current.x * 0.5;
-      groupRef.current.rotation.x = 0.15 + mouse.current.y * 0.35;
-    }
+    // Subtle camera sway following the mouse
+    mouse.current.x = THREE.MathUtils.lerp(
+      mouse.current.x,
+      state.pointer.x,
+      0.08
+    );
+    mouse.current.y = THREE.MathUtils.lerp(
+      mouse.current.y,
+      state.pointer.y,
+      0.08
+    );
+    camera.rotation.y = mouse.current.x * 0.08;
+    camera.rotation.x = mouse.current.y * 0.04;
   });
 
   return (
-    <group ref={groupRef}>
-      {/* Wireframe sphere shell - reduced segments */}
-      <mesh>
-        <sphereGeometry args={[radius, 24, 16]} />
-        <meshBasicMaterial
-          color="#4A9EF5"
-          wireframe
-          transparent
-          opacity={0.05}
-        />
-      </mesh>
-
-      {/* Equator ring */}
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[radius * 1.02, 0.004, 6, 64]} />
-        <meshBasicMaterial color="#4A9EF5" transparent opacity={0.18} />
-      </mesh>
-
-      {/* Tilted orbital ring - like a celestial navigation arc */}
-      <mesh rotation={[Math.PI / 2.8, 0.5, 0]}>
-        <torusGeometry args={[radius * 1.04, 0.003, 6, 64]} />
-        <meshBasicMaterial color="#FFFFFF" transparent opacity={0.07} />
-      </mesh>
-
-      {/* Second tilted ring */}
-      <mesh rotation={[Math.PI / 3.5, -0.8, 0.3]}>
-        <torusGeometry args={[radius * 1.06, 0.003, 6, 64]} />
-        <meshBasicMaterial color="#4A9EF5" transparent opacity={0.05} />
-      </mesh>
-
-      {/* Batched nodes */}
-      <GlobeNodes points={points} />
-
-      {/* Batched arc lines */}
-      <ArcLines points={points} arcs={arcs} />
-    </group>
-  );
-}
-
-function Scene() {
-  return (
     <>
-      <StarField />
-      <Globe />
+      <Sky />
+      <Sea />
+      <HorizonGlow />
+      <Stars />
+
+      <LanternGlow />
+      <LightBeam />
+      <GlassPanes />
+
+      {/* Ships at varying distances */}
+      <Ship baseX={-5} y={-1.7} z={-7} scale={0.8} speed={0.15} direction={1} />
+      <Ship baseX={8} y={-1.75} z={-9} scale={0.5} speed={0.08} direction={-1} />
+      <Ship baseX={2} y={-1.72} z={-8} scale={0.65} speed={0.12} direction={1} />
+      <Ship baseX={-12} y={-1.78} z={-10} scale={0.4} speed={0.06} direction={-1} />
     </>
   );
 }
@@ -259,20 +344,19 @@ export default function HeroScene() {
   return (
     <div className="absolute inset-0 z-0">
       <Canvas
-        camera={{ position: [0, 0, 5.5], fov: 45 }}
-        gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
+        camera={{ fov: 60, near: 0.1, far: 50 }}
+        gl={{ antialias: false, alpha: false, powerPreference: "high-performance" }}
         dpr={[1, 1.5]}
-        frameloop="always"
       >
         <Scene />
         <EffectComposer multisampling={0}>
           <Bloom
-            luminanceThreshold={0.4}
+            luminanceThreshold={0.5}
             luminanceSmoothing={0.9}
-            intensity={0.6}
+            intensity={0.5}
             mipmapBlur
           />
-          <Vignette offset={0.3} darkness={0.6} />
+          <Vignette offset={0.35} darkness={0.5} />
         </EffectComposer>
       </Canvas>
     </div>

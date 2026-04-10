@@ -10,7 +10,7 @@ interface LighthouseProps {
 export default function Lighthouse({
   className = "",
   size = 48,
-  color = "#4A9EF5",
+  color = "#E2864B",
   beam = false,
 }: LighthouseProps) {
   return (

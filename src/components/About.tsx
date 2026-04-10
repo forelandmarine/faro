@@ -44,7 +44,7 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-40 px-6 md:px-16 lg:px-24 overflow-hidden grain-overlay"
+      className="relative py-40 px-6 md:px-16 lg:px-24 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center relative z-10">
         {/* Visual side */}
@@ -53,7 +53,7 @@ export default function About() {
             {/* Abstract placeholder with lighthouse */}
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-surface to-surface-light" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <Lighthouse size={160} color="#4A9EF5" beam />
+              <Lighthouse size={160} color="#E2864B" beam />
             </div>
             {/* Film grain vibe */}
             <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />

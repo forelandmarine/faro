@@ -6,7 +6,6 @@ import SmoothScroll from "@/components/SmoothScroll";
 import Preloader from "@/components/Preloader";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Reel from "@/components/Reel";
 import Services from "@/components/Services";
 import Portfolio from "@/components/Portfolio";
 import Process from "@/components/Process";
@@ -39,7 +38,6 @@ export default function Home() {
           }`}
         >
           <Hero />
-          <Reel />
           <Services />
           <Portfolio />
           <Process />

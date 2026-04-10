@@ -4,9 +4,24 @@ import { useEffect, useRef } from "react";
 
 export const scrollState = { progress: 0 };
 
+interface Star {
+  x: number; y: number;
+  s: number; a: number; sp: number; ph: number;
+  // Interaction: glow boost when mouse is near
+  glow: number;
+}
+
+interface ShootingStar {
+  active: boolean;
+  timer: number;
+  x: number; y: number;
+  vx: number; vy: number;
+  life: number; maxLife: number;
+}
+
 export default function HeroScene() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouse = useRef({ x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 });
+  const mouse = useRef({ x: 0.5, y: 0.5, tx: 0.5, ty: 0.5, px: 0, py: 0 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -17,11 +32,10 @@ export default function HeroScene() {
     let w = 0;
     let h = 0;
 
-    const BLUE = [0, 112, 243]; // Vercel blue #0070F3
-    const WHITE = [255, 255, 255];
+    const BLUE = [0, 112, 243];
 
-    // Stars
-    let starData: { x: number; y: number; s: number; a: number; sp: number; ph: number }[] = [];
+    let stars: Star[] = [];
+    let shootingStars: ShootingStar[] = [];
 
     const latLines = 16;
     const lonLines = 32;
@@ -37,23 +51,32 @@ export default function HeroScene() {
       canvas.style.height = h + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Generate stars
-      starData = [];
-      for (let i = 0; i < 300; i++) {
-        starData.push({
+      stars = [];
+      for (let i = 0; i < 400; i++) {
+        const bright = Math.random() < 0.06;
+        stars.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          s: Math.random() < 0.05 ? 1.5 + Math.random() : 0.5 + Math.random() * 0.5,
-          a: 0.15 + Math.random() * 0.5,
-          sp: 0.5 + Math.random() * 3,
+          s: bright ? 1.5 + Math.random() * 1.2 : 0.4 + Math.random() * 0.6,
+          a: bright ? 0.6 + Math.random() * 0.4 : 0.1 + Math.random() * 0.35,
+          sp: 0.5 + Math.random() * 2.5,
           ph: Math.random() * Math.PI * 2,
+          glow: 0,
         });
       }
+
+      shootingStars = [
+        { active: false, timer: 1.5, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 0.6 },
+        { active: false, timer: 5, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 0.5 },
+        { active: false, timer: 9, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 0.7 },
+      ];
     };
 
     const onMouse = (e: MouseEvent) => {
       mouse.current.tx = e.clientX / w;
       mouse.current.ty = e.clientY / h;
+      mouse.current.px = e.clientX;
+      mouse.current.py = e.clientY;
     };
 
     resize();
@@ -72,16 +95,15 @@ export default function HeroScene() {
     };
 
     const draw = () => {
-      time += 1 / 60;
+      const dt = 1 / 60;
+      time += dt;
 
-      // Spring-damped mouse tracking (Vercel-style)
       mouse.current.x += (mouse.current.tx - mouse.current.x) * 0.06;
       mouse.current.y += (mouse.current.ty - mouse.current.y) * 0.06;
 
-      // Mouse drives rotation strongly
       const ry = time * 0.1 + (mouse.current.x - 0.5) * 2.0;
       const rx = (mouse.current.y - 0.5) * 1.0;
-      const R = Math.min(w, h) * 0.38;
+      const R = Math.min(w, h) * 0.25;
       const cx = w / 2;
       const cy = h / 2;
       const fov = 800;
@@ -89,41 +111,140 @@ export default function HeroScene() {
       ctx.fillStyle = "#000000";
       ctx.fillRect(0, 0, w, h);
 
-      // ── Stars ──
+      // ── Stars with mouse proximity interaction ──
+      const mpx = mouse.current.px;
+      const mpy = mouse.current.py;
       const mx = (mouse.current.x - 0.5) * 20;
       const my = (mouse.current.y - 0.5) * 12;
-      for (const star of starData) {
+
+      for (const star of stars) {
         const twinkle = star.a + Math.sin(time * star.sp + star.ph) * star.a * 0.4;
         const sx = star.x + mx * star.s * 0.3;
         const sy = star.y + my * star.s * 0.2;
-        ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
+
+        // Mouse proximity: stars within 120px of cursor glow brighter
+        const dx = sx - mpx;
+        const dy = sy - mpy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const proximity = Math.max(0, 1 - dist / 120);
+        star.glow += (proximity - star.glow) * 0.1; // smooth
+
+        const finalAlpha = twinkle + star.glow * 0.6;
+        const finalSize = star.s + star.glow * 2;
+
+        // Glow halo when activated
+        if (star.glow > 0.05) {
+          const gr = finalSize * 8;
+          const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, gr);
+          glow.addColorStop(0, `rgba(${BLUE[0]},${BLUE[1]},${BLUE[2]},${star.glow * 0.25})`);
+          glow.addColorStop(1, `rgba(${BLUE[0]},${BLUE[1]},${BLUE[2]},0)`);
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(sx, sy, gr, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Bright stars always get a small halo
+        if (star.s > 1.2) {
+          const gr = finalSize * 4;
+          const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, gr);
+          glow.addColorStop(0, `rgba(255,255,255,${finalAlpha * 0.15})`);
+          glow.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = glow;
+          ctx.beginPath();
+          ctx.arc(sx, sy, gr, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Star core - shifts to blue when glowing
+        if (star.glow > 0.1) {
+          const blend = star.glow;
+          const r = Math.round(255 * (1 - blend) + BLUE[0] * blend);
+          const g = Math.round(255 * (1 - blend) + BLUE[1] * blend);
+          const b = Math.round(255 * (1 - blend) + BLUE[2] * blend);
+          ctx.fillStyle = `rgba(${r},${g},${b},${finalAlpha})`;
+        } else {
+          ctx.fillStyle = `rgba(255,255,255,${finalAlpha})`;
+        }
         ctx.beginPath();
-        ctx.arc(sx, sy, star.s, 0, Math.PI * 2);
+        ctx.arc(sx, sy, finalSize, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // ── Helper: project and draw a wireframe ring ──
-      const drawRing = (
-        getPoint: (t: number) => [number, number, number]
-      ) => {
+      // ── Shooting stars ──
+      for (const ss of shootingStars) {
+        ss.timer -= dt;
+        if (!ss.active && ss.timer <= 0) {
+          ss.active = true;
+          ss.life = 0;
+          ss.x = Math.random() * w * 0.7 + w * 0.1;
+          ss.y = Math.random() * h * 0.3 + h * 0.05;
+          const angle = Math.PI * 0.1 + Math.random() * 0.4;
+          const speed = 500 + Math.random() * 500;
+          ss.vx = Math.cos(angle) * speed;
+          ss.vy = Math.sin(angle) * speed;
+          ss.maxLife = 0.3 + Math.random() * 0.5;
+        }
+        if (ss.active) {
+          ss.life += dt;
+          ss.x += ss.vx * dt;
+          ss.y += ss.vy * dt;
+          if (ss.life > ss.maxLife || ss.x > w + 50 || ss.y > h + 50) {
+            ss.active = false;
+            ss.timer = 3 + Math.random() * 7;
+            continue;
+          }
+          const fade = ss.life < 0.06 ? ss.life / 0.06
+            : ss.life > ss.maxLife * 0.5 ? (ss.maxLife - ss.life) / (ss.maxLife * 0.5) : 1;
+
+          // Trail
+          const tailLen = 100 * fade;
+          const normVx = ss.vx / Math.sqrt(ss.vx * ss.vx + ss.vy * ss.vy);
+          const normVy = ss.vy / Math.sqrt(ss.vx * ss.vx + ss.vy * ss.vy);
+          const tailX = ss.x - normVx * tailLen;
+          const tailY = ss.y - normVy * tailLen;
+
+          const grad = ctx.createLinearGradient(ss.x, ss.y, tailX, tailY);
+          grad.addColorStop(0, `rgba(255,255,255,${fade * 0.9})`);
+          grad.addColorStop(0.3, `rgba(${BLUE[0]},${BLUE[1]},${BLUE[2]},${fade * 0.4})`);
+          grad.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.5 + fade;
+          ctx.beginPath();
+          ctx.moveTo(ss.x, ss.y);
+          ctx.lineTo(tailX, tailY);
+          ctx.stroke();
+
+          // Bright head
+          const headGlow = ctx.createRadialGradient(ss.x, ss.y, 0, ss.x, ss.y, 6);
+          headGlow.addColorStop(0, `rgba(255,255,255,${fade * 0.9})`);
+          headGlow.addColorStop(1, `rgba(${BLUE[0]},${BLUE[1]},${BLUE[2]},0)`);
+          ctx.fillStyle = headGlow;
+          ctx.beginPath();
+          ctx.arc(ss.x, ss.y, 6, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = `rgba(255,255,255,${fade})`;
+          ctx.beginPath();
+          ctx.arc(ss.x, ss.y, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // ── Globe wireframe ──
+      const drawRing = (getPoint: (t: number) => [number, number, number]) => {
         const points: { sx: number; sy: number; z: number }[] = [];
         for (let j = 0; j <= segs; j++) {
-          const t = j / segs;
-          const [px, py, pz] = getPoint(t);
+          const [px, py, pz] = getPoint(j / segs);
           const [rx2, ry2, rz2] = rot(px, py, pz, ry, rx);
           const s = fov / (fov + rz2);
           points.push({ sx: cx + rx2 * s, sy: cy + ry2 * s, z: rz2 });
         }
-
-        // Draw segments with depth-based opacity
         for (let j = 0; j < points.length - 1; j++) {
           const p1 = points[j];
           const p2 = points[j + 1];
-          const avgZ = (p1.z + p2.z) / 2;
-          // Map z from [-R, R] to opacity
-          const t = (avgZ + R) / (2 * R); // 0 = back, 1 = front
+          const t = ((p1.z + p2.z) / 2 + R) / (2 * R);
           const alpha = 0.02 + t * 0.18;
-
           ctx.strokeStyle = `rgba(${BLUE[0]},${BLUE[1]},${BLUE[2]},${alpha})`;
           ctx.lineWidth = 0.5 + t * 0.5;
           ctx.beginPath();
@@ -133,19 +254,12 @@ export default function HeroScene() {
         }
       };
 
-      // ── Latitude lines ──
       for (let i = 1; i < latLines; i++) {
         const phi = (i / latLines) * Math.PI;
-        const ringR = R * Math.sin(phi);
-        const ringY = R * Math.cos(phi);
-        drawRing((t) => [
-          ringR * Math.cos(t * Math.PI * 2),
-          ringY,
-          ringR * Math.sin(t * Math.PI * 2),
-        ]);
+        const rr = R * Math.sin(phi);
+        const ry2 = R * Math.cos(phi);
+        drawRing((t) => [rr * Math.cos(t * Math.PI * 2), ry2, rr * Math.sin(t * Math.PI * 2)]);
       }
-
-      // ── Longitude lines ──
       for (let i = 0; i < lonLines; i++) {
         const theta = (i / lonLines) * Math.PI * 2;
         drawRing((t) => [
@@ -155,7 +269,7 @@ export default function HeroScene() {
         ]);
       }
 
-      // ── Grid dots ──
+      // Grid dots
       for (let i = 1; i < latLines; i++) {
         const phi = (i / latLines) * Math.PI;
         for (let j = 0; j < lonLines; j++) {
@@ -167,20 +281,19 @@ export default function HeroScene() {
           const s = fov / (fov + rz2);
           const sx = cx + rx2 * s;
           const sy = cy + ry2 * s;
-
           const t = (rz2 + R) / (2 * R);
+          if (t < 0.1) continue;
           const dotAlpha = 0.03 + t * 0.3;
           const dotR = (0.8 + t * 1.5) * s;
 
-          // Glow on front-face dots
           if (t > 0.6) {
-            const glowR = dotR * 6;
-            const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, glowR);
-            glow.addColorStop(0, `rgba(${BLUE[0]},${BLUE[1]},${BLUE[2]},${(t - 0.6) * 0.15})`);
+            const gr = dotR * 5;
+            const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, gr);
+            glow.addColorStop(0, `rgba(${BLUE[0]},${BLUE[1]},${BLUE[2]},${(t - 0.6) * 0.12})`);
             glow.addColorStop(1, `rgba(${BLUE[0]},${BLUE[1]},${BLUE[2]},0)`);
             ctx.fillStyle = glow;
             ctx.beginPath();
-            ctx.arc(sx, sy, glowR, 0, Math.PI * 2);
+            ctx.arc(sx, sy, gr, 0, Math.PI * 2);
             ctx.fill();
           }
 
@@ -191,17 +304,17 @@ export default function HeroScene() {
         }
       }
 
-      // ── Centre glow - larger, more visible ──
-      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.3);
-      glow.addColorStop(0, "rgba(0,112,243,0.06)");
-      glow.addColorStop(0.4, "rgba(0,112,243,0.02)");
-      glow.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = glow;
+      // Centre glow
+      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.3);
+      cg.addColorStop(0, "rgba(0,112,243,0.05)");
+      cg.addColorStop(0.4, "rgba(0,112,243,0.015)");
+      cg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = cg;
       ctx.beginPath();
       ctx.arc(cx, cy, R * 1.3, 0, Math.PI * 2);
       ctx.fill();
 
-      // ── Vignette ──
+      // Vignette
       const vig = ctx.createRadialGradient(cx, cy, w * 0.2, cx, cy, w * 0.75);
       vig.addColorStop(0, "rgba(0,0,0,0)");
       vig.addColorStop(1, "rgba(0,0,0,0.5)");

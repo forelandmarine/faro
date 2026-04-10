@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #0F1923;
+  --color-background: #000000;
   --color-foreground: #F5EDE4;
   --color-accent: #E2864B;
   --color-accent-light: #EDA06E;
-  --color-muted: #6B7D8D;
-  --color-surface: #162231;
-  --color-surface-light: #1D2D3F;
+  --color-muted: #5A5A5A;
+  --color-surface: #0A0A0A;
+  --color-surface-light: #141414;
   --font-sans: var(--font-inter);
 }
 
 html {
-  background: #0F1923;
+  background: #000000;
   color: #F5EDE4;
 }
 
@@ -46,7 +46,7 @@ html.lenis, html.lenis body {
   top: 0;
   width: 50%;
   height: 100vh;
-  background: #0F1923;
+  background: #000000;
   z-index: 100;
 }
 .curtain-left { left: 0; }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   EffectComposer,
@@ -9,269 +9,327 @@ import {
 } from "@react-three/postprocessing";
 import * as THREE from "three";
 
-/* ── Sunset sky gradient as a large background plane ── */
+/* ── Shared scroll progress: written by GSAP, read by R3F ── */
+export const scrollState = { progress: 0 };
+
+/* ── Sunset sky dome ── */
 function Sky() {
-  const mat = useMemo(() => {
-    return new THREE.ShaderMaterial({
-      uniforms: {
-        uTop: { value: new THREE.Color("#0F1923") },
-        uMid: { value: new THREE.Color("#2A1A2E") },
-        uHorizon: { value: new THREE.Color("#D4764E") },
-        uGlow: { value: new THREE.Color("#E8A85C") },
-      },
-      vertexShader: `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform vec3 uTop;
-        uniform vec3 uMid;
-        uniform vec3 uHorizon;
-        uniform vec3 uGlow;
-        varying vec2 vUv;
-        void main() {
-          vec3 col = mix(uGlow, uHorizon, smoothstep(0.0, 0.15, vUv.y));
-          col = mix(col, uMid, smoothstep(0.15, 0.5, vUv.y));
-          col = mix(col, uTop, smoothstep(0.5, 1.0, vUv.y));
-          gl_FragColor = vec4(col, 1.0);
-        }
-      `,
-      depthWrite: false,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const mat = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        uniforms: {
+          uTop: { value: new THREE.Color("#0F1923") },
+          uMid: { value: new THREE.Color("#2A1A2E") },
+          uHorizon: { value: new THREE.Color("#D4764E") },
+          uGlow: { value: new THREE.Color("#E8A85C") },
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+          }`,
+        fragmentShader: `
+          uniform vec3 uTop, uMid, uHorizon, uGlow;
+          varying vec2 vUv;
+          void main() {
+            vec3 c = mix(uGlow, uHorizon, smoothstep(0.0,0.12,vUv.y));
+            c = mix(c, uMid, smoothstep(0.12,0.45,vUv.y));
+            c = mix(c, uTop, smoothstep(0.45,1.0,vUv.y));
+            gl_FragColor = vec4(c,1.0);
+          }`,
+        side: THREE.BackSide,
+        depthWrite: false,
+      }),
+    []
+  );
 
   return (
-    <mesh position={[0, 0, -12]} scale={[30, 15, 1]}>
-      <planeGeometry args={[1, 1]} />
+    <mesh scale={[80, 40, 80]}>
+      <sphereGeometry args={[1, 32, 16]} />
       <primitive object={mat} attach="material" />
     </mesh>
   );
 }
 
-/* ── Sea surface ── */
-function Sea() {
+/* ── Ocean plane with subtle vertex waves ── */
+function Ocean() {
   const ref = useRef<THREE.Mesh>(null!);
-
-  return (
-    <mesh ref={ref} position={[0, -2.2, -4]} rotation={[-0.3, 0, 0]}>
-      <planeGeometry args={[40, 12, 1, 1]} />
-      <meshBasicMaterial
-        color="#0C1520"
-        transparent
-        opacity={0.85}
-      />
-    </mesh>
-  );
-}
-
-/* ── Horizon glow - warm band of light at the water line ── */
-function HorizonGlow() {
-  return (
-    <mesh position={[0, -1.6, -8]}>
-      <planeGeometry args={[40, 1.2, 1, 1]} />
-      <meshBasicMaterial
-        color="#E8A85C"
-        transparent
-        opacity={0.08}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-      />
-    </mesh>
-  );
-}
-
-/* ── Rotating light beam ── */
-function LightBeam() {
-  const groupRef = useRef<THREE.Group>(null!);
-  const coneRef = useRef<THREE.Mesh>(null!);
+  const baseY = useMemo(() => new Float32Array(0), []);
+  const geoRef = useRef<THREE.PlaneGeometry>(null!);
 
   useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3;
+    if (!geoRef.current) return;
+    const pos = geoRef.current.attributes.position;
+    if (baseY.length === 0) {
+      // Cache initial Y
+      const arr = new Float32Array(pos.count);
+      for (let i = 0; i < pos.count; i++) arr[i] = pos.getY(i);
+      (baseY as unknown as { length: number }).length = pos.count;
+      Object.assign(baseY, arr);
     }
-    if (coneRef.current) {
-      const mat = coneRef.current.material as THREE.MeshBasicMaterial;
-      mat.opacity = 0.06 + Math.sin(state.clock.elapsedTime * 1.5) * 0.02;
+    const t = state.clock.elapsedTime;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const z = pos.getZ(i);
+      pos.setY(
+        i,
+        baseY[i] +
+          Math.sin(x * 0.3 + t * 0.6) * 0.08 +
+          Math.sin(z * 0.4 + t * 0.4) * 0.05
+      );
+    }
+    pos.needsUpdate = true;
+  });
+
+  return (
+    <mesh ref={ref} position={[0, -0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <planeGeometry ref={geoRef} args={[120, 120, 40, 40]} />
+      <meshStandardMaterial
+        color="#0C1822"
+        roughness={0.85}
+        metalness={0.1}
+        transparent
+        opacity={0.95}
+      />
+    </mesh>
+  );
+}
+
+/* ── Lighthouse tower built from primitives ── */
+function Lighthouse() {
+  const beamRef = useRef<THREE.Group>(null!);
+
+  useFrame((state) => {
+    if (beamRef.current) {
+      beamRef.current.rotation.y = state.clock.elapsedTime * 0.5;
     }
   });
 
   return (
-    <group ref={groupRef} position={[0, 0.5, 0]}>
-      {/* Main beam cone */}
-      <mesh ref={coneRef} rotation={[0, 0, Math.PI / 2]} position={[5, 0, 0]}>
-        <coneGeometry args={[3, 10, 32, 1, true]} />
-        <meshBasicMaterial
+    <group position={[0, 0, 0]}>
+      {/* Rocky base */}
+      <mesh position={[0, 0.15, 0]}>
+        <cylinderGeometry args={[2.5, 3.2, 0.6, 8]} />
+        <meshStandardMaterial color="#1A2430" roughness={0.95} />
+      </mesh>
+      <mesh position={[1.2, 0.1, 0.8]} rotation={[0.1, 0.5, 0]}>
+        <boxGeometry args={[1.2, 0.5, 1]} />
+        <meshStandardMaterial color="#1E2B38" roughness={0.95} />
+      </mesh>
+      <mesh position={[-0.8, 0.12, -1]} rotation={[0, 0.8, 0.05]}>
+        <boxGeometry args={[1.5, 0.4, 0.8]} />
+        <meshStandardMaterial color="#182530" roughness={0.95} />
+      </mesh>
+
+      {/* Tower - lower section (white) */}
+      <mesh position={[0, 3.5, 0]}>
+        <cylinderGeometry args={[0.9, 1.3, 6.2, 16]} />
+        <meshStandardMaterial color="#E8DDD0" roughness={0.6} />
+      </mesh>
+
+      {/* Tower - red stripe 1 */}
+      <mesh position={[0, 2.2, 0]}>
+        <cylinderGeometry args={[1.15, 1.2, 0.8, 16]} />
+        <meshStandardMaterial color="#C0503A" roughness={0.5} />
+      </mesh>
+
+      {/* Tower - red stripe 2 */}
+      <mesh position={[0, 4.6, 0]}>
+        <cylinderGeometry args={[0.98, 1.02, 0.8, 16]} />
+        <meshStandardMaterial color="#C0503A" roughness={0.5} />
+      </mesh>
+
+      {/* Gallery platform */}
+      <mesh position={[0, 6.7, 0]}>
+        <cylinderGeometry args={[1.3, 1.3, 0.12, 16]} />
+        <meshStandardMaterial color="#2A2A2A" roughness={0.3} metalness={0.4} />
+      </mesh>
+
+      {/* Gallery railing posts */}
+      {Array.from({ length: 12 }).map((_, i) => {
+        const a = (i / 12) * Math.PI * 2;
+        return (
+          <mesh
+            key={`rail-${i}`}
+            position={[Math.cos(a) * 1.25, 7.0, Math.sin(a) * 1.25]}
+          >
+            <cylinderGeometry args={[0.02, 0.02, 0.5, 4]} />
+            <meshStandardMaterial color="#2A2A2A" metalness={0.5} roughness={0.3} />
+          </mesh>
+        );
+      })}
+
+      {/* Gallery railing top ring */}
+      <mesh position={[0, 7.25, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[1.25, 0.025, 6, 32]} />
+        <meshStandardMaterial color="#2A2A2A" metalness={0.5} roughness={0.3} />
+      </mesh>
+
+      {/* Lantern room - glass */}
+      <mesh position={[0, 7.6, 0]}>
+        <cylinderGeometry args={[0.8, 0.8, 1.4, 12]} />
+        <meshPhysicalMaterial
           color="#F5D39A"
+          transmission={0.6}
+          roughness={0.1}
+          thickness={0.2}
           transparent
-          opacity={0.07}
-          side={THREE.DoubleSide}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
+          opacity={0.25}
+          metalness={0}
         />
       </mesh>
-      {/* Narrower bright core */}
-      <mesh rotation={[0, 0, Math.PI / 2]} position={[4, 0, 0]}>
-        <coneGeometry args={[1, 8, 16, 1, true]} />
-        <meshBasicMaterial
-          color="#FFECD2"
-          transparent
-          opacity={0.04}
-          side={THREE.DoubleSide}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-        />
+
+      {/* Lantern mullion bars */}
+      {Array.from({ length: 8 }).map((_, i) => {
+        const a = (i / 8) * Math.PI * 2;
+        return (
+          <mesh
+            key={`mull-${i}`}
+            position={[Math.cos(a) * 0.78, 7.6, Math.sin(a) * 0.78]}
+          >
+            <boxGeometry args={[0.025, 1.4, 0.025]} />
+            <meshStandardMaterial color="#2A2A2A" metalness={0.4} roughness={0.3} />
+          </mesh>
+        );
+      })}
+
+      {/* Dome cap */}
+      <mesh position={[0, 8.55, 0]}>
+        <sphereGeometry args={[0.85, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshStandardMaterial color="#2A2A2A" metalness={0.3} roughness={0.4} />
       </mesh>
-    </group>
-  );
-}
 
-/* ── Light source glow at the centre ── */
-function LanternGlow() {
-  const ref = useRef<THREE.Mesh>(null!);
+      {/* Spire */}
+      <mesh position={[0, 9.2, 0]}>
+        <coneGeometry args={[0.05, 0.6, 6]} />
+        <meshStandardMaterial color="#2A2A2A" metalness={0.5} roughness={0.3} />
+      </mesh>
 
-  useFrame((state) => {
-    if (ref.current) {
-      const s = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.08;
-      ref.current.scale.setScalar(s);
-    }
-  });
+      {/* Light glow inside lantern */}
+      <mesh position={[0, 7.6, 0]}>
+        <sphereGeometry args={[0.2, 8, 8]} />
+        <meshBasicMaterial color="#FFECD2" />
+      </mesh>
 
-  return (
-    <mesh ref={ref} position={[0, 0.5, 0]}>
-      <sphereGeometry args={[0.15, 12, 12]} />
-      <meshBasicMaterial
-        color="#FFECD2"
-        transparent
-        opacity={0.9}
-      />
-    </mesh>
-  );
-}
-
-/* ── Glass mullions - vertical panes of the lantern room ── */
-function GlassPanes() {
-  const groupRef = useRef<THREE.Group>(null!);
-  const count = 16;
-  const radius = 2.5;
-
-  const bars = useMemo(() => {
-    const items = [];
-    for (let i = 0; i < count; i++) {
-      const angle = (i / count) * Math.PI * 2;
-      items.push({
-        x: Math.cos(angle) * radius,
-        z: Math.sin(angle) * radius,
-        ry: -angle,
-      });
-    }
-    return items;
-  }, []);
-
-  return (
-    <group ref={groupRef} position={[0, 0.5, 0]}>
-      {/* Vertical mullion bars */}
-      {bars.map((bar, i) => (
-        <mesh key={i} position={[bar.x, 0, bar.z]} rotation={[0, bar.ry, 0]}>
-          <boxGeometry args={[0.015, 3, 0.015]} />
-          <meshBasicMaterial color="#F5EDE4" transparent opacity={0.08} />
+      {/* Rotating beam */}
+      <group ref={beamRef} position={[0, 7.6, 0]}>
+        <mesh rotation={[0, 0, Math.PI / 2]} position={[8, 0, 0]}>
+          <coneGeometry args={[3.5, 16, 16, 1, true]} />
+          <meshBasicMaterial
+            color="#F5D39A"
+            transparent
+            opacity={0.045}
+            side={THREE.DoubleSide}
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+          />
         </mesh>
-      ))}
-      {/* Top ring */}
-      <mesh position={[0, 1.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[radius, 0.01, 6, 48]} />
-        <meshBasicMaterial color="#F5EDE4" transparent opacity={0.1} />
-      </mesh>
-      {/* Bottom ring */}
-      <mesh position={[0, -1.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[radius, 0.01, 6, 48]} />
-        <meshBasicMaterial color="#F5EDE4" transparent opacity={0.1} />
-      </mesh>
-      {/* Mid ring */}
-      <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[radius, 0.008, 6, 48]} />
-        <meshBasicMaterial color="#F5EDE4" transparent opacity={0.05} />
-      </mesh>
+        {/* Opposite beam, dimmer */}
+        <mesh rotation={[0, 0, -Math.PI / 2]} position={[-8, 0, 0]}>
+          <coneGeometry args={[3.5, 16, 16, 1, true]} />
+          <meshBasicMaterial
+            color="#F5D39A"
+            transparent
+            opacity={0.025}
+            side={THREE.DoubleSide}
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
+      </group>
     </group>
   );
 }
 
-/* ── Ship silhouette ── */
-function Ship({
-  baseX,
-  y,
-  z,
-  scale,
-  speed,
-  direction,
-}: {
-  baseX: number;
-  y: number;
-  z: number;
-  scale: number;
-  speed: number;
-  direction: number;
-}) {
-  const groupRef = useRef<THREE.Group>(null!);
+/* ── Simple seabird (triangle pair) ── */
+function Bird({ offset }: { offset: number }) {
+  const ref = useRef<THREE.Group>(null!);
 
   useFrame((state) => {
-    if (groupRef.current) {
-      // Ships drift slowly across the horizon
-      const t = state.clock.elapsedTime * speed * direction;
-      groupRef.current.position.x = baseX + t;
-      // Wrap around
-      if (groupRef.current.position.x > 18) groupRef.current.position.x = -18;
-      if (groupRef.current.position.x < -18) groupRef.current.position.x = 18;
-      // Gentle bob
-      groupRef.current.position.y =
-        y + Math.sin(state.clock.elapsedTime * 0.5 + baseX) * 0.03;
-    }
+    if (!ref.current) return;
+    const t = state.clock.elapsedTime * 0.3 + offset;
+    const radius = 8 + Math.sin(offset * 3) * 4;
+    ref.current.position.x = Math.cos(t) * radius;
+    ref.current.position.z = Math.sin(t) * radius;
+    ref.current.position.y = 6 + Math.sin(t * 2 + offset) * 0.8;
+    ref.current.rotation.y = -t + Math.PI / 2;
+    // Wing flap
+    const flap = Math.sin(state.clock.elapsedTime * 4 + offset * 5) * 0.4;
+    ref.current.children[0].rotation.z = flap;
+    ref.current.children[1].rotation.z = -flap;
   });
 
   return (
-    <group
-      ref={groupRef}
-      position={[baseX, y, z]}
-      scale={[scale * direction, scale, scale]}
-    >
-      {/* Hull */}
-      <mesh>
-        <boxGeometry args={[0.6, 0.08, 0.1]} />
-        <meshBasicMaterial color="#0A1018" transparent opacity={0.9} />
+    <group ref={ref}>
+      {/* Left wing */}
+      <mesh position={[-0.15, 0, 0]} rotation={[0, 0, 0.2]}>
+        <planeGeometry args={[0.3, 0.05]} />
+        <meshBasicMaterial color="#1A1A1A" side={THREE.DoubleSide} />
       </mesh>
-      {/* Superstructure */}
-      <mesh position={[0.05, 0.1, 0]}>
-        <boxGeometry args={[0.2, 0.12, 0.08]} />
-        <meshBasicMaterial color="#0A1018" transparent opacity={0.9} />
-      </mesh>
-      {/* Mast */}
-      <mesh position={[-0.1, 0.2, 0]}>
-        <boxGeometry args={[0.01, 0.25, 0.01]} />
-        <meshBasicMaterial color="#0A1018" transparent opacity={0.8} />
-      </mesh>
-      {/* Navigation light */}
-      <mesh position={[-0.1, 0.33, 0]}>
-        <sphereGeometry args={[0.012, 6, 6]} />
-        <meshBasicMaterial color="#F5D39A" transparent opacity={0.6} />
+      {/* Right wing */}
+      <mesh position={[0.15, 0, 0]} rotation={[0, 0, -0.2]}>
+        <planeGeometry args={[0.3, 0.05]} />
+        <meshBasicMaterial color="#1A1A1A" side={THREE.DoubleSide} />
       </mesh>
     </group>
   );
 }
 
-/* ── Stars - sparse, visible above the horizon ── */
-function Stars({ count = 200 }: { count?: number }) {
-  const ref = useRef<THREE.Points>(null!);
+/* ── Ships on the horizon ── */
+function Ship({
+  baseAngle,
+  radius,
+  speed,
+  scale,
+}: {
+  baseAngle: number;
+  radius: number;
+  speed: number;
+  scale: number;
+}) {
+  const ref = useRef<THREE.Group>(null!);
 
+  useFrame((state) => {
+    if (!ref.current) return;
+    const angle = baseAngle + state.clock.elapsedTime * speed;
+    ref.current.position.x = Math.cos(angle) * radius;
+    ref.current.position.z = Math.sin(angle) * radius;
+    ref.current.position.y =
+      -0.05 + Math.sin(state.clock.elapsedTime * 0.5 + baseAngle) * 0.03;
+    ref.current.rotation.y = -angle + Math.PI / 2;
+  });
+
+  return (
+    <group ref={ref} scale={scale}>
+      <mesh>
+        <boxGeometry args={[0.8, 0.1, 0.15]} />
+        <meshStandardMaterial color="#0E1820" roughness={0.9} />
+      </mesh>
+      <mesh position={[0.05, 0.12, 0]}>
+        <boxGeometry args={[0.25, 0.15, 0.1]} />
+        <meshStandardMaterial color="#0E1820" roughness={0.9} />
+      </mesh>
+      <mesh position={[-0.15, 0.25, 0]}>
+        <boxGeometry args={[0.015, 0.3, 0.015]} />
+        <meshStandardMaterial color="#0E1820" roughness={0.9} />
+      </mesh>
+      <mesh position={[-0.15, 0.42, 0]}>
+        <sphereGeometry args={[0.015, 4, 4]} />
+        <meshBasicMaterial color="#F5D39A" transparent opacity={0.5} />
+      </mesh>
+    </group>
+  );
+}
+
+/* ── Stars ── */
+function Stars({ count = 150 }: { count?: number }) {
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
       const theta = Math.random() * Math.PI * 2;
-      // Only upper hemisphere
-      const phi = Math.random() * Math.PI * 0.4;
-      const r = 14 + Math.random() * 4;
+      const phi = Math.random() * Math.PI * 0.35;
+      const r = 50 + Math.random() * 10;
       pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
       pos[i * 3 + 1] = r * Math.cos(phi);
       pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
@@ -280,62 +338,81 @@ function Stars({ count = 200 }: { count?: number }) {
   }, [count]);
 
   return (
-    <points ref={ref}>
+    <points>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial
-        size={0.03}
-        color="#F5EDE4"
-        transparent
-        opacity={0.4}
-        sizeAttenuation
-      />
+      <pointsMaterial size={0.08} color="#F5EDE4" transparent opacity={0.35} sizeAttenuation />
     </points>
   );
 }
 
-function Scene() {
+/* ── Camera controller: helix orbit driven by scroll ── */
+function CameraRig() {
   const { camera } = useThree();
-  const mouse = useRef({ x: 0, y: 0 });
+  const current = useRef({ angle: 0, height: 1, radius: 14, lookY: 4 });
 
-  useEffect(() => {
-    camera.position.set(0, 0.5, 0);
-    camera.lookAt(0, 0, -5);
-  }, [camera]);
+  useFrame(() => {
+    const p = scrollState.progress;
 
-  useFrame((state) => {
-    // Subtle camera sway following the mouse
-    mouse.current.x = THREE.MathUtils.lerp(
-      mouse.current.x,
-      state.pointer.x,
-      0.08
+    // Helix path: start far away at sea level, spiral in and up
+    const targetAngle = p * Math.PI * 2.2; // ~1.2 full orbits
+    const targetHeight = 0.8 + p * 8.5; // sea level to lantern height
+    const targetRadius = 14 - p * 9; // 14 -> 5
+    const targetLookY = 3 + p * 4.5;
+
+    // Smooth lerp
+    const c = current.current;
+    c.angle = THREE.MathUtils.lerp(c.angle, targetAngle, 0.06);
+    c.height = THREE.MathUtils.lerp(c.height, targetHeight, 0.06);
+    c.radius = THREE.MathUtils.lerp(c.radius, targetRadius, 0.06);
+    c.lookY = THREE.MathUtils.lerp(c.lookY, targetLookY, 0.06);
+
+    camera.position.set(
+      Math.cos(c.angle) * c.radius,
+      c.height,
+      Math.sin(c.angle) * c.radius
     );
-    mouse.current.y = THREE.MathUtils.lerp(
-      mouse.current.y,
-      state.pointer.y,
-      0.08
-    );
-    camera.rotation.y = mouse.current.x * 0.08;
-    camera.rotation.x = mouse.current.y * 0.04;
+    camera.lookAt(0, c.lookY, 0);
   });
 
+  return null;
+}
+
+function Scene() {
   return (
     <>
+      <ambientLight intensity={0.25} color="#B8C8D8" />
+      <directionalLight
+        position={[10, 8, -5]}
+        intensity={0.8}
+        color="#E8A85C"
+        castShadow={false}
+      />
+      <directionalLight
+        position={[-5, 3, 8]}
+        intensity={0.2}
+        color="#8BA4B8"
+      />
+      {/* Warm glow from the lantern */}
+      <pointLight position={[0, 7.6, 0]} intensity={2} color="#F5D39A" distance={12} />
+
       <Sky />
-      <Sea />
-      <HorizonGlow />
+      <Ocean />
       <Stars />
+      <Lighthouse />
 
-      <LanternGlow />
-      <LightBeam />
-      <GlassPanes />
+      {/* Birds */}
+      {[0, 1.5, 3, 4.5, 6.2].map((offset, i) => (
+        <Bird key={i} offset={offset} />
+      ))}
 
-      {/* Ships at varying distances */}
-      <Ship baseX={-5} y={-1.7} z={-7} scale={0.8} speed={0.15} direction={1} />
-      <Ship baseX={8} y={-1.75} z={-9} scale={0.5} speed={0.08} direction={-1} />
-      <Ship baseX={2} y={-1.72} z={-8} scale={0.65} speed={0.12} direction={1} />
-      <Ship baseX={-12} y={-1.78} z={-10} scale={0.4} speed={0.06} direction={-1} />
+      {/* Ships circling at various distances */}
+      <Ship baseAngle={0} radius={25} speed={0.02} scale={1.2} />
+      <Ship baseAngle={2} radius={30} speed={-0.015} scale={0.8} />
+      <Ship baseAngle={4} radius={22} speed={0.025} scale={1} />
+
+      <CameraRig />
     </>
   );
 }
@@ -344,8 +421,12 @@ export default function HeroScene() {
   return (
     <div className="absolute inset-0 z-0">
       <Canvas
-        camera={{ fov: 60, near: 0.1, far: 50 }}
-        gl={{ antialias: false, alpha: false, powerPreference: "high-performance" }}
+        camera={{ fov: 50, near: 0.1, far: 100 }}
+        gl={{
+          antialias: false,
+          alpha: false,
+          powerPreference: "high-performance",
+        }}
         dpr={[1, 1.5]}
       >
         <Scene />
@@ -356,7 +437,7 @@ export default function HeroScene() {
             intensity={0.5}
             mipmapBlur
           />
-          <Vignette offset={0.35} darkness={0.5} />
+          <Vignette offset={0.3} darkness={0.45} />
         </EffectComposer>
       </Canvas>
     </div>

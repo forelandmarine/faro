@@ -2,7 +2,7 @@
 
 @theme inline {
   --color-background: #000000;
-  --color-foreground: #F5EDE4;
+  --color-foreground: #EDEDED;
   --color-accent: #0070F3;
   --color-accent-light: #3291FF;
   --color-muted: #5A5A5A;
@@ -13,7 +13,7 @@
 
 html {
   background: #000000;
-  color: #F5EDE4;
+  color: #EDEDED;
 }
 
 body {
@@ -76,7 +76,7 @@ html.lenis, html.lenis body {
 /* Selection */
 ::selection {
   background: rgba(0, 112, 243, 0.3);
-  color: #F5EDE4;
+  color: #EDEDED;
 }
 
 /* Scrollbar */

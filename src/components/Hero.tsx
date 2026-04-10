@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lighthouse from "./Lighthouse";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,22 +11,22 @@ const HeroScene = dynamic(() => import("./HeroScene"), { ssr: false });
 
 export default function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".hero-line", {
-        y: 40,
+      gsap.from(".hero-reveal", {
+        y: 30,
         opacity: 0,
-        stagger: 0.1,
-        duration: 0.8,
+        stagger: 0.08,
+        duration: 0.7,
         ease: "power3.out",
-        delay: 0.2,
+        delay: 0.1,
       });
 
-      gsap.to(textRef.current, {
+      gsap.to(contentRef.current, {
         opacity: 0,
-        y: -30,
+        y: -20,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
@@ -43,46 +42,51 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen flex items-center justify-center overflow-hidden"
+      className="relative h-screen flex flex-col items-center justify-center overflow-hidden"
     >
       <HeroScene />
 
-      <div ref={textRef} className="relative z-10 text-center px-6 max-w-5xl">
-        <div className="hero-line flex items-center justify-center gap-3 mb-8">
-          <Lighthouse size={28} beam />
-          <span className="text-xs font-medium tracking-[0.3em] uppercase text-accent">
-            Creative Studio
-          </span>
+      <div ref={contentRef} className="relative z-10 w-full max-w-[90vw] px-6">
+        {/* Main title */}
+        <div className="hero-reveal">
+          <h1 className="text-[clamp(4rem,15vw,14rem)] font-black leading-[0.85] tracking-[-0.04em] text-white">
+            FARO
+          </h1>
         </div>
 
-        <h1 className="hero-line text-[clamp(3rem,8vw,9rem)] font-black leading-[0.9] tracking-tighter mb-6">
-          FARO
-        </h1>
+        {/* Tagline */}
+        <div className="hero-reveal mt-4 md:mt-6">
+          <p className="text-[clamp(1rem,2.5vw,1.75rem)] font-light leading-snug text-white/70 max-w-xl">
+            Brands designed to be found.
+          </p>
+        </div>
 
-        <p className="hero-line text-[clamp(1.1rem,2.5vw,2rem)] font-light leading-tight text-foreground/80 max-w-2xl mx-auto">
-          Brands designed to be found.
-        </p>
+        {/* Separator */}
+        <div className="hero-reveal mt-8 md:mt-10">
+          <div className="w-12 h-px bg-white/20" />
+        </div>
 
-        <div className="hero-line mt-12 flex items-center justify-center gap-8">
+        {/* CTA */}
+        <div className="hero-reveal mt-6 md:mt-8 flex items-center gap-6">
           <a
             href="#work"
-            className="text-sm font-semibold tracking-widest uppercase border-b-2 border-accent pb-1 hover:text-accent transition-colors"
+            className="text-[13px] font-medium tracking-[0.08em] uppercase text-white/90 hover:text-accent transition-colors"
           >
-            See our work
+            View work
           </a>
+          <span className="w-1 h-1 rounded-full bg-white/20" />
           <a
             href="#contact"
-            className="text-sm font-semibold tracking-widest uppercase text-muted hover:text-foreground transition-colors"
+            className="text-[13px] font-medium tracking-[0.08em] uppercase text-white/40 hover:text-white/80 transition-colors"
           >
             Get in touch
           </a>
         </div>
+      </div>
 
-        <div className="hero-line mt-16 animate-bounce">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="mx-auto opacity-40">
-            <path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
+      {/* Scroll indicator */}
+      <div className="hero-reveal absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+        <div className="w-px h-12 bg-gradient-to-b from-transparent via-white/30 to-transparent animate-pulse" />
       </div>
     </section>
   );

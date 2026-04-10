@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Lexend_Peta } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,15 +8,20 @@ const inter = Inter({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
+const lexendPeta = Lexend_Peta({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
 export const metadata: Metadata = {
   title: "FARO — Creative Studio",
   description:
-    "We design and build websites that make people stop scrolling. Web design, brand identity, creative media, and interactive experiences.",
+    "Brands designed to be found. Web design, brand identity, creative media, and interactive experiences.",
   metadataBase: new URL("https://faro.is"),
   openGraph: {
     title: "FARO — Creative Studio",
-    description:
-      "We design and build websites that make people stop scrolling.",
+    description: "Brands designed to be found.",
     url: "https://faro.is",
     siteName: "FARO",
     type: "website",
@@ -25,8 +30,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "FARO — Creative Studio",
-    description:
-      "We design and build websites that make people stop scrolling.",
+    description: "Brands designed to be found.",
   },
   icons: {
     icon: "/favicon.svg",
@@ -40,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} antialiased`}>
+    <html lang="en" className={`${inter.variable} ${lexendPeta.variable} antialiased`}>
       <body className="bg-background text-foreground">{children}</body>
     </html>
   );

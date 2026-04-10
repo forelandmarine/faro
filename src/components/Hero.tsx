@@ -64,7 +64,7 @@ export default function Hero() {
 
       <div ref={textRef} className="relative z-10 text-center px-6 max-w-5xl">
         <div className="flex items-center justify-center gap-3 mb-8">
-          <Lighthouse size={32} color="#C8965A" beam />
+          <Lighthouse size={32} color="#4A9EF5" beam />
           <span className="text-sm font-medium tracking-[0.3em] uppercase text-accent">
             Creative Studio
           </span>

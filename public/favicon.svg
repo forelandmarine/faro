@@ -1,24 +1,24 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="32" height="32" rx="6" fill="#0A0A0A"/>
   <!-- Lamp housing -->
-  <rect x="13" y="7" width="6" height="4" rx="0.5" fill="#C8965A"/>
+  <rect x="13" y="7" width="6" height="4" rx="0.5" fill="#4A9EF5"/>
   <circle cx="16" cy="9" r="1" fill="#0A0A0A" opacity="0.4"/>
   <!-- Cap -->
-  <path d="M13.5 7L16 4L18.5 7" stroke="#C8965A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="16" y1="4" x2="16" y2="2.5" stroke="#C8965A" stroke-width="0.8" stroke-linecap="round"/>
+  <path d="M13.5 7L16 4L18.5 7" stroke="#4A9EF5" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="16" y1="4" x2="16" y2="2.5" stroke="#4A9EF5" stroke-width="0.8" stroke-linecap="round"/>
   <!-- Gallery rail -->
-  <line x1="12" y1="7" x2="20" y2="7" stroke="#C8965A" stroke-width="0.8" stroke-linecap="round"/>
+  <line x1="12" y1="7" x2="20" y2="7" stroke="#4A9EF5" stroke-width="0.8" stroke-linecap="round"/>
   <!-- Tower -->
-  <path d="M13 11L12 27H20L19 11Z" fill="none" stroke="#C8965A" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M13 11L12 27H20L19 11Z" fill="none" stroke="#4A9EF5" stroke-width="1.2" stroke-linejoin="round"/>
   <!-- Stripes -->
-  <line x1="12.7" y1="15" x2="19.3" y2="15" stroke="#C8965A" stroke-width="0.5" opacity="0.4"/>
-  <line x1="12.4" y1="19" x2="19.6" y2="19" stroke="#C8965A" stroke-width="0.5" opacity="0.4"/>
-  <line x1="12.2" y1="23" x2="19.8" y2="23" stroke="#C8965A" stroke-width="0.5" opacity="0.4"/>
+  <line x1="12.7" y1="15" x2="19.3" y2="15" stroke="#4A9EF5" stroke-width="0.5" opacity="0.4"/>
+  <line x1="12.4" y1="19" x2="19.6" y2="19" stroke="#4A9EF5" stroke-width="0.5" opacity="0.4"/>
+  <line x1="12.2" y1="23" x2="19.8" y2="23" stroke="#4A9EF5" stroke-width="0.5" opacity="0.4"/>
   <!-- Window -->
-  <rect x="15" y="16" width="2" height="2.5" rx="1" fill="#C8965A" opacity="0.3"/>
+  <rect x="15" y="16" width="2" height="2.5" rx="1" fill="#4A9EF5" opacity="0.3"/>
   <!-- Base -->
-  <line x1="10" y1="27" x2="22" y2="27" stroke="#C8965A" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="10" y1="27" x2="22" y2="27" stroke="#4A9EF5" stroke-width="1.5" stroke-linecap="round"/>
   <!-- Light beams -->
-  <path d="M16 7L8 2" stroke="#C8965A" stroke-width="0.5" opacity="0.15"/>
-  <path d="M16 7L24 2" stroke="#C8965A" stroke-width="0.5" opacity="0.15"/>
+  <path d="M16 7L8 2" stroke="#4A9EF5" stroke-width="0.5" opacity="0.15"/>
+  <path d="M16 7L24 2" stroke="#4A9EF5" stroke-width="0.5" opacity="0.15"/>
 </svg>

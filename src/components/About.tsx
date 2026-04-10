@@ -53,7 +53,7 @@ export default function About() {
             {/* Abstract placeholder with lighthouse */}
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-surface to-surface-light" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <Lighthouse size={160} color="#C8965A" beam />
+              <Lighthouse size={160} color="#4A9EF5" beam />
             </div>
             {/* Film grain vibe */}
             <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />

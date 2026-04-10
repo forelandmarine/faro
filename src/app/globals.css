@@ -2,9 +2,9 @@
 
 @theme inline {
   --color-background: #0A0A0A;
-  --color-foreground: #F5F0EB;
-  --color-accent: #C8965A;
-  --color-accent-light: #E0B97A;
+  --color-foreground: #F0F0F0;
+  --color-accent: #4A9EF5;
+  --color-accent-light: #74B6F7;
   --color-muted: #6B6B6B;
   --color-surface: #141414;
   --color-surface-light: #1E1E1E;
@@ -13,7 +13,7 @@
 
 html {
   background: #0A0A0A;
-  color: #F5F0EB;
+  color: #F0F0F0;
 }
 
 body {
@@ -104,13 +104,13 @@ html.lenis, html.lenis body {
 
 /* Glow effect */
 .glow {
-  box-shadow: 0 0 60px rgba(200, 150, 90, 0.15), 0 0 120px rgba(200, 150, 90, 0.05);
+  box-shadow: 0 0 60px rgba(74, 158, 245, 0.15), 0 0 120px rgba(74, 158, 245, 0.05);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(200, 150, 90, 0.3);
-  color: #F5F0EB;
+  background: rgba(74, 158, 245, 0.3);
+  color: #F0F0F0;
 }
 
 /* Scrollbar */

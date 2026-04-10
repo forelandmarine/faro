@@ -4,41 +4,121 @@ import { useEffect, useRef, useCallback } from "react";
 
 export const scrollState = { progress: 0 };
 
+interface Star {
+  x: number;
+  y: number;
+  r: number;
+  brightness: number;
+  speed: number;
+  phase: number;
+  // Constellation membership (-1 = none)
+  group: number;
+  // Color tint: 0=white, 1=blue, 2=cyan, 3=warm
+  tint: number;
+}
+
+interface ConstellationLine {
+  a: number;
+  b: number;
+  group: number;
+}
+
 export default function HeroScene() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouse = useRef({ x: 0.5, y: 0.5 });
-  const stars = useRef<
-    { x: number; y: number; r: number; base: number; speed: number; phase: number }[]
-  >([]);
-  const shootingStars = useRef<
-    {
-      active: boolean;
-      timer: number;
-      x: number; y: number;
-      vx: number; vy: number;
-      life: number; maxLife: number;
-    }[]
-  >([]);
+  const mouse = useRef({ x: 0.5, y: 0.5, targetX: 0.5, targetY: 0.5 });
+  const allStars = useRef<Star[]>([]);
+  const constellationLines = useRef<ConstellationLine[]>([]);
+  const scroll = useRef(0);
 
   const init = useCallback((w: number, h: number) => {
-    const s: typeof stars.current = [];
-    for (let i = 0; i < 500; i++) {
-      const isBright = Math.random() < 0.07;
-      s.push({
+    const stars: Star[] = [];
+    const lines: ConstellationLine[] = [];
+
+    // ── Background field stars ──
+    for (let i = 0; i < 600; i++) {
+      const isBright = Math.random() < 0.04;
+      stars.push({
         x: Math.random() * w,
-        y: Math.random() * h * 0.6,
-        r: isBright ? 1.2 + Math.random() * 1.8 : 0.3 + Math.random() * 0.7,
-        base: isBright ? 0.75 + Math.random() * 0.25 : 0.15 + Math.random() * 0.4,
-        speed: 0.3 + Math.random() * 2,
+        y: Math.random() * h,
+        r: isBright ? 1.2 + Math.random() * 1.5 : 0.3 + Math.random() * 0.6,
+        brightness: isBright ? 0.6 + Math.random() * 0.4 : 0.08 + Math.random() * 0.25,
+        speed: 0.5 + Math.random() * 2,
         phase: Math.random() * Math.PI * 2,
+        group: -1,
+        tint: Math.random() < 0.3 ? 1 : Math.random() < 0.1 ? 2 : 0,
       });
     }
-    stars.current = s;
-    shootingStars.current = [
-      { active: false, timer: 2, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 0.8 },
-      { active: false, timer: 6, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 0.6 },
-      { active: false, timer: 11, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 0.7 },
+
+    // ── Constellation clusters ──
+    // Each constellation is a group of bright stars connected by lines
+    // They're spread across the viewport
+    const constellations = [
+      // Group 0: top-left, angular network
+      { cx: w * 0.15, cy: h * 0.2, spread: w * 0.12, count: 7 },
+      // Group 1: centre-top, large
+      { cx: w * 0.5, cy: h * 0.15, spread: w * 0.15, count: 9 },
+      // Group 2: right, mid-height
+      { cx: w * 0.82, cy: h * 0.3, spread: w * 0.1, count: 6 },
+      // Group 3: bottom-left
+      { cx: w * 0.25, cy: h * 0.6, spread: w * 0.1, count: 5 },
+      // Group 4: bottom-right
+      { cx: w * 0.7, cy: h * 0.65, spread: w * 0.12, count: 7 },
+      // Group 5: far left mid
+      { cx: w * 0.05, cy: h * 0.45, spread: w * 0.08, count: 5 },
+      // Group 6: centre
+      { cx: w * 0.45, cy: h * 0.42, spread: w * 0.14, count: 8 },
+      // Group 7: top-right
+      { cx: w * 0.9, cy: h * 0.1, spread: w * 0.08, count: 5 },
     ];
+
+    for (let g = 0; g < constellations.length; g++) {
+      const c = constellations[g];
+      const groupStart = stars.length;
+
+      for (let i = 0; i < c.count; i++) {
+        const angle = (i / c.count) * Math.PI * 2 + Math.random() * 0.8;
+        const dist = Math.random() * c.spread;
+        stars.push({
+          x: c.cx + Math.cos(angle) * dist,
+          y: c.cy + Math.sin(angle) * dist * 0.6,
+          r: 1.5 + Math.random() * 2,
+          brightness: 0.7 + Math.random() * 0.3,
+          speed: 0.3 + Math.random() * 1,
+          phase: Math.random() * Math.PI * 2,
+          group: g,
+          tint: g % 3 === 0 ? 2 : g % 3 === 1 ? 1 : 0,
+        });
+      }
+
+      // Connect nearby stars in the group
+      for (let i = groupStart; i < stars.length; i++) {
+        let closest = -1;
+        let closestDist = Infinity;
+        // Find 1-2 nearest neighbours
+        for (let j = groupStart; j < stars.length; j++) {
+          if (i === j) continue;
+          const dx = stars[i].x - stars[j].x;
+          const dy = stars[i].y - stars[j].y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < closestDist && d < c.spread * 1.2) {
+            closestDist = d;
+            closest = j;
+          }
+        }
+        if (closest !== -1) {
+          // Avoid duplicate lines
+          const exists = lines.some(
+            (l) => (l.a === i && l.b === closest) || (l.a === closest && l.b === i)
+          );
+          if (!exists) {
+            lines.push({ a: i, b: closest, group: g });
+          }
+        }
+      }
+    }
+
+    allStars.current = stars;
+    constellationLines.current = lines;
   }, []);
 
   useEffect(() => {
@@ -59,492 +139,210 @@ export default function HeroScene() {
     };
 
     const onMouse = (e: MouseEvent) => {
-      mouse.current.x = e.clientX / window.innerWidth;
-      mouse.current.y = e.clientY / window.innerHeight;
+      mouse.current.targetX = e.clientX / window.innerWidth;
+      mouse.current.targetY = e.clientY / window.innerHeight;
     };
 
     resize();
     window.addEventListener("resize", resize);
     window.addEventListener("mousemove", onMouse);
 
-    /* ── Helper: draw a small house silhouette ── */
-    const drawHouse = (
-      x: number, baseY: number,
-      bw: number, bh: number, roofH: number,
-      hasWindow: boolean, windowLit: boolean
-    ) => {
-      // Walls
-      ctx.fillStyle = "#0E1218";
-      ctx.fillRect(x - bw / 2, baseY - bh, bw, bh);
-      // Roof
-      ctx.beginPath();
-      ctx.moveTo(x - bw / 2 - 2, baseY - bh);
-      ctx.lineTo(x, baseY - bh - roofH);
-      ctx.lineTo(x + bw / 2 + 2, baseY - bh);
-      ctx.closePath();
-      ctx.fillStyle = "#0C1018";
-      ctx.fill();
-      // Moonlit roof edge
-      ctx.beginPath();
-      ctx.moveTo(x - bw / 2 - 2, baseY - bh);
-      ctx.lineTo(x, baseY - bh - roofH);
-      ctx.strokeStyle = "rgba(180, 195, 220, 0.08)";
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-      // Window
-      if (hasWindow) {
-        const winW = bw * 0.3;
-        const winH = bh * 0.35;
-        const winY = baseY - bh * 0.65;
-        if (windowLit) {
-          // Warm glow
-          const wg = ctx.createRadialGradient(x, winY, 0, x, winY, winW * 3);
-          wg.addColorStop(0, "rgba(226, 180, 100, 0.06)");
-          wg.addColorStop(1, "rgba(226, 180, 100, 0)");
-          ctx.fillStyle = wg;
-          ctx.beginPath();
-          ctx.arc(x, winY, winW * 3, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = "rgba(226, 180, 100, 0.35)";
-        } else {
-          ctx.fillStyle = "rgba(140, 160, 190, 0.06)";
-        }
-        ctx.fillRect(x - winW / 2, winY - winH / 2, winW, winH);
-      }
-    };
-
-    /* ── Helper: draw a tree silhouette ── */
-    const drawTree = (x: number, baseY: number, h: number, spread: number) => {
-      ctx.fillStyle = "#080C12";
-      // Trunk
-      ctx.fillRect(x - 1, baseY - h * 0.3, 2, h * 0.3);
-      // Canopy (triangle)
-      ctx.beginPath();
-      ctx.moveTo(x - spread, baseY - h * 0.25);
-      ctx.lineTo(x, baseY - h);
-      ctx.lineTo(x + spread, baseY - h * 0.25);
-      ctx.closePath();
-      ctx.fill();
-      // Moonlit edge
-      ctx.beginPath();
-      ctx.moveTo(x - spread, baseY - h * 0.25);
-      ctx.lineTo(x, baseY - h);
-      ctx.strokeStyle = "rgba(180, 195, 220, 0.04)";
-      ctx.lineWidth = 0.6;
-      ctx.stroke();
-    };
+    const tintColors = [
+      [255, 255, 255],   // white
+      [140, 180, 255],   // blue
+      [100, 220, 240],   // cyan
+      [255, 200, 140],   // warm
+    ];
 
     const draw = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
       const dt = 1 / 60;
       time += dt;
+
+      // Smooth mouse
+      mouse.current.x += (mouse.current.targetX - mouse.current.x) * 0.05;
+      mouse.current.y += (mouse.current.targetY - mouse.current.y) * 0.05;
+
+      // Smooth scroll tracking
+      scroll.current += (scrollState.progress - scroll.current) * 0.08;
+      const sp = scroll.current; // 0-1
+
       ctx.clearRect(0, 0, w, h);
 
-      // ── Sky ──
-      const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
-      skyGrad.addColorStop(0, "#000000");
-      skyGrad.addColorStop(0.45, "#020306");
-      skyGrad.addColorStop(0.65, "#05080F");
-      skyGrad.addColorStop(1, "#080C16");
-      ctx.fillStyle = skyGrad;
+      // ── Background ──
+      // Shifts from deep black to a dark blue-purple as you scroll
+      const bgR = Math.floor(2 + sp * 6);
+      const bgG = Math.floor(3 + sp * 4);
+      const bgB = Math.floor(8 + sp * 18);
+      ctx.fillStyle = `rgb(${bgR},${bgG},${bgB})`;
       ctx.fillRect(0, 0, w, h);
 
-      // ── Stars ──
-      const mx = (mouse.current.x - 0.5) * 10;
-      const my = (mouse.current.y - 0.5) * 5;
-      for (const star of stars.current) {
-        const twinkle = star.base + Math.sin(time * star.speed + star.phase) * star.base * 0.35;
-        const px = star.x + mx * (star.r * 0.4);
-        const py = star.y + my * (star.r * 0.25);
-        if (star.r > 1.2) {
-          const glow = ctx.createRadialGradient(px, py, 0, px, py, star.r * 5);
-          glow.addColorStop(0, `rgba(255,255,255,${twinkle * 0.2})`);
-          glow.addColorStop(1, "rgba(255,255,255,0)");
+      // Subtle radial glow that intensifies with scroll
+      const centerGlow = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w * 0.6);
+      centerGlow.addColorStop(0, `rgba(60,80,140,${0.02 + sp * 0.06})`);
+      centerGlow.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = centerGlow;
+      ctx.fillRect(0, 0, w, h);
+
+      // ── Parallax offset ──
+      const mx = (mouse.current.x - 0.5) * 15;
+      const my = (mouse.current.y - 0.5) * 10;
+
+      const stars = allStars.current;
+      const lines = constellationLines.current;
+
+      // ── Draw constellation lines ──
+      // Lines fade in/out based on scroll and pulse
+      for (const line of lines) {
+        const sa = stars[line.a];
+        const sb = stars[line.b];
+
+        // Parallax
+        const pxA = sa.x + mx * (sa.r * 0.3);
+        const pyA = sa.y + my * (sa.r * 0.2);
+        const pxB = sb.x + mx * (sb.r * 0.3);
+        const pyB = sb.y + my * (sb.r * 0.2);
+
+        // Scroll state determines line visibility
+        // 0-0.3: lines fading in
+        // 0.3-0.7: fully visible, pulsing
+        // 0.7-1: lines transform - become brighter, more connected
+        let lineAlpha: number;
+        if (sp < 0.3) {
+          lineAlpha = (sp / 0.3) * 0.15;
+        } else if (sp < 0.7) {
+          lineAlpha = 0.15 + Math.sin(time * 0.8 + line.group) * 0.05;
+        } else {
+          const t = (sp - 0.7) / 0.3;
+          lineAlpha = 0.15 + t * 0.25;
+        }
+
+        const tint = tintColors[sa.tint];
+        const glowPhase = sp > 0.7 ? (sp - 0.7) / 0.3 : 0;
+
+        // Line glow (wider, fainter) when in final state
+        if (glowPhase > 0) {
+          ctx.strokeStyle = `rgba(${tint[0]},${tint[1]},${tint[2]},${lineAlpha * glowPhase * 0.4})`;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(pxA, pyA);
+          ctx.lineTo(pxB, pyB);
+          ctx.stroke();
+        }
+
+        // Main line
+        ctx.strokeStyle = `rgba(${tint[0]},${tint[1]},${tint[2]},${lineAlpha})`;
+        ctx.lineWidth = sp > 0.7 ? 1 + glowPhase * 0.5 : 0.8;
+        ctx.beginPath();
+        ctx.moveTo(pxA, pyA);
+        ctx.lineTo(pxB, pyB);
+        ctx.stroke();
+
+        // Data pulse traveling along lines (sci-fi)
+        if (sp > 0.4) {
+          const pulseT = (time * 0.5 + line.group * 0.7 + line.a * 0.3) % 1;
+          const pulseX = pxA + (pxB - pxA) * pulseT;
+          const pulseY = pyA + (pyB - pyA) * pulseT;
+          const pulseAlpha = Math.sin(pulseT * Math.PI) * (sp > 0.7 ? 0.6 : 0.3);
+          const pg = ctx.createRadialGradient(pulseX, pulseY, 0, pulseX, pulseY, 4);
+          pg.addColorStop(0, `rgba(${tint[0]},${tint[1]},${tint[2]},${pulseAlpha})`);
+          pg.addColorStop(1, `rgba(${tint[0]},${tint[1]},${tint[2]},0)`);
+          ctx.fillStyle = pg;
+          ctx.beginPath();
+          ctx.arc(pulseX, pulseY, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // ── Draw stars ──
+      for (const star of stars) {
+        const twinkle = star.brightness +
+          Math.sin(time * star.speed + star.phase) * star.brightness * 0.3;
+        const px = star.x + mx * (star.r * 0.3);
+        const py = star.y + my * (star.r * 0.2);
+        const tint = tintColors[star.tint];
+
+        const isConstellation = star.group !== -1;
+
+        // Scroll affects constellation stars
+        let sizeMult = 1;
+        let alphaMult = 1;
+        if (isConstellation) {
+          // Stars grow and brighten as you scroll
+          sizeMult = 1 + sp * 0.8;
+          alphaMult = 0.6 + sp * 0.4;
+
+          // At high scroll, constellation stars get an outer ring
+          if (sp > 0.5) {
+            const ringAlpha = (sp - 0.5) * 0.4;
+            ctx.strokeStyle = `rgba(${tint[0]},${tint[1]},${tint[2]},${ringAlpha * twinkle})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.arc(px, py, star.r * sizeMult * 3.5, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        }
+
+        // Halo glow
+        if (star.r > 1 || isConstellation) {
+          const glowR = star.r * (isConstellation ? 6 * sizeMult : 4);
+          const glow = ctx.createRadialGradient(px, py, 0, px, py, glowR);
+          glow.addColorStop(0, `rgba(${tint[0]},${tint[1]},${tint[2]},${twinkle * alphaMult * 0.2})`);
+          glow.addColorStop(1, `rgba(${tint[0]},${tint[1]},${tint[2]},0)`);
           ctx.fillStyle = glow;
           ctx.beginPath();
-          ctx.arc(px, py, star.r * 5, 0, Math.PI * 2);
+          ctx.arc(px, py, glowR, 0, Math.PI * 2);
           ctx.fill();
         }
-        ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
-        ctx.beginPath();
-        ctx.arc(px, py, star.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
 
-      // ── Shooting stars ──
-      for (const ss of shootingStars.current) {
-        ss.timer -= dt;
-        if (!ss.active && ss.timer <= 0) {
-          ss.active = true;
-          ss.life = 0;
-          ss.x = Math.random() * w * 0.7 + w * 0.1;
-          ss.y = Math.random() * h * 0.25 + h * 0.05;
-          const angle = Math.PI * 0.12 + Math.random() * 0.35;
-          const speed = 500 + Math.random() * 400;
-          ss.vx = Math.cos(angle) * speed;
-          ss.vy = Math.sin(angle) * speed;
-          ss.maxLife = 0.4 + Math.random() * 0.5;
-        }
-        if (ss.active) {
-          ss.life += dt;
-          ss.x += ss.vx * dt;
-          ss.y += ss.vy * dt;
-          if (ss.life > ss.maxLife) {
-            ss.active = false;
-            ss.timer = 4 + Math.random() * 8;
-            continue;
-          }
-          const fade = ss.life < 0.08 ? ss.life / 0.08
-            : ss.life > ss.maxLife * 0.5 ? (ss.maxLife - ss.life) / (ss.maxLife * 0.5) : 1;
-          const tailLen = 80 * fade;
-          const grad = ctx.createLinearGradient(
-            ss.x, ss.y,
-            ss.x - (ss.vx / 500) * tailLen, ss.y - (ss.vy / 500) * tailLen
-          );
-          grad.addColorStop(0, `rgba(255,255,255,${fade * 0.9})`);
-          grad.addColorStop(1, "rgba(255,255,255,0)");
-          ctx.strokeStyle = grad;
-          ctx.lineWidth = 2;
+        // Core
+        const coreR = star.r * sizeMult;
+        ctx.fillStyle = `rgba(${tint[0]},${tint[1]},${tint[2]},${twinkle * alphaMult})`;
+        ctx.beginPath();
+        ctx.arc(px, py, coreR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Cross-hair spikes on bright constellation stars when scrolled
+        if (isConstellation && sp > 0.3 && star.r > 1.8) {
+          const spikeLen = star.r * sizeMult * 4 * sp;
+          const spikeAlpha = twinkle * 0.15 * sp;
+          ctx.strokeStyle = `rgba(${tint[0]},${tint[1]},${tint[2]},${spikeAlpha})`;
+          ctx.lineWidth = 0.5;
+          // Vertical
           ctx.beginPath();
-          ctx.moveTo(ss.x, ss.y);
-          ctx.lineTo(ss.x - (ss.vx / 500) * tailLen, ss.y - (ss.vy / 500) * tailLen);
+          ctx.moveTo(px, py - spikeLen);
+          ctx.lineTo(px, py + spikeLen);
           ctx.stroke();
-          ctx.fillStyle = `rgba(255,255,255,${fade})`;
+          // Horizontal
           ctx.beginPath();
-          ctx.arc(ss.x, ss.y, 2, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.moveTo(px - spikeLen, py);
+          ctx.lineTo(px + spikeLen, py);
+          ctx.stroke();
         }
       }
 
-      // ── Moon ──
-      const moonX = w * 0.12;
-      const moonY = h * 0.22;
-      const moonGlow = ctx.createRadialGradient(moonX, moonY, 0, moonX, moonY, 90);
-      moonGlow.addColorStop(0, "rgba(200,210,230,0.07)");
-      moonGlow.addColorStop(0.5, "rgba(160,175,200,0.02)");
-      moonGlow.addColorStop(1, "rgba(160,175,200,0)");
-      ctx.fillStyle = moonGlow;
-      ctx.beginPath();
-      ctx.arc(moonX, moonY, 90, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "rgba(220,225,235,0.08)";
-      ctx.beginPath();
-      ctx.arc(moonX, moonY, 12, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "rgba(235,240,248,0.13)";
-      ctx.beginPath();
-      ctx.arc(moonX, moonY, 8, 0, Math.PI * 2);
-      ctx.fill();
-
-      // ════════════════════════════════════════════
-      //  COASTLINE - harbour with channel in middle
-      // ════════════════════════════════════════════
-      const horizonY = h * 0.68;
-      const channelL = w * 0.44; // left side of harbour channel
-      const channelR = w * 0.56; // right side of harbour channel
-      const waterLevel = horizonY + 6; // water in the channel
-
-      // ── LEFT HEADLAND (hills, town) ──
-      const leftCoast: [number, number][] = [
-        [0, horizonY + 10],
-        [w * 0.03, horizonY + 5],
-        [w * 0.07, horizonY - 4],
-        [w * 0.11, horizonY + 2],
-        [w * 0.15, horizonY - 15],
-        [w * 0.19, horizonY - 8],
-        [w * 0.23, horizonY - 28],  // hilltop
-        [w * 0.27, horizonY - 22],
-        [w * 0.31, horizonY - 30],  // highest point left
-        [w * 0.35, horizonY - 18],
-        [w * 0.38, horizonY - 10],
-        [w * 0.41, horizonY - 4],
-        [channelL, waterLevel],      // drops to water at channel
-      ];
-
-      // ── RIGHT HEADLAND (lighthouse headland) ──
-      const rightCoast: [number, number][] = [
-        [channelR, waterLevel],      // rises from channel
-        [w * 0.59, horizonY - 3],
-        [w * 0.62, horizonY - 8],
-        [w * 0.65, horizonY - 15],
-        [w * 0.68, horizonY - 25],
-        [w * 0.71, horizonY - 35],
-        [w * 0.74, horizonY - 42],   // lighthouse peak
-        [w * 0.77, horizonY - 35],
-        [w * 0.80, horizonY - 22],
-        [w * 0.84, horizonY - 12],
-        [w * 0.88, horizonY - 5],
-        [w * 0.92, horizonY],
-        [w * 0.96, horizonY + 5],
-        [w, horizonY + 10],
-      ];
-
-      // Fill LEFT headland
-      ctx.beginPath();
-      ctx.moveTo(leftCoast[0][0], leftCoast[0][1]);
-      for (const p of leftCoast) ctx.lineTo(p[0], p[1]);
-      ctx.lineTo(channelL, h);
-      ctx.lineTo(0, h);
-      ctx.closePath();
-      ctx.fillStyle = "#0A0E14";
-      ctx.fill();
-
-      // Fill RIGHT headland
-      ctx.beginPath();
-      ctx.moveTo(rightCoast[0][0], rightCoast[0][1]);
-      for (const p of rightCoast) ctx.lineTo(p[0], p[1]);
-      ctx.lineTo(w, h);
-      ctx.lineTo(channelR, h);
-      ctx.closePath();
-      ctx.fillStyle = "#0A0E14";
-      ctx.fill();
-
-      // Moonlit edges - left
-      ctx.beginPath();
-      ctx.moveTo(leftCoast[0][0], leftCoast[0][1]);
-      for (const p of leftCoast) ctx.lineTo(p[0], p[1]);
-      ctx.strokeStyle = "rgba(180,195,220,0.12)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(140,165,200,0.05)";
-      ctx.lineWidth = 3;
-      ctx.stroke();
-
-      // Moonlit edges - right
-      ctx.beginPath();
-      ctx.moveTo(rightCoast[0][0], rightCoast[0][1]);
-      for (const p of rightCoast) ctx.lineTo(p[0], p[1]);
-      ctx.strokeStyle = "rgba(180,195,220,0.12)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(140,165,200,0.05)";
-      ctx.lineWidth = 3;
-      ctx.stroke();
-
-      // ── Harbour channel water ──
-      const chGrad = ctx.createLinearGradient(0, waterLevel, 0, h);
-      chGrad.addColorStop(0, "#060A12");
-      chGrad.addColorStop(1, "#030508");
-      ctx.fillStyle = chGrad;
-      ctx.fillRect(channelL, waterLevel, channelR - channelL, h - waterLevel);
-
-      // Channel shimmer
-      for (let i = 0; i < 6; i++) {
-        const sy = waterLevel + 10 + i * 15;
-        const shimmer = Math.sin(time * 0.5 + i * 0.9) * 0.025 + 0.02;
-        ctx.strokeStyle = `rgba(150,170,200,${shimmer})`;
-        ctx.lineWidth = 0.5;
-        const sx = channelL + 10 + Math.sin(time * 0.4 + i) * 8;
-        ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(sx + 20 + Math.sin(i) * 15, sy);
-        ctx.stroke();
-      }
-
-      // ── Trees on left hillsides ──
-      drawTree(w * 0.13, horizonY - 12, 14, 5);
-      drawTree(w * 0.16, horizonY - 6, 11, 4);
-      drawTree(w * 0.20, horizonY - 14, 16, 6);
-      drawTree(w * 0.22, horizonY - 24, 13, 5);
-      drawTree(w * 0.25, horizonY - 26, 15, 5);
-      drawTree(w * 0.28, horizonY - 23, 12, 4);
-      drawTree(w * 0.33, horizonY - 25, 14, 5);
-      drawTree(w * 0.36, horizonY - 15, 11, 4);
-      drawTree(w * 0.39, horizonY - 8, 10, 4);
-
-      // Trees on right hillside
-      drawTree(w * 0.61, horizonY - 6, 10, 4);
-      drawTree(w * 0.63, horizonY - 12, 13, 5);
-      drawTree(w * 0.66, horizonY - 20, 15, 5);
-      drawTree(w * 0.69, horizonY - 30, 14, 5);
-      drawTree(w * 0.80, horizonY - 20, 12, 4);
-      drawTree(w * 0.83, horizonY - 10, 11, 4);
-      drawTree(w * 0.86, horizonY - 4, 10, 4);
-
-      // ── Houses on left hilltops (the town) ──
-      drawHouse(w * 0.17, horizonY - 10, 8, 7, 5, true, true);
-      drawHouse(w * 0.21, horizonY - 18, 7, 6, 4, true, false);
-      drawHouse(w * 0.24, horizonY - 26, 9, 8, 5, true, true);
-      drawHouse(w * 0.27, horizonY - 22, 6, 5, 4, true, false);
-      drawHouse(w * 0.30, horizonY - 27, 8, 7, 5, true, true);
-      drawHouse(w * 0.32, horizonY - 24, 7, 6, 4, true, false);
-      drawHouse(w * 0.34, horizonY - 20, 10, 8, 6, true, true);
-      drawHouse(w * 0.37, horizonY - 14, 7, 6, 4, true, false);
-      drawHouse(w * 0.40, horizonY - 6, 8, 7, 5, true, true);
-
-      // Scattered houses on right side
-      drawHouse(w * 0.60, horizonY - 5, 7, 6, 4, true, true);
-      drawHouse(w * 0.64, horizonY - 12, 8, 7, 5, true, false);
-      drawHouse(w * 0.67, horizonY - 22, 7, 6, 4, true, true);
-
-      // ── Keeper's cottage under the lighthouse ──
-      const cottageX = w * 0.74 + 14;
-      const cottageBaseY = horizonY - 35;
-      drawHouse(cottageX, cottageBaseY, 10, 8, 5, true, true);
-      // Chimney
-      ctx.fillStyle = "#0E1218";
-      ctx.fillRect(cottageX + 3, cottageBaseY - 8 - 5 - 4, 2, 6);
-
-      // ── Lighthouse ──
-      const lhX = w * 0.74;
-      const lhBaseY = horizonY - 42;
-      const towerH = h * 0.12;
-      const towerTopW = 4;
-      const towerBotW = 7;
-
-      // Tower
-      ctx.fillStyle = "#12161E";
-      ctx.beginPath();
-      ctx.moveTo(lhX - towerBotW, lhBaseY);
-      ctx.lineTo(lhX - towerTopW, lhBaseY - towerH);
-      ctx.lineTo(lhX + towerTopW, lhBaseY - towerH);
-      ctx.lineTo(lhX + towerBotW, lhBaseY);
-      ctx.closePath();
-      ctx.fill();
-
-      // Moonlit edge
-      ctx.beginPath();
-      ctx.moveTo(lhX - towerBotW, lhBaseY);
-      ctx.lineTo(lhX - towerTopW, lhBaseY - towerH);
-      ctx.strokeStyle = "rgba(180,195,220,0.18)";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Gallery
-      const galleryY = lhBaseY - towerH;
-      ctx.fillStyle = "#161C26";
-      ctx.fillRect(lhX - towerTopW - 4, galleryY, (towerTopW + 4) * 2, 3);
-
-      // Lantern room
-      const lanternH = towerH * 0.2;
-      ctx.fillStyle = "#1A2030";
-      ctx.fillRect(lhX - 5, galleryY - lanternH, 10, lanternH);
-
-      // Dome
-      ctx.fillStyle = "#161C26";
-      ctx.beginPath();
-      ctx.arc(lhX, galleryY - lanternH, 6, Math.PI, 0);
-      ctx.fill();
-
-      // ── LIGHT ──
-      const lightY = galleryY - lanternH * 0.5;
-      const pulse = 0.65 + Math.sin(time * 1.8) * 0.35;
-
-      // Atmospheric glow
-      const atmo = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 130);
-      atmo.addColorStop(0, `rgba(226,134,75,${0.28 * pulse})`);
-      atmo.addColorStop(0.3, `rgba(226,134,75,${0.08 * pulse})`);
-      atmo.addColorStop(0.6, `rgba(226,134,75,${0.02 * pulse})`);
-      atmo.addColorStop(1, "rgba(226,134,75,0)");
-      ctx.fillStyle = atmo;
-      ctx.beginPath();
-      ctx.arc(lhX, lightY, 130, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Medium glow
-      const med = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 40);
-      med.addColorStop(0, `rgba(255,220,170,${0.5 * pulse})`);
-      med.addColorStop(0.5, `rgba(226,134,75,${0.15 * pulse})`);
-      med.addColorStop(1, "rgba(226,134,75,0)");
-      ctx.fillStyle = med;
-      ctx.beginPath();
-      ctx.arc(lhX, lightY, 40, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Core
-      const core = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, 8);
-      core.addColorStop(0, `rgba(255,245,225,${0.95 * pulse})`);
-      core.addColorStop(0.5, `rgba(255,200,140,${0.6 * pulse})`);
-      core.addColorStop(1, `rgba(226,134,75,${0.2 * pulse})`);
-      ctx.fillStyle = core;
-      ctx.beginPath();
-      ctx.arc(lhX, lightY, 8, 0, Math.PI * 2);
-      ctx.fill();
-
-      // ── Beam ──
-      const beamAngle = time * 0.6;
-      const beamDir = Math.cos(beamAngle);
-      if (beamDir > -0.2) {
-        const beamStrength = Math.max(0, beamDir);
-        const beamLen = Math.min(w * 0.5, 500);
-        const beamSpread = 0.06;
-        const baseAngle = -Math.PI / 2 + Math.sin(beamAngle) * 1.0;
-
-        ctx.save();
-        ctx.globalCompositeOperation = "lighter";
-
-        // Outer
-        ctx.beginPath();
-        ctx.moveTo(lhX, lightY);
-        ctx.lineTo(lhX + Math.cos(baseAngle - beamSpread * 1.8) * beamLen, lightY + Math.sin(baseAngle - beamSpread * 1.8) * beamLen);
-        ctx.lineTo(lhX + Math.cos(baseAngle + beamSpread * 1.8) * beamLen, lightY + Math.sin(baseAngle + beamSpread * 1.8) * beamLen);
-        ctx.closePath();
-        const ob = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, beamLen);
-        ob.addColorStop(0, `rgba(226,134,75,${beamStrength * 0.12 * pulse})`);
-        ob.addColorStop(0.4, `rgba(226,134,75,${beamStrength * 0.03 * pulse})`);
-        ob.addColorStop(1, "rgba(226,134,75,0)");
-        ctx.fillStyle = ob;
-        ctx.fill();
-
-        // Inner
-        ctx.beginPath();
-        ctx.moveTo(lhX, lightY);
-        ctx.lineTo(lhX + Math.cos(baseAngle - beamSpread) * beamLen * 0.8, lightY + Math.sin(baseAngle - beamSpread) * beamLen * 0.8);
-        ctx.lineTo(lhX + Math.cos(baseAngle + beamSpread) * beamLen * 0.8, lightY + Math.sin(baseAngle + beamSpread) * beamLen * 0.8);
-        ctx.closePath();
-        const ib = ctx.createRadialGradient(lhX, lightY, 0, lhX, lightY, beamLen * 0.8);
-        ib.addColorStop(0, `rgba(255,220,170,${beamStrength * 0.15 * pulse})`);
-        ib.addColorStop(0.3, `rgba(226,134,75,${beamStrength * 0.05 * pulse})`);
-        ib.addColorStop(1, "rgba(226,134,75,0)");
-        ctx.fillStyle = ib;
-        ctx.fill();
-
-        ctx.restore();
-      }
-
-      // ── Water reflection ──
-      for (let i = 0; i < 8; i++) {
-        const ry = horizonY + i * 12 + 8;
-        const rFade = 1 - i / 8;
-        const shimmer = Math.sin(time * 0.8 + i * 0.7) * 0.3 + 0.7;
-        const rw = 35 * shimmer * rFade;
-        const rg = ctx.createRadialGradient(lhX, ry, 0, lhX, ry, rw);
-        rg.addColorStop(0, `rgba(226,134,75,${0.06 * pulse * rFade * shimmer})`);
-        rg.addColorStop(1, "rgba(226,134,75,0)");
-        ctx.fillStyle = rg;
-        ctx.beginPath();
-        ctx.arc(lhX, ry, rw, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // ── Town lights reflected in harbour channel ──
-      const litHouses = [
-        [w * 0.17, horizonY - 10],
-        [w * 0.24, horizonY - 26],
-        [w * 0.30, horizonY - 27],
-        [w * 0.34, horizonY - 20],
-        [w * 0.40, horizonY - 6],
-        [w * 0.60, horizonY - 5],
-        [w * 0.67, horizonY - 22],
-      ];
-      for (const [hx] of litHouses) {
-        // Only reflect houses near the channel
-        if (hx > channelL - 40 && hx < channelR + 40) {
-          const ry = waterLevel + 5;
-          const rg = ctx.createLinearGradient(0, ry, 0, ry + 30);
-          rg.addColorStop(0, "rgba(226,180,100,0.025)");
-          rg.addColorStop(1, "rgba(226,180,100,0)");
-          ctx.fillStyle = rg;
-          ctx.fillRect(hx - 3, ry, 6, 30);
+      // ── HUD / scan line effect at high scroll ──
+      if (sp > 0.6) {
+        const hudAlpha = (sp - 0.6) * 0.08;
+        // Horizontal scan lines
+        for (let y = 0; y < h; y += 4) {
+          ctx.fillStyle = `rgba(100,180,255,${hudAlpha * (0.3 + Math.sin(y * 0.1 + time * 2) * 0.2)})`;
+          ctx.fillRect(0, y, w, 0.5);
         }
       }
+
+      // ── Vignette ──
+      const vig = ctx.createRadialGradient(w / 2, h / 2, w * 0.25, w / 2, h / 2, w * 0.7);
+      vig.addColorStop(0, "rgba(0,0,0,0)");
+      vig.addColorStop(1, `rgba(0,0,0,${0.4 + sp * 0.15})`);
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, w, h);
 
       raf = requestAnimationFrame(draw);
     };
 
     raf = requestAnimationFrame(draw);
-
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);

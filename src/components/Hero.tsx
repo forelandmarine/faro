@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { scrollState } from "./HeroScene";
 import Lighthouse from "./Lighthouse";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -17,18 +16,6 @@ export default function Hero() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Pin hero, drive scroll progress to the canvas
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "+=200%",
-        pin: true,
-        pinSpacing: true,
-        onUpdate: (self) => {
-          scrollState.progress = self.progress;
-        },
-      });
-
       gsap.from(".hero-line", {
         y: 40,
         opacity: 0,
@@ -44,7 +31,7 @@ export default function Hero() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=80%",
+          end: "+=50%",
           scrub: 1,
         },
       });
@@ -89,6 +76,12 @@ export default function Hero() {
           >
             Get in touch
           </a>
+        </div>
+
+        <div className="hero-line mt-16 animate-bounce">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="mx-auto opacity-40">
+            <path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </div>
       </div>
     </section>

@@ -12,6 +12,26 @@ export const metadata: Metadata = {
   title: "FARO — Creative Studio",
   description:
     "We design and build websites that make people stop scrolling. Web design, brand identity, creative media, and interactive experiences.",
+  metadataBase: new URL("https://faro.is"),
+  openGraph: {
+    title: "FARO — Creative Studio",
+    description:
+      "We design and build websites that make people stop scrolling.",
+    url: "https://faro.is",
+    siteName: "FARO",
+    type: "website",
+    locale: "en_GB",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FARO — Creative Studio",
+    description:
+      "We design and build websites that make people stop scrolling.",
+  },
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

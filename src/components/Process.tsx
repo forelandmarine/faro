@@ -90,7 +90,7 @@ export default function Process() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden">
+    <section id="process" ref={sectionRef} className="relative overflow-hidden">
       <div className="h-screen flex flex-col justify-center">
         <div className="px-6 md:px-16 lg:px-24 mb-12">
           <div className="process-title max-w-7xl mx-auto">

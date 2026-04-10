@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lighthouse from "./Lighthouse";
@@ -9,6 +9,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Contact() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle"
+  );
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -27,6 +31,28 @@ export default function Contact() {
 
     return () => ctx.revert();
   }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) return;
+
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setStatus("sent");
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
 
   return (
     <section
@@ -54,40 +80,77 @@ export default function Contact() {
         </p>
 
         {/* Contact form */}
-        <form
-          className="mt-16 max-w-lg mx-auto space-y-6 text-left"
-          onSubmit={(e) => e.preventDefault()}
-        >
-          <div>
-            <input
-              type="text"
-              placeholder="Your name"
-              className="w-full bg-transparent border-b border-foreground/10 py-4 text-lg font-light focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20"
-            />
-          </div>
-          <div>
-            <input
-              type="email"
-              placeholder="Email address"
-              className="w-full bg-transparent border-b border-foreground/10 py-4 text-lg font-light focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20"
-            />
-          </div>
-          <div>
-            <textarea
-              placeholder="Tell us about your project"
-              rows={4}
-              className="w-full bg-transparent border-b border-foreground/10 py-4 text-lg font-light focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20 resize-none"
-            />
-          </div>
-          <div className="pt-4">
+        {status === "sent" ? (
+          <div className="mt-16 py-16">
+            <Lighthouse size={32} color="#C8965A" className="mx-auto mb-4" />
+            <p className="text-xl font-semibold">Message sent.</p>
+            <p className="text-muted font-light mt-2">
+              We will be in touch shortly.
+            </p>
             <button
-              type="submit"
-              className="w-full py-5 bg-accent text-background font-bold text-sm tracking-[0.2em] uppercase rounded-lg hover:bg-accent-light transition-colors"
+              onClick={() => setStatus("idle")}
+              className="mt-6 text-accent text-sm font-medium underline underline-offset-4 hover:text-accent-light transition-colors"
             >
-              Send message
+              Send another message
             </button>
           </div>
-        </form>
+        ) : (
+          <form
+            className="mt-16 max-w-lg mx-auto space-y-6 text-left"
+            onSubmit={handleSubmit}
+          >
+            <div>
+              <input
+                type="text"
+                placeholder="Your name"
+                value={form.name}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, name: e.target.value }))
+                }
+                required
+                className="w-full bg-transparent border-b border-foreground/10 py-4 text-lg font-light focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20"
+              />
+            </div>
+            <div>
+              <input
+                type="email"
+                placeholder="Email address"
+                value={form.email}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, email: e.target.value }))
+                }
+                required
+                className="w-full bg-transparent border-b border-foreground/10 py-4 text-lg font-light focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20"
+              />
+            </div>
+            <div>
+              <textarea
+                placeholder="Tell us about your project"
+                rows={4}
+                value={form.message}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, message: e.target.value }))
+                }
+                required
+                className="w-full bg-transparent border-b border-foreground/10 py-4 text-lg font-light focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20 resize-none"
+              />
+            </div>
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={status === "sending"}
+                className="w-full py-5 bg-accent text-background font-bold text-sm tracking-[0.2em] uppercase rounded-lg hover:bg-accent-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {status === "sending" ? "Sending..." : "Send message"}
+              </button>
+              {status === "error" && (
+                <p className="text-red-400 text-sm mt-3 text-center">
+                  Something went wrong. Please try again or email us directly.
+                </p>
+              )}
+            </div>
+          </form>
+        )}
 
         <div className="mt-12 flex items-center justify-center gap-8 text-muted text-sm">
           <a

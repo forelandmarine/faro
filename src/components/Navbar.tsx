@@ -57,47 +57,43 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-16 lg:px-24 flex items-center justify-between h-16 md:h-20">
-        {/* Logo */}
         <a
           href="#"
           onClick={(e) => {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className="flex items-center gap-2 group"
+          className="flex items-center gap-2.5 group"
         >
           <Lighthouse
-            size={20}
+            size={18}
             color="#7EC8E3"
-            className="opacity-60 group-hover:opacity-100 transition-opacity"
+            className="opacity-50 group-hover:opacity-100 transition-opacity"
           />
-          <span className="text-lg font-display font-extrabold italic tracking-tighter">FARO</span>
+          <span className="type-display text-base tracking-[-0.02em]">FARO</span>
         </a>
 
-        {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={(e) => handleClick(e, link.href)}
-              className="text-xs font-semibold tracking-[0.15em] uppercase text-muted hover:text-foreground transition-colors"
+              className="text-xs font-medium tracking-[0.1em] uppercase text-muted hover:text-foreground transition-colors"
             >
               {link.label}
             </a>
           ))}
         </div>
 
-        {/* CTA */}
         <a
           href="#contact"
           onClick={(e) => handleClick(e, "#contact")}
-          className="hidden md:block text-xs font-semibold tracking-[0.15em] uppercase px-5 py-2.5 border border-accent/40 rounded-full text-accent hover:bg-accent hover:text-background transition-all"
+          className="hidden md:block text-xs font-medium tracking-[0.1em] uppercase px-5 py-2.5 border border-accent/30 rounded-full text-accent hover:bg-accent hover:text-background transition-all"
         >
           Start a project
         </a>
 
-        {/* Mobile menu button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="md:hidden flex flex-col gap-1.5 p-2"
@@ -116,7 +112,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-500 ${
           menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
@@ -128,7 +123,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={(e) => handleClick(e, link.href)}
-              className="block text-sm font-medium tracking-wider uppercase text-muted hover:text-foreground transition-colors py-2"
+              className="block text-sm font-medium tracking-[0.05em] uppercase text-muted hover:text-foreground transition-colors py-2"
             >
               {link.label}
             </a>
@@ -136,7 +131,7 @@ export default function Navbar() {
           <a
             href="#contact"
             onClick={(e) => handleClick(e, "#contact")}
-            className="block text-sm font-bold tracking-wider uppercase text-accent pt-4 border-t border-foreground/5"
+            className="block text-sm font-medium tracking-[0.05em] uppercase text-accent pt-4 border-t border-foreground/5"
           >
             Start a project
           </a>

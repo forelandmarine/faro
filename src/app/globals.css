@@ -24,6 +24,28 @@ body {
   overflow-x: hidden;
 }
 
+/* --- Typography system --- */
+
+/* Display: Lexend Peta 800 italic - hero, section titles, wordmark */
+.type-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Eyebrow: Inter 500, uppercase, tracked */
+.type-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+/* --- End typography system --- */
+
 html.lenis, html.lenis body {
   height: auto;
 }

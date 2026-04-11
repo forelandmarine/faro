@@ -43,13 +43,11 @@ export default function Testimonials() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative py-32 overflow-hidden">
-      <div className="px-6 md:px-16 lg:px-24 mb-16">
+    <section ref={sectionRef} className="relative py-32 md:py-40 overflow-hidden">
+      <div className="px-6 md:px-16 lg:px-24 mb-16 md:mb-20">
         <div className="testimonials-title max-w-7xl mx-auto">
-          <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
-            Philosophy
-          </span>
-          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-extrabold italic leading-[0.95] tracking-tight">
+          <span className="type-eyebrow block mb-5">Philosophy</span>
+          <h2 className="type-display text-[clamp(2.5rem,4.5vw,4rem)]">
             Words we
             <br />
             work by.
@@ -57,15 +55,13 @@ export default function Testimonials() {
         </div>
       </div>
 
-      {/* Marquee rows */}
-      <div className="space-y-6">
-        {/* Top row - scrolls left */}
+      <div className="space-y-4">
         <div className="relative">
           <div className="animate-marquee-left flex whitespace-nowrap">
             {[...topRow, ...topRow].map((text, i) => (
               <span
                 key={i}
-                className="inline-block text-2xl md:text-4xl font-bold tracking-tight text-foreground/10 hover:text-foreground/60 transition-colors duration-500 cursor-default px-8"
+                className="inline-block text-xl md:text-3xl font-medium tracking-tight text-foreground/8 hover:text-foreground/50 transition-colors duration-500 cursor-default px-6 md:px-8"
               >
                 {text}
               </span>
@@ -73,13 +69,12 @@ export default function Testimonials() {
           </div>
         </div>
 
-        {/* Bottom row - scrolls right */}
         <div className="relative">
           <div className="animate-marquee-right flex whitespace-nowrap">
             {[...bottomRow, ...bottomRow].map((text, i) => (
               <span
                 key={i}
-                className="inline-block text-2xl md:text-4xl font-bold tracking-tight text-foreground/10 hover:text-foreground/60 transition-colors duration-500 cursor-default px-8"
+                className="inline-block text-xl md:text-3xl font-medium tracking-tight text-foreground/8 hover:text-foreground/50 transition-colors duration-500 cursor-default px-6 md:px-8"
               >
                 {text}
               </span>

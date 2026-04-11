@@ -16,7 +16,7 @@ const services = [
   {
     title: "Brand Identity",
     description:
-      "Visual identities that hold up at every scale. Logo, type, color, tone of voice, guidelines.",
+      "Visual identities that hold up at every scale. Logo, type, colour, tone of voice, guidelines.",
     num: "02",
   },
   {
@@ -44,7 +44,6 @@ export default function Services() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Section title
       gsap.from(".services-title", {
         y: 60,
         opacity: 0,
@@ -56,16 +55,15 @@ export default function Services() {
         },
       });
 
-      // Service items stagger
       gsap.from(".service-item", {
-        y: 80,
+        y: 60,
         opacity: 0,
-        stagger: 0.12,
-        duration: 0.8,
+        stagger: 0.1,
+        duration: 0.7,
         ease: "power3.out",
         scrollTrigger: {
           trigger: ".service-list",
-          start: "top 70%",
+          start: "top 75%",
         },
       });
     }, sectionRef);
@@ -77,57 +75,34 @@ export default function Services() {
     <section
       id="services"
       ref={sectionRef}
-      className="relative py-40 px-6 md:px-16 lg:px-24"
+      className="relative py-32 md:py-40 px-6 md:px-16 lg:px-24"
     >
       <div className="max-w-7xl mx-auto">
-        <div className="services-title mb-20">
-          <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
-            What we do
-          </span>
-          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-extrabold italic leading-[0.95] tracking-tight">
+        <div className="services-title mb-16 md:mb-20">
+          <span className="type-eyebrow block mb-5">What we do</span>
+          <h2 className="type-display text-[clamp(2.5rem,4.5vw,4rem)]">
             Services built
             <br />
             for ambition.
           </h2>
         </div>
 
-        <div className="service-list">
+        <div className="service-list border-b border-foreground/8">
           {services.map((service) => (
             <div
               key={service.num}
-              className="service-item group border-t border-foreground/10 py-10 md:py-14 cursor-pointer transition-colors hover:border-accent/30"
+              className="service-item group border-t border-foreground/8 py-8 md:py-10 cursor-default"
             >
-              <div className="flex items-start md:items-center justify-between gap-6 flex-col md:flex-row">
-                <div className="flex items-start gap-6 md:gap-10">
-                  <span className="text-accent/40 font-mono text-sm mt-1">
-                    {service.num}
-                  </span>
-                  <div>
-                    <h3 className="text-[clamp(1.5rem,3vw,3rem)] font-medium tracking-tight group-hover:text-accent transition-colors duration-300">
-                      {service.title}
-                    </h3>
-                    <p className="text-muted font-light mt-2 max-w-lg text-base md:text-lg leading-relaxed opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-20 transition-all duration-500">
-                      {service.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-[-10px] group-hover:translate-x-0">
-                  <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M7 17L17 7M17 7H7M17 7V17"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-[3rem_1fr_1fr] gap-4 md:gap-8 items-baseline">
+                <span className="text-foreground/20 text-xs font-medium tabular-nums">
+                  {service.num}
+                </span>
+                <h3 className="text-lg md:text-xl font-medium tracking-[-0.01em] group-hover:text-accent transition-colors duration-300">
+                  {service.title}
+                </h3>
+                <p className="text-sm text-muted leading-relaxed max-w-sm">
+                  {service.description}
+                </p>
               </div>
             </div>
           ))}

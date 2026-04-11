@@ -11,7 +11,6 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
   const rightRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Simulate loading progress
     const tl = gsap.timeline();
 
     tl.to(
@@ -74,7 +73,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
       <div ref={leftRef} className="curtain-left flex items-center justify-end pr-4">
         <div className="preloader-content flex flex-col items-end gap-4">
           <div className="preloader-lighthouse opacity-0 scale-75">
-            <Lighthouse size={40} beam />
+            <Lighthouse size={36} beam />
           </div>
         </div>
       </div>
@@ -84,13 +83,13 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
             {"FARO".split("").map((char, i) => (
               <span
                 key={i}
-                className="inline-block text-6xl font-display font-extrabold italic tracking-tighter opacity-0 translate-y-full"
+                className="type-display inline-block text-5xl tracking-[-0.02em] opacity-0 translate-y-full"
               >
                 {char}
               </span>
             ))}
           </div>
-          <div className="text-muted text-sm font-light mt-2 tabular-nums">
+          <div className="text-muted text-xs font-medium mt-2 tabular-nums">
             {progress}%
           </div>
         </div>

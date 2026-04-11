@@ -58,15 +58,14 @@ export default function Contact() {
     <section
       id="contact"
       ref={sectionRef}
-      className="relative py-40 px-6 md:px-16 lg:px-24"
+      className="relative py-32 md:py-40 px-6 md:px-16 lg:px-24"
     >
-      {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-4xl mx-auto text-center contact-content relative z-10">
-        <Lighthouse size={48} color="#7EC8E3" beam className="mx-auto mb-8" />
+        <Lighthouse size={40} color="#7EC8E3" beam className="mx-auto mb-10" />
 
-        <h2 className="text-[clamp(2.5rem,6vw,6rem)] font-display font-extrabold italic leading-[0.9] tracking-tight">
+        <h2 className="type-display text-[clamp(2.5rem,5vw,5rem)]">
           Let&apos;s build
           <br />
           something
@@ -74,22 +73,21 @@ export default function Contact() {
           extraordinary.
         </h2>
 
-        <p className="text-muted font-light text-lg md:text-xl mt-8 max-w-lg mx-auto leading-relaxed">
+        <p className="text-muted text-base md:text-lg mt-8 max-w-md mx-auto leading-relaxed">
           Whether you have a full brief or just a rough idea, we would love to
           hear from you. No commitment, no pressure.
         </p>
 
-        {/* Contact form */}
         {status === "sent" ? (
           <div className="mt-16 py-16">
-            <Lighthouse size={32} color="#7EC8E3" className="mx-auto mb-4" />
-            <p className="text-xl font-semibold">Message sent.</p>
-            <p className="text-muted font-light mt-2">
+            <Lighthouse size={28} color="#7EC8E3" className="mx-auto mb-4" />
+            <p className="text-lg font-medium">Message sent.</p>
+            <p className="text-muted text-sm mt-2">
               We will be in touch shortly.
             </p>
             <button
               onClick={() => setStatus("idle")}
-              className="mt-6 text-accent text-sm font-medium underline underline-offset-4 hover:text-accent-light transition-colors"
+              className="mt-6 text-accent text-xs font-medium underline underline-offset-4 hover:text-accent-light transition-colors"
             >
               Send another message
             </button>
@@ -108,7 +106,7 @@ export default function Contact() {
                   setForm((f) => ({ ...f, name: e.target.value }))
                 }
                 required
-                className="w-full bg-transparent border-b border-foreground/10 py-4 text-lg font-light focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20"
+                className="w-full bg-transparent border-b border-foreground/8 py-4 text-base focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20"
               />
             </div>
             <div>
@@ -120,7 +118,7 @@ export default function Contact() {
                   setForm((f) => ({ ...f, email: e.target.value }))
                 }
                 required
-                className="w-full bg-transparent border-b border-foreground/10 py-4 text-lg font-light focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20"
+                className="w-full bg-transparent border-b border-foreground/8 py-4 text-base focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20"
               />
             </div>
             <div>
@@ -132,14 +130,14 @@ export default function Contact() {
                   setForm((f) => ({ ...f, message: e.target.value }))
                 }
                 required
-                className="w-full bg-transparent border-b border-foreground/10 py-4 text-lg font-light focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20 resize-none"
+                className="w-full bg-transparent border-b border-foreground/8 py-4 text-base focus:border-accent focus:outline-none transition-colors placeholder:text-foreground/20 resize-none"
               />
             </div>
             <div className="pt-4">
               <button
                 type="submit"
                 disabled={status === "sending"}
-                className="w-full py-5 bg-accent text-background font-bold text-sm tracking-[0.2em] uppercase rounded-lg hover:bg-accent-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-accent text-background font-medium text-xs tracking-[0.1em] uppercase rounded-lg hover:bg-accent-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {status === "sending" ? "Sending..." : "Send message"}
               </button>
@@ -152,18 +150,18 @@ export default function Contact() {
           </form>
         )}
 
-        <div className="mt-12 flex items-center justify-center gap-8 text-muted text-sm">
+        <div className="mt-12 flex items-center justify-center gap-8 text-muted text-xs">
           <a
             href="mailto:hello@faro.is"
             className="hover:text-accent transition-colors"
           >
             hello@faro.is
           </a>
-          <span className="w-1 h-1 rounded-full bg-foreground/20" />
+          <span className="w-1 h-1 rounded-full bg-foreground/15" />
           <a href="#" className="hover:text-accent transition-colors">
             Instagram
           </a>
-          <span className="w-1 h-1 rounded-full bg-foreground/20" />
+          <span className="w-1 h-1 rounded-full bg-foreground/15" />
           <a href="#" className="hover:text-accent transition-colors">
             LinkedIn
           </a>

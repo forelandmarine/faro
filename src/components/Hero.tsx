@@ -47,46 +47,41 @@ export default function Hero() {
       <HeroScene />
 
       <div ref={contentRef} className="relative z-10 w-full max-w-7xl px-6 md:px-16 lg:px-24">
-        {/* Main title */}
         <div className="hero-reveal">
-          <h1 className="text-[clamp(4rem,15vw,14rem)] font-display font-extrabold italic leading-[0.85] tracking-[-0.04em] text-white">
+          <h1 className="type-display text-[clamp(5rem,12vw,11rem)] leading-[0.9] tracking-[-0.03em] text-white">
             FARO
           </h1>
         </div>
 
-        {/* Tagline */}
-        <div className="hero-reveal mt-4 md:mt-6">
-          <p className="text-[clamp(1rem,2.5vw,1.75rem)] font-medium leading-snug text-white/70 max-w-xl">
+        <div className="hero-reveal mt-6">
+          <p className="text-lg md:text-xl font-medium text-white/60 max-w-md">
             Brands designed to be found.
           </p>
         </div>
 
-        {/* Separator */}
-        <div className="hero-reveal mt-8 md:mt-10">
-          <div className="w-12 h-px bg-white/20" />
+        <div className="hero-reveal mt-10">
+          <div className="w-10 h-px bg-white/15" />
         </div>
 
-        {/* CTA */}
-        <div className="hero-reveal mt-6 md:mt-8 flex items-center gap-6">
+        <div className="hero-reveal mt-6 flex items-center gap-6">
           <a
             href="#work"
-            className="text-sm font-medium tracking-[0.08em] uppercase text-white/90 hover:text-accent transition-colors"
+            className="text-xs font-medium tracking-[0.1em] uppercase text-white/80 hover:text-accent transition-colors"
           >
             View work
           </a>
-          <span className="w-1 h-1 rounded-full bg-white/20" />
+          <span className="w-1 h-1 rounded-full bg-white/15" />
           <a
             href="#contact"
-            className="text-sm font-medium tracking-[0.08em] uppercase text-white/40 hover:text-white/80 transition-colors"
+            className="text-xs font-medium tracking-[0.1em] uppercase text-white/35 hover:text-white/70 transition-colors"
           >
             Get in touch
           </a>
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <div className="hero-reveal absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-        <div className="w-px h-12 bg-gradient-to-b from-transparent via-white/30 to-transparent animate-pulse" />
+        <div className="w-px h-12 bg-gradient-to-b from-transparent via-white/20 to-transparent animate-pulse" />
       </div>
     </section>
   );

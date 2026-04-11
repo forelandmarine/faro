@@ -39,20 +39,18 @@ export default function Portfolio() {
         },
       });
 
-      // Animate each project card
       gsap.from(".project-card", {
-        y: 100,
+        y: 80,
         opacity: 0,
-        stagger: 0.25,
-        duration: 1,
+        stagger: 0.2,
+        duration: 0.9,
         ease: "power3.out",
         scrollTrigger: {
           trigger: ".project-grid",
-          start: "top 70%",
+          start: "top 75%",
         },
       });
 
-      // 3D tilt effect on each device mockup
       document.querySelectorAll<HTMLElement>(".device-mockup").forEach((el) => {
         el.addEventListener("mousemove", (e) => {
           const rect = el.getBoundingClientRect();
@@ -83,32 +81,28 @@ export default function Portfolio() {
     <section
       id="work"
       ref={sectionRef}
-      className="relative py-40 px-6 md:px-16 lg:px-24"
+      className="relative py-32 md:py-40 px-6 md:px-16 lg:px-24"
     >
       <div className="max-w-7xl mx-auto">
-        <div className="portfolio-title mb-20">
-          <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
-            Selected work
-          </span>
-          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-extrabold italic leading-[0.95] tracking-tight">
+        <div className="portfolio-title mb-16 md:mb-20">
+          <span className="type-eyebrow block mb-5">Selected work</span>
+          <h2 className="type-display text-[clamp(2.5rem,4.5vw,4rem)]">
             The proof is
             <br />
             in the pixels.
           </h2>
         </div>
 
-        <div className="project-grid space-y-32">
+        <div className="project-grid space-y-24 md:space-y-32">
           {projects.map((project, i) => (
             <div
               key={project.name}
               className={`project-card flex flex-col ${
                 i % 2 === 1 ? "lg:flex-row-reverse" : "lg:flex-row"
-              } gap-12 lg:gap-20 items-center`}
+              } gap-10 lg:gap-16 items-center`}
             >
-              {/* Device mockup */}
               <div className="flex-1 w-full" style={{ perspective: "1000px" }}>
                 <div className="device-mockup relative aspect-[16/10] bg-surface rounded-xl border border-foreground/5 overflow-hidden glow transition-shadow hover:shadow-accent/10">
-                  {/* Browser chrome */}
                   <div className="absolute top-0 left-0 right-0 h-8 bg-surface-light flex items-center px-4 gap-2 border-b border-foreground/5">
                     <div className="w-2.5 h-2.5 rounded-full bg-foreground/10" />
                     <div className="w-2.5 h-2.5 rounded-full bg-foreground/10" />
@@ -122,7 +116,6 @@ export default function Portfolio() {
                     </div>
                   </div>
 
-                  {/* Placeholder site content */}
                   <div className="absolute inset-0 top-8 bg-gradient-to-br from-surface via-surface-light to-surface p-6 flex flex-col justify-center items-center">
                     <div className="w-full max-w-sm space-y-3">
                       <div className="h-3 bg-accent/10 rounded w-1/3" />
@@ -137,30 +130,28 @@ export default function Portfolio() {
                     </div>
                   </div>
 
-                  {/* Reflection effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
                 </div>
               </div>
 
-              {/* Project info */}
               <div className="flex-1 max-w-md">
-                <span className="text-accent text-xs font-medium tracking-[0.2em] uppercase">
+                <span className="type-eyebrow">
                   {project.category}
                 </span>
-                <h3 className="text-[clamp(2rem,4vw,3.5rem)] font-display font-medium tracking-tight mt-3 leading-[0.95]">
+                <h3 className="text-2xl md:text-3xl font-medium tracking-[-0.01em] mt-4 leading-tight">
                   {project.name}
                 </h3>
-                <p className="text-muted font-light mt-4 text-base leading-relaxed">
+                <p className="text-muted text-sm leading-relaxed mt-4">
                   {project.description}
                 </p>
                 <a
                   href={`https://${project.url}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 mt-6 text-accent text-sm font-semibold tracking-wide uppercase hover:gap-3 transition-all"
+                  className="inline-flex items-center gap-2 mt-6 text-accent text-xs font-medium tracking-[0.1em] uppercase hover:gap-3 transition-all"
                 >
                   Visit site
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                     <path
                       d="M7 17L17 7M17 7H7M17 7V17"
                       stroke="currentColor"

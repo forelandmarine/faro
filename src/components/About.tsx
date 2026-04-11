@@ -12,7 +12,6 @@ export default function About() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Parallax on the visual side
       gsap.to(".about-visual", {
         y: -80,
         scrollTrigger: {
@@ -23,7 +22,6 @@ export default function About() {
         },
       });
 
-      // Text reveal
       gsap.from(".about-text > *", {
         y: 50,
         opacity: 0,
@@ -44,35 +42,29 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-40 px-6 md:px-16 lg:px-24 overflow-hidden"
+      className="relative py-32 md:py-40 px-6 md:px-16 lg:px-24 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center relative z-10">
-        {/* Visual side */}
         <div className="about-visual flex-1 w-full">
           <div className="aspect-[4/5] bg-surface rounded-2xl overflow-hidden relative border border-foreground/5">
-            {/* Abstract placeholder with lighthouse */}
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-surface to-surface-light" />
             <div className="absolute inset-0 flex items-center justify-center">
               <Lighthouse size={160} color="#7EC8E3" beam />
             </div>
-            {/* Film grain vibe */}
             <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
           </div>
         </div>
 
-        {/* Text side */}
         <div className="about-text flex-1 max-w-lg">
-          <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
-            About Faro
-          </span>
-          <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-display font-extrabold italic leading-[0.95] tracking-tight mb-6">
+          <span className="type-eyebrow block mb-5">About Faro</span>
+          <h2 className="type-display text-[clamp(2rem,3.5vw,3rem)] mb-8">
             Your brand
             <br />
             deserves better
             <br />
             than a template.
           </h2>
-          <div className="space-y-4 text-muted font-light leading-relaxed">
+          <div className="space-y-4 text-muted text-sm leading-relaxed">
             <p>
               Faro is a creative studio that designs and builds digital
               experiences for businesses that take their brand seriously.
@@ -87,12 +79,12 @@ export default function About() {
               code, and a direct line to the people doing the work.
             </p>
           </div>
-          <div className="mt-8 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-surface border border-foreground/10 flex items-center justify-center">
-              <span className="text-sm font-bold">JW</span>
+          <div className="mt-10 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-surface border border-foreground/10 flex items-center justify-center">
+              <span className="text-xs font-medium">JW</span>
             </div>
             <div>
-              <div className="font-semibold text-sm">Jack</div>
+              <div className="font-medium text-sm">Jack</div>
               <div className="text-muted text-xs">Founder, Faro Creative</div>
             </div>
           </div>

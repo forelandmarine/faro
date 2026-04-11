@@ -67,28 +67,26 @@ export default function Process() {
   }, []);
 
   return (
-    <section id="process" ref={sectionRef} className="relative py-32 px-6 md:px-16 lg:px-24">
+    <section id="process" ref={sectionRef} className="relative py-32 md:py-40 px-6 md:px-16 lg:px-24">
       <div className="max-w-7xl mx-auto">
-        <div className="process-title mb-16">
-          <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
-            How we work
-          </span>
-          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-extrabold italic leading-[0.95] tracking-tight">
+        <div className="process-title mb-16 md:mb-20">
+          <span className="type-eyebrow block mb-5">How we work</span>
+          <h2 className="type-display text-[clamp(2.5rem,4.5vw,4rem)]">
             From brief to launch.
           </h2>
         </div>
 
-        <div className="process-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="process-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-5">
           {steps.map((step) => (
             <div
               key={step.num}
-              className="process-step p-6 rounded-xl bg-surface border border-foreground/5 hover:border-accent/20 transition-colors group"
+              className="process-step p-6 rounded-xl bg-surface border border-foreground/5 hover:border-accent/15 transition-colors group"
             >
-              <span className="text-accent font-mono text-sm">{step.num}</span>
-              <h3 className="text-xl font-medium mt-3 tracking-tight group-hover:text-accent transition-colors">
+              <span className="text-foreground/20 text-xs font-medium tabular-nums">{step.num}</span>
+              <h3 className="text-base font-medium mt-3 tracking-[-0.01em] group-hover:text-accent transition-colors">
                 {step.title}
               </h3>
-              <p className="text-muted font-light mt-3 text-sm leading-relaxed">
+              <p className="text-muted text-sm leading-relaxed mt-3">
                 {step.body}
               </p>
             </div>

@@ -71,7 +71,7 @@ export default function Navbar() {
             color="#7EC8E3"
             className="opacity-60 group-hover:opacity-100 transition-opacity"
           />
-          <span className="text-lg font-semibold tracking-tighter">FARO</span>
+          <span className="text-lg font-display font-extrabold italic tracking-tighter">FARO</span>
         </a>
 
         {/* Desktop links */}

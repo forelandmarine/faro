@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="flex items-center gap-3">
           <Lighthouse size={24} color="#7EC8E3" />
-          <span className="text-xl font-black tracking-tighter">FARO</span>
+          <span className="text-xl font-display font-extrabold italic tracking-tighter">FARO</span>
         </div>
 
         <div className="flex items-center gap-6 text-muted text-xs">

@@ -66,7 +66,7 @@ export default function Contact() {
       <div className="max-w-4xl mx-auto text-center contact-content relative z-10">
         <Lighthouse size={48} color="#7EC8E3" beam className="mx-auto mb-8" />
 
-        <h2 className="text-[clamp(2.5rem,6vw,6rem)] font-black leading-[0.9] tracking-tight">
+        <h2 className="text-[clamp(2.5rem,6vw,6rem)] font-display font-extrabold italic leading-[0.9] tracking-tight">
           Let&apos;s build
           <br />
           something

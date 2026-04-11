@@ -84,7 +84,7 @@ export default function Services() {
           <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
             What we do
           </span>
-          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-black leading-[0.95] tracking-tight">
+          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-extrabold italic leading-[0.95] tracking-tight">
             Services built
             <br />
             for ambition.
@@ -103,7 +103,7 @@ export default function Services() {
                     {service.num}
                   </span>
                   <div>
-                    <h3 className="text-[clamp(1.5rem,3vw,3rem)] font-bold tracking-tight group-hover:text-accent transition-colors duration-300">
+                    <h3 className="text-[clamp(1.5rem,3vw,3rem)] font-medium tracking-tight group-hover:text-accent transition-colors duration-300">
                       {service.title}
                     </h3>
                     <p className="text-muted font-light mt-2 max-w-lg text-base md:text-lg leading-relaxed opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-20 transition-all duration-500">

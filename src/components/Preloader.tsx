@@ -84,7 +84,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
             {"FARO".split("").map((char, i) => (
               <span
                 key={i}
-                className="inline-block text-6xl font-black tracking-tighter opacity-0 translate-y-full"
+                className="inline-block text-6xl font-display font-extrabold italic tracking-tighter opacity-0 translate-y-full"
               >
                 {char}
               </span>

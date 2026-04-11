@@ -65,7 +65,7 @@ export default function About() {
           <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
             About Faro
           </span>
-          <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-black leading-[0.95] tracking-tight mb-6">
+          <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-display font-extrabold italic leading-[0.95] tracking-tight mb-6">
             Your brand
             <br />
             deserves better

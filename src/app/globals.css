@@ -8,7 +8,8 @@
   --color-muted: #5A5A5A;
   --color-surface: #0A0A0A;
   --color-surface-light: #141414;
-  --font-sans: var(--font-display);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-lexend);
 }
 
 html {

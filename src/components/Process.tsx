@@ -73,7 +73,7 @@ export default function Process() {
           <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
             How we work
           </span>
-          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-black leading-[0.95] tracking-tight">
+          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-extrabold italic leading-[0.95] tracking-tight">
             From brief to launch.
           </h2>
         </div>
@@ -85,7 +85,7 @@ export default function Process() {
               className="process-step p-6 rounded-xl bg-surface border border-foreground/5 hover:border-accent/20 transition-colors group"
             >
               <span className="text-accent font-mono text-sm">{step.num}</span>
-              <h3 className="text-xl font-bold mt-3 tracking-tight group-hover:text-accent transition-colors">
+              <h3 className="text-xl font-medium mt-3 tracking-tight group-hover:text-accent transition-colors">
                 {step.title}
               </h3>
               <p className="text-muted font-light mt-3 text-sm leading-relaxed">

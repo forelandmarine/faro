@@ -5,11 +5,12 @@ import "./globals.css";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  style: ["normal", "italic"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 const lexendPeta = Lexend_Peta({
-  variable: "--font-display",
+  variable: "--font-lexend",
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
@@ -44,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${lexendPeta.variable} antialiased`}>
+    <html lang="en" className={`${inter.variable} ${lexendPeta.variable} antialiased`} suppressHydrationWarning>
       <body className="bg-background text-foreground">{children}</body>
     </html>
   );

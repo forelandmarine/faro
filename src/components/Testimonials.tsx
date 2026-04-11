@@ -49,7 +49,7 @@ export default function Testimonials() {
           <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
             Philosophy
           </span>
-          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-black leading-[0.95] tracking-tight">
+          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-extrabold italic leading-[0.95] tracking-tight">
             Words we
             <br />
             work by.

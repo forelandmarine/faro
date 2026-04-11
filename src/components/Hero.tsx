@@ -49,14 +49,14 @@ export default function Hero() {
       <div ref={contentRef} className="relative z-10 w-full max-w-7xl px-6 md:px-16 lg:px-24">
         {/* Main title */}
         <div className="hero-reveal">
-          <h1 className="text-[clamp(4rem,15vw,14rem)] font-semibold leading-[0.85] tracking-[-0.04em] text-white">
+          <h1 className="text-[clamp(4rem,15vw,14rem)] font-display font-extrabold italic leading-[0.85] tracking-[-0.04em] text-white">
             FARO
           </h1>
         </div>
 
         {/* Tagline */}
         <div className="hero-reveal mt-4 md:mt-6">
-          <p className="text-[clamp(1rem,2.5vw,1.75rem)] font-normal leading-snug text-white/70 max-w-xl">
+          <p className="text-[clamp(1rem,2.5vw,1.75rem)] font-medium leading-snug text-white/70 max-w-xl">
             Brands designed to be found.
           </p>
         </div>

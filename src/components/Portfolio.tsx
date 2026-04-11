@@ -90,7 +90,7 @@ export default function Portfolio() {
           <span className="text-accent text-sm font-medium tracking-[0.3em] uppercase block mb-4">
             Selected work
           </span>
-          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-black leading-[0.95] tracking-tight">
+          <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-extrabold italic leading-[0.95] tracking-tight">
             The proof is
             <br />
             in the pixels.
@@ -147,7 +147,7 @@ export default function Portfolio() {
                 <span className="text-accent text-xs font-medium tracking-[0.2em] uppercase">
                   {project.category}
                 </span>
-                <h3 className="text-[clamp(2rem,4vw,3.5rem)] font-black tracking-tight mt-3 leading-[0.95]">
+                <h3 className="text-[clamp(2rem,4vw,3.5rem)] font-display font-medium tracking-tight mt-3 leading-[0.95]">
                   {project.name}
                 </h3>
                 <p className="text-muted font-light mt-4 text-base leading-relaxed">

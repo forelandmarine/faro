@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Lexend_Peta } from "next/font/google";
+import { Inter, Noto_Sans_Display } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -9,9 +9,10 @@ const inter = Inter({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
-const lexendPeta = Lexend_Peta({
-  variable: "--font-lexend",
+const notoSansDisplay = Noto_Sans_Display({
+  variable: "--font-noto-display",
   subsets: ["latin"],
+  style: ["normal", "italic"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
@@ -45,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${lexendPeta.variable} antialiased`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${notoSansDisplay.variable} antialiased`} suppressHydrationWarning>
       <body className="bg-background text-foreground">{children}</body>
     </html>
   );

@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Noto_Sans_Display } from "next/font/google";
+import { Figtree } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
   style: ["normal", "italic"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
-const notoSansDisplay = Noto_Sans_Display({
-  variable: "--font-noto-display",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-});
 
 export const metadata: Metadata = {
   title: "FARO — Creative Studio",
@@ -46,8 +40,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${notoSansDisplay.variable} antialiased`} suppressHydrationWarning>
-      <body className="bg-background text-foreground">{children}</body>
+    <html lang="en" className={`${figtree.variable} antialiased`} suppressHydrationWarning>
+      <body className="bg-background text-foreground grain">{children}</body>
     </html>
   );
 }

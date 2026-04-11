@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useHorizontalScroll } from "./HorizontalScroll";
+import SplitText from "./SplitText";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,160 +15,184 @@ const projects = [
     url: "forelandmarine.com",
     category: "Web Design / Brand / Development",
     description:
-      "A refined digital presence for an independent superyacht consultancy. Clean, confident, and built to reflect the calibre of the work.",
+      "An independent superyacht consultancy needed a digital presence that matched the calibre of their work. We gave them something clean, confident, and impossible to forget.",
+    image: "/portfolio/foreland.svg",
   },
   {
     name: "Nimara Pilates",
     url: "nimarapilates.com",
     category: "Web Design / Brand Identity",
     description:
-      "A warm, editorial-feeling site for a premium pilates studio launching in Mallorca. Movement and calm expressed through scroll and space.",
+      "A premium pilates studio launching in Mallorca. We designed an editorial-feeling site where every scroll feels like a breath — movement and calm expressed through whitespace and intention.",
+    image: "/portfolio/nimara.svg",
   },
 ];
 
-export default function Portfolio() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+function ProjectPanel({
+  project,
+  index,
+  panelNum,
+}: {
+  project: (typeof projects)[number];
+  index: number;
+  panelNum: string;
+}) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const { scrollTween, isHorizontal } = useHorizontalScroll();
 
   useEffect(() => {
+    if (isHorizontal && !scrollTween) return;
+
     const ctx = gsap.context(() => {
-      gsap.from(".portfolio-title", {
-        y: 60,
+      const triggerBase =
+        isHorizontal && scrollTween
+          ? {
+              containerAnimation: scrollTween,
+              start: "left 75%",
+              toggleActions: "play none none none" as const,
+            }
+          : { start: "top 75%" };
+
+      // Clip-path reveal + desaturated-to-color on the image
+      if (imageRef.current) {
+        gsap.fromTo(
+          imageRef.current,
+          {
+            clipPath: "inset(15% 15% 15% 15%)",
+            scale: 1.15,
+            filter: "saturate(0) brightness(0.7)",
+          },
+          {
+            clipPath: "inset(0% 0% 0% 0%)",
+            scale: 1,
+            filter: "saturate(1) brightness(1)",
+            duration: 1.6,
+            ease: "power3.inOut",
+            scrollTrigger: {
+              trigger: panelRef.current,
+              ...triggerBase,
+            },
+          }
+        );
+      }
+
+      // Text content fade up
+      gsap.from(`.project-meta-${index}`, {
+        y: 40,
         opacity: 0,
-        duration: 1,
+        duration: 0.8,
+        delay: 0.3,
         ease: "power3.out",
         scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 75%",
+          trigger: panelRef.current,
+          ...triggerBase,
         },
       });
 
-      gsap.from(".project-card", {
-        y: 80,
-        opacity: 0,
-        stagger: 0.2,
-        duration: 0.9,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".project-grid",
-          start: "top 75%",
-        },
-      });
-
-      document.querySelectorAll<HTMLElement>(".device-mockup").forEach((el) => {
-        el.addEventListener("mousemove", (e) => {
-          const rect = el.getBoundingClientRect();
+      // 3D hover tilt + color grading shift on image
+      const imageEl = imageRef.current;
+      if (imageEl) {
+        const handleMove = (e: MouseEvent) => {
+          const rect = imageEl.getBoundingClientRect();
           const x = (e.clientX - rect.left) / rect.width - 0.5;
           const y = (e.clientY - rect.top) / rect.height - 0.5;
-          gsap.to(el, {
-            rotateY: x * 20,
-            rotateX: -y * 20,
+          gsap.to(imageEl, {
+            rotateY: x * 12,
+            rotateX: -y * 12,
+            filter: "saturate(1.2) brightness(1.05) contrast(1.05)",
             duration: 0.5,
             ease: "power2.out",
           });
-        });
-        el.addEventListener("mouseleave", () => {
-          gsap.to(el, {
+        };
+        const handleLeave = () => {
+          gsap.to(imageEl, {
             rotateY: 0,
             rotateX: 0,
+            filter: "saturate(1) brightness(1) contrast(1)",
             duration: 0.8,
             ease: "elastic.out(1, 0.5)",
           });
-        });
-      });
-    }, sectionRef);
+        };
+        imageEl.addEventListener("mousemove", handleMove);
+        imageEl.addEventListener("mouseleave", handleLeave);
+      }
+    }, panelRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [scrollTween, isHorizontal, index]);
 
   return (
     <section
-      id="work"
-      ref={sectionRef}
-      className="relative py-32 md:py-40 px-6 md:px-16 lg:px-24"
+      id={index === 0 ? "work" : undefined}
+      ref={panelRef}
+      className="panel relative flex items-center justify-center px-6 md:px-16 lg:px-24 py-16 md:py-0"
     >
-      <div className="max-w-7xl mx-auto">
-        <div className="portfolio-title mb-16 md:mb-20">
-          <span className="type-eyebrow block mb-5">Selected work</span>
-          <h2 className="type-display text-[clamp(2.5rem,4.5vw,4rem)]">
-            The proof is
-            <br />
-            in the pixels.
-          </h2>
+      <div className={`absolute inset-0 pointer-events-none ${index % 2 === 0 ? "bg-[radial-gradient(ellipse_at_70%_60%,rgba(200,168,124,0.03),transparent_70%)]" : "bg-[radial-gradient(ellipse_at_30%_40%,rgba(126,200,227,0.03),transparent_70%)]"}`} />
+      <div
+        className={`relative z-10 flex flex-col ${index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"} gap-10 lg:gap-16 items-center max-w-6xl w-full`}
+      >
+        <div className="flex-[1.2] w-full" style={{ perspective: "1000px" }}>
+          <div
+            ref={imageRef}
+            data-cursor-project
+            className="relative aspect-[16/10] rounded-lg overflow-hidden glow"
+          >
+            <Image
+              src={project.image}
+              alt={`${project.name} website`}
+              fill
+              className="object-cover"
+              priority={index === 0}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+          </div>
         </div>
 
-        <div className="project-grid space-y-24 md:space-y-32">
-          {projects.map((project, i) => (
-            <div
-              key={project.name}
-              className={`project-card flex flex-col ${
-                i % 2 === 1 ? "lg:flex-row-reverse" : "lg:flex-row"
-              } gap-10 lg:gap-16 items-center`}
-            >
-              <div className="flex-1 w-full" style={{ perspective: "1000px" }}>
-                <div className="device-mockup relative aspect-[16/10] bg-surface rounded-xl border border-foreground/5 overflow-hidden glow transition-shadow hover:shadow-accent/10">
-                  <div className="absolute top-0 left-0 right-0 h-8 bg-surface-light flex items-center px-4 gap-2 border-b border-foreground/5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-foreground/10" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-foreground/10" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-foreground/10" />
-                    <div className="flex-1 mx-4">
-                      <div className="h-4 bg-foreground/5 rounded-full max-w-xs mx-auto flex items-center justify-center">
-                        <span className="text-[10px] text-muted">
-                          {project.url}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="absolute inset-0 top-8 bg-gradient-to-br from-surface via-surface-light to-surface p-6 flex flex-col justify-center items-center">
-                    <div className="w-full max-w-sm space-y-3">
-                      <div className="h-3 bg-accent/10 rounded w-1/3" />
-                      <div className="h-8 bg-accent/15 rounded w-2/3" />
-                      <div className="h-2 bg-foreground/5 rounded w-full mt-4" />
-                      <div className="h-2 bg-foreground/5 rounded w-4/5" />
-                      <div className="h-2 bg-foreground/5 rounded w-3/5" />
-                      <div className="flex gap-2 mt-6">
-                        <div className="h-8 w-24 bg-accent/20 rounded" />
-                        <div className="h-8 w-20 border border-foreground/10 rounded" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
-                </div>
-              </div>
-
-              <div className="flex-1 max-w-md">
-                <span className="type-eyebrow">
-                  {project.category}
-                </span>
-                <h3 className="text-2xl md:text-3xl font-medium tracking-[-0.01em] mt-4 leading-tight">
-                  {project.name}
-                </h3>
-                <p className="text-muted text-sm leading-relaxed mt-4">
-                  {project.description}
-                </p>
-                <a
-                  href={`https://${project.url}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 mt-6 text-accent text-xs font-medium tracking-[0.1em] uppercase hover:gap-3 transition-all"
-                >
-                  Visit site
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M7 17L17 7M17 7H7M17 7V17"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          ))}
+        <div className={`project-meta-${index} flex-1 max-w-md`}>
+          <span className="type-eyebrow">{project.category}</span>
+          <h3 className="text-2xl md:text-3xl font-medium tracking-[-0.01em] mt-4 leading-tight">
+            {project.name}
+          </h3>
+          <p className="text-muted text-sm leading-relaxed mt-4">
+            {project.description}
+          </p>
+          <a
+            href={`https://${project.url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-6 text-accent text-xs font-medium tracking-[0.1em] uppercase hover:gap-3 transition-all"
+          >
+            Visit site
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M7 17L17 7M17 7H7M17 7V17"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </a>
         </div>
       </div>
+
+      <span className="panel-number">{panelNum}</span>
     </section>
+  );
+}
+
+export default function Portfolio() {
+  return (
+    <>
+      {projects.map((project, i) => (
+        <ProjectPanel
+          key={project.name}
+          project={project}
+          index={i}
+          panelNum={String(i + 3).padStart(2, "0")}
+        />
+      ))}
+    </>
   );
 }

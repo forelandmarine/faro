@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lighthouse from "./Lighthouse";
+import Magnetic from "./Magnetic";
+import { SoundToggle } from "./SoundEngine";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -41,8 +43,41 @@ export default function Navbar() {
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setMenuOpen(false);
+
     const target = document.querySelector(href);
-    if (target) {
+    if (!target) return;
+
+    // In horizontal scroll mode, we need to calculate the equivalent
+    // vertical scroll position for the target panel
+    const isHorizontal = window.innerWidth >= 768;
+
+    if (isHorizontal) {
+      // Find the panel track and calculate position
+      const track = document.querySelector(".panel-track");
+      if (!track) return;
+
+      const trackRect = track.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+
+      // How far the target is from the track's left edge (accounting for current transform)
+      const style = window.getComputedStyle(track);
+      const matrix = new DOMMatrix(style.transform);
+      const currentX = matrix.m41;
+
+      // Target's offset from the start of the track
+      const targetOffset = targetRect.left - trackRect.left + Math.abs(currentX);
+
+      // Total scrollable distance maps to total track overflow
+      const totalTrackOverflow = track.scrollWidth - window.innerWidth;
+      const scrollTriggers = ScrollTrigger.getAll();
+      const mainTrigger = scrollTriggers.find((t) => t.vars.pin);
+
+      if (mainTrigger) {
+        const scrollRatio = targetOffset / totalTrackOverflow;
+        const targetScroll = mainTrigger.start + (mainTrigger.end - mainTrigger.start) * scrollRatio;
+        window.scrollTo({ top: targetScroll, behavior: "smooth" });
+      }
+    } else {
       target.scrollIntoView({ behavior: "smooth" });
     }
   };
@@ -79,20 +114,25 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={(e) => handleClick(e, link.href)}
-              className="text-xs font-medium tracking-[0.1em] uppercase text-muted hover:text-foreground transition-colors"
+              className="text-xs font-medium tracking-[0.1em] uppercase text-foreground hover:text-accent transition-colors"
             >
               {link.label}
             </a>
           ))}
         </div>
 
-        <a
-          href="#contact"
-          onClick={(e) => handleClick(e, "#contact")}
-          className="hidden md:block text-xs font-medium tracking-[0.1em] uppercase px-5 py-2.5 border border-accent/30 rounded-full text-accent hover:bg-accent hover:text-background transition-all"
-        >
-          Start a project
-        </a>
+        <div className="hidden md:flex items-center gap-4">
+          <SoundToggle />
+          <Magnetic strength={0.25}>
+            <a
+              href="#contact"
+              onClick={(e) => handleClick(e, "#contact")}
+              className="text-xs font-medium tracking-[0.1em] uppercase px-5 py-2.5 border border-accent/30 rounded-full text-accent hover:bg-accent hover:text-background transition-all"
+            >
+              Start a project
+            </a>
+          </Magnetic>
+        </div>
 
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -123,7 +163,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               onClick={(e) => handleClick(e, link.href)}
-              className="block text-sm font-medium tracking-[0.05em] uppercase text-muted hover:text-foreground transition-colors py-2"
+              className="block text-sm font-medium tracking-[0.05em] uppercase text-foreground hover:text-accent transition-colors py-2"
             >
               {link.label}
             </a>

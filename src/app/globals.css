@@ -8,8 +8,8 @@
   --color-muted: #5A5A5A;
   --color-surface: #0A0A0A;
   --color-surface-light: #141414;
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-noto-display);
+  --font-sans: var(--font-figtree);
+  --font-display: var(--font-figtree);
 }
 
 html {
@@ -26,11 +26,11 @@ body {
 
 /* --- Typography system --- */
 
-/* Display: Lexend Peta 800 italic - hero, section titles, wordmark */
+/* Display: Figtree 800 — hero, section titles, wordmark */
 .type-display {
   font-family: var(--font-display), system-ui, sans-serif;
   font-weight: 800;
-  font-style: italic;
+  font-style: normal;
   line-height: 1;
   letter-spacing: -0.02em;
 }
@@ -101,6 +101,99 @@ html.lenis, html.lenis body {
   background: rgba(126, 200, 227, 0.3);
   color: #EDEDED;
 }
+
+/* --- Horizontal scroll panels --- */
+
+.panel {
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Panel dividers — vertical gradient lines between panels */
+.panel + .panel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10%;
+  width: 1px;
+  height: 80%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(126, 200, 227, 0.12) 30%,
+    rgba(126, 200, 227, 0.12) 70%,
+    transparent
+  );
+  z-index: 10;
+}
+
+/* Giant section numbers — deep background layer */
+.panel-number {
+  position: absolute;
+  bottom: -0.05em;
+  right: 0.05em;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 900;
+  font-size: 22vw;
+  line-height: 1;
+  color: rgba(237, 237, 237, 0.02);
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+  filter: blur(1px);
+}
+
+/* Mobile: reset panel to normal flow */
+@media (max-width: 767px) {
+  .panel {
+    width: 100%;
+    height: auto;
+    min-height: auto;
+  }
+  .panel + .panel::before {
+    display: none;
+  }
+  .panel-number {
+    display: none;
+  }
+}
+
+/* --- End horizontal scroll panels --- */
+
+/* --- Film grain overlay --- */
+
+@keyframes grain-shift {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -3%); }
+  20% { transform: translate(3%, 1%); }
+  30% { transform: translate(-1%, 2%); }
+  40% { transform: translate(2%, -2%); }
+  50% { transform: translate(-3%, 3%); }
+  60% { transform: translate(1%, -1%); }
+  70% { transform: translate(-2%, 2%); }
+  80% { transform: translate(3%, -3%); }
+  90% { transform: translate(-1%, 1%); }
+}
+
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 9999;
+  animation: grain-shift 0.5s steps(3) infinite;
+  mix-blend-mode: overlay;
+}
+
+/* --- End film grain --- */
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 0; }

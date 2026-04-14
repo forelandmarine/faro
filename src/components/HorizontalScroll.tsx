@@ -36,7 +36,8 @@ export function useHorizontalScroll() {
 }
 
 function isHorizontalMode() {
-  return typeof window !== "undefined" && window.innerWidth >= 768;
+  return typeof window !== "undefined" &&
+    (window.innerWidth >= 768 || window.innerWidth > window.innerHeight);
 }
 
 export default function HorizontalScroll({ children }: { children: ReactNode }) {
@@ -57,7 +58,7 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
 
     const ctx = gsap.context(() => {
       ScrollTrigger.matchMedia({
-        "(min-width: 768px)": function () {
+        "(min-width: 768px), (orientation: landscape)": function () {
           const tween = gsap.to(track, {
             x: () => -(track.scrollWidth - window.innerWidth),
             ease: "none",
@@ -146,7 +147,7 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
       <div ref={containerRef} className="horizontal-scroll-container">
         <div
           ref={trackRef}
-          className="panel-track flex flex-col md:flex-row md:flex-nowrap will-change-transform"
+          className="panel-track flex flex-col landscape:flex-row landscape:flex-nowrap md:flex-row md:flex-nowrap will-change-transform"
         >
           {children}
         </div>

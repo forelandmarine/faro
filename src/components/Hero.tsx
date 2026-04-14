@@ -82,7 +82,7 @@ export default function Hero() {
     >
       <HeroScene />
 
-      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24 -translate-y-[5vh] md:-translate-y-[10vh] md:-translate-x-[15%]">
+      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24 -translate-y-[3vh] md:-translate-y-[10vh] md:-translate-x-[15%]">
         <div className="hero-reveal flex items-center gap-[0.12em]">
           <SplitText
             as="h1"
@@ -101,28 +101,13 @@ export default function Hero() {
           </span>
         </div>
 
-        <div className="hero-reveal -mt-3">
+        <div className="hero-reveal mt-2">
           <SplitText
             as="p"
             split="words"
-            className="type-display text-[clamp(1.2rem,3vw,2.5rem)] leading-[1] text-white"
+            className="text-base md:text-xl font-medium text-white/80 max-w-md"
             immediate
             delay={3.4}
-            stagger={0.04}
-            duration={0.7}
-            weightFrom={300}
-          >
-            Creative Design
-          </SplitText>
-        </div>
-
-        <div className="hero-reveal mt-8">
-          <SplitText
-            as="p"
-            split="words"
-            className="text-lg md:text-xl font-medium text-white max-w-md"
-            immediate
-            delay={3.7}
             stagger={0.05}
             duration={0.6}
           >

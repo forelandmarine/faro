@@ -14,6 +14,7 @@ import Process from "@/components/Process";
 import About from "@/components/About";
 import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
+import OrientationPrompt from "@/components/OrientationPrompt";
 
 const CustomCursor = dynamic(() => import("@/components/CustomCursor"), {
   ssr: false,
@@ -38,6 +39,7 @@ export default function Home() {
       <CustomCursor />
       <CoastlineScene />
       <FlyingBirds />
+      <OrientationPrompt />
 
       <SmoothScroll>
         <Navbar />

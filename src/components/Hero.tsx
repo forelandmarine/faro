@@ -22,7 +22,7 @@ export default function Hero() {
     const target = document.querySelector(href);
     if (!target) return;
 
-    if (window.innerWidth >= 768 || window.innerWidth > window.innerHeight) {
+    if (window.innerWidth >= 768) {
       const track = document.querySelector(".panel-track");
       if (!track) return;
       const style = window.getComputedStyle(track);
@@ -82,7 +82,7 @@ export default function Hero() {
     >
       <HeroScene />
 
-      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24 -translate-y-[10vh] -translate-x-[15%]">
+      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24 -translate-y-[5vh] md:-translate-y-[10vh] md:-translate-x-[15%]">
         <div className="hero-reveal flex items-center gap-[0.12em]">
           <SplitText
             as="h1"

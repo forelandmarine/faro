@@ -13,6 +13,9 @@ export default function HeroScene() {
     const onCanPlay = () => setVideoLoaded(true);
     video.addEventListener("canplay", onCanPlay);
 
+    // Force play on mobile (iOS requires user gesture but muted autoplay is allowed)
+    video.play().catch(() => {});
+
     return () => video.removeEventListener("canplay", onCanPlay);
   }, []);
 

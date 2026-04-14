@@ -26,7 +26,7 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       // In horizontal mode, use scroll progress; in vertical, use scrollY
-      const isHorizontalMode = window.innerWidth >= 768 || (window.innerWidth > window.innerHeight);
+      const isHorizontalMode = window.innerWidth >= 768;
       if (isHorizontalMode) {
         setScrolled(scrollState.progress > 0.02);
       } else {
@@ -56,7 +56,7 @@ export default function Navbar() {
 
     // In horizontal scroll mode, we need to calculate the equivalent
     // vertical scroll position for the target panel
-    const isHorizontal = window.innerWidth >= 768 || (window.innerWidth > window.innerHeight);
+    const isHorizontal = window.innerWidth >= 768;
 
     if (isHorizontal) {
       // Find the panel track and calculate position
@@ -115,7 +115,7 @@ export default function Navbar() {
           <span className="type-display text-base tracking-[-0.02em]">FARO</span>
         </a>
 
-        <div className="hidden landscape:flex md:flex items-center gap-6 lg:gap-8">
+        <div className="hidden md:flex items-center gap-6 lg:gap-8">
           {links.map((link) => (
             <a
               key={link.href}
@@ -128,7 +128,7 @@ export default function Navbar() {
           ))}
         </div>
 
-        <div className="hidden landscape:flex md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-4">
           <SoundToggle />
           <Magnetic strength={0.25}>
             <a
@@ -143,7 +143,7 @@ export default function Navbar() {
 
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden landscape:hidden flex flex-col gap-1.5 p-3"
+          className="md:hidden flex flex-col gap-1.5 p-3"
           aria-label="Toggle menu"
         >
           <span

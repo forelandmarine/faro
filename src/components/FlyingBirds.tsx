@@ -58,7 +58,7 @@ export default function FlyingBirds() {
   return (
     <div
       ref={containerRef}
-      className="fixed top-0 left-0 w-full h-[20vh] pointer-events-none z-[38] hidden landscape:block md:block"
+      className="fixed top-0 left-0 w-full h-[15vh] md:h-[20vh] pointer-events-none z-[30] hidden landscape:block md:block"
     >
       {birds.map((bird, i) => (
         <div

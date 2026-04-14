@@ -147,6 +147,7 @@ html.lenis, html.lenis body {
   flex-shrink: 0;
   overflow: hidden;
   position: relative;
+  z-index: 31;
 }
 
 /* Panel dividers — vertical gradient lines between panels */
@@ -183,8 +184,7 @@ html.lenis, html.lenis body {
   filter: blur(1px);
 }
 
-/* Mobile: reset panel to normal flow */
-/* Portrait mobile only — stack panels vertically */
+/* Portrait mobile — stack panels vertically */
 @media (max-width: 767px) and (orientation: portrait) {
   .panel {
     width: 100%;
@@ -199,8 +199,15 @@ html.lenis, html.lenis body {
   .panel + .panel::before {
     display: none;
   }
-  .panel-number {
-    display: none;
+}
+
+/* All mobile — text scaling */
+@media (max-width: 767px) {
+  .type-display {
+    letter-spacing: -0.01em;
+  }
+  .panel {
+    font-size: 0.9rem;
   }
 }
 

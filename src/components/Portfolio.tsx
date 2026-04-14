@@ -5,7 +5,6 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
-import SplitText from "./SplitText";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,29 +12,23 @@ const projects = [
   {
     name: "Foreland Marine",
     url: "forelandmarine.com",
-    category: "Web Design / Brand / Development",
-    description:
-      "An independent superyacht consultancy needed a digital presence that matched the calibre of their work. We gave them something clean, confident, and impossible to forget.",
-    image: "/portfolio/foreland.svg",
+    category: "Web / Brand / Dev",
+    image: "/portfolio/foreland.png",
   },
   {
     name: "Nimara Pilates",
     url: "nimarapilates.com",
-    category: "Web Design / Brand Identity",
-    description:
-      "A premium pilates studio launching in Mallorca. We designed an editorial-feeling site where every scroll feels like a breath — movement and calm expressed through whitespace and intention.",
-    image: "/portfolio/nimara.svg",
+    category: "Web / Brand",
+    image: "/portfolio/nimara.png",
   },
 ];
 
 function ProjectPanel({
   project,
   index,
-  panelNum,
 }: {
   project: (typeof projects)[number];
   index: number;
-  panelNum: string;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
@@ -54,13 +47,12 @@ function ProjectPanel({
             }
           : { start: "top 75%" };
 
-      // Clip-path reveal + desaturated-to-color on the image
       if (imageRef.current) {
         gsap.fromTo(
           imageRef.current,
           {
-            clipPath: "inset(15% 15% 15% 15%)",
-            scale: 1.15,
+            clipPath: "inset(5% 5% 5% 5%)",
+            scale: 1.04,
             filter: "saturate(0) brightness(0.7)",
           },
           {
@@ -77,12 +69,11 @@ function ProjectPanel({
         );
       }
 
-      // Text content fade up
-      gsap.from(`.project-meta-${index}`, {
-        y: 40,
+      gsap.from(".project-caption-" + index, {
+        y: 20,
         opacity: 0,
-        duration: 0.8,
-        delay: 0.3,
+        duration: 0.7,
+        delay: 0.8,
         ease: "power3.out",
         scrollTrigger: {
           trigger: panelRef.current,
@@ -90,7 +81,6 @@ function ProjectPanel({
         },
       });
 
-      // 3D hover tilt + color grading shift on image
       const imageEl = imageRef.current;
       if (imageEl) {
         const handleMove = (e: MouseEvent) => {
@@ -98,9 +88,8 @@ function ProjectPanel({
           const x = (e.clientX - rect.left) / rect.width - 0.5;
           const y = (e.clientY - rect.top) / rect.height - 0.5;
           gsap.to(imageEl, {
-            rotateY: x * 12,
-            rotateX: -y * 12,
-            filter: "saturate(1.2) brightness(1.05) contrast(1.05)",
+            rotateY: x * 8,
+            rotateX: -y * 8,
             duration: 0.5,
             ease: "power2.out",
           });
@@ -109,7 +98,6 @@ function ProjectPanel({
           gsap.to(imageEl, {
             rotateY: 0,
             rotateX: 0,
-            filter: "saturate(1) brightness(1) contrast(1)",
             duration: 0.8,
             ease: "elastic.out(1, 0.5)",
           });
@@ -126,58 +114,58 @@ function ProjectPanel({
     <section
       id={index === 0 ? "work" : undefined}
       ref={panelRef}
-      className="panel relative flex items-center justify-center px-6 md:px-16 lg:px-24 py-16 md:py-0"
+      className="panel relative flex flex-col items-center px-8 md:px-20 lg:px-28 py-16 md:py-0"
+      style={{ justifyContent: "center", paddingBottom: "15vh" }}
     >
-      <div className={`absolute inset-0 pointer-events-none ${index % 2 === 0 ? "bg-[radial-gradient(ellipse_at_70%_60%,rgba(200,168,124,0.03),transparent_70%)]" : "bg-[radial-gradient(ellipse_at_30%_40%,rgba(126,200,227,0.03),transparent_70%)]"}`} />
-      <div
-        className={`relative z-10 flex flex-col ${index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"} gap-10 lg:gap-16 items-center max-w-6xl w-full`}
-      >
-        <div className="flex-[1.2] w-full" style={{ perspective: "1000px" }}>
-          <div
-            ref={imageRef}
-            data-cursor-project
-            className="relative aspect-[16/10] rounded-lg overflow-hidden glow"
-          >
+      {/* iPad-style device container */}
+      <div className="w-full max-w-[65vw] md:max-w-[52vw]" style={{ perspective: "1200px" }}>
+        <div
+          ref={imageRef}
+          data-cursor-project
+          className="relative rounded-2xl overflow-hidden"
+          style={{
+            border: "8px solid #1A2A35",
+            borderRadius: "20px",
+            boxShadow: "0 8px 40px rgba(26,42,53,0.15), 0 2px 10px rgba(26,42,53,0.1)",
+          }}
+        >
+          {/* Top bezel with camera dot */}
+          <div className="relative bg-[#1A2A35] h-5 flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-[#2A3E4A]" />
+          </div>
+
+          {/* Screen */}
+          <div className="relative aspect-[4/3] bg-[#f0f0f0]">
             <Image
               src={project.image}
               alt={`${project.name} website`}
               fill
-              className="object-cover"
+              className="object-cover object-top"
               priority={index === 0}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
           </div>
-        </div>
-
-        <div className={`project-meta-${index} flex-1 max-w-md`}>
-          <span className="type-eyebrow">{project.category}</span>
-          <h3 className="text-2xl md:text-3xl font-medium tracking-[-0.01em] mt-4 leading-tight">
-            {project.name}
-          </h3>
-          <p className="text-muted text-sm leading-relaxed mt-4">
-            {project.description}
-          </p>
-          <a
-            href={`https://${project.url}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 mt-6 text-accent text-xs font-medium tracking-[0.1em] uppercase hover:gap-3 transition-all"
-          >
-            Visit site
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M7 17L17 7M17 7H7M17 7V17"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </a>
         </div>
       </div>
 
-      <span className="panel-number">{panelNum}</span>
+      {/* Caption */}
+      <div className={`project-caption-${index} mt-4 md:mt-5 flex items-center gap-6`}>
+        <span className="text-foreground text-lg md:text-xl font-semibold">
+          {project.name}
+        </span>
+        <span className="text-foreground/60 text-sm font-medium">
+          {project.category}
+        </span>
+        <a
+          href={`https://${project.url}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-accent text-xs font-semibold tracking-wider uppercase hover:text-accent-light transition-colors"
+        >
+          Visit
+          <span className="inline-block ml-1">&#8599;</span>
+        </a>
+      </div>
+
     </section>
   );
 }
@@ -190,7 +178,6 @@ export default function Portfolio() {
           key={project.name}
           project={project}
           index={i}
-          panelNum={String(i + 3).padStart(2, "0")}
         />
       ))}
     </>

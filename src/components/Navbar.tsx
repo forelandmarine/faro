@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lighthouse from "./Lighthouse";
 import Magnetic from "./Magnetic";
 import { SoundToggle } from "./SoundEngine";
+import { scrollState } from "./HorizontalScroll";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,7 +25,13 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 100);
+      // In horizontal mode, use scroll progress; in vertical, use scrollY
+      const isHorizontalMode = window.innerWidth >= 768;
+      if (isHorizontalMode) {
+        setScrolled(scrollState.progress > 0.02);
+      } else {
+        setScrolled(window.scrollY > 100);
+      }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -87,7 +94,7 @@ export default function Navbar() {
       ref={navRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-foreground/5"
+          ? "bg-background/80 backdrop-blur-xl border-b border-foreground/6"
           : "bg-transparent"
       }`}
     >
@@ -157,7 +164,7 @@ export default function Navbar() {
           menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="px-6 pb-8 pt-4 bg-background/95 backdrop-blur-xl border-t border-foreground/5 space-y-4">
+        <div className="px-6 pb-8 pt-4 bg-background/95 backdrop-blur-xl border-t border-foreground/6 space-y-4">
           {links.map((link) => (
             <a
               key={link.href}
@@ -171,7 +178,7 @@ export default function Navbar() {
           <a
             href="#contact"
             onClick={(e) => handleClick(e, "#contact")}
-            className="block text-sm font-medium tracking-[0.05em] uppercase text-accent pt-4 border-t border-foreground/5"
+            className="block text-sm font-medium tracking-[0.05em] uppercase text-accent pt-4 border-t border-foreground/6"
           >
             Start a project
           </a>

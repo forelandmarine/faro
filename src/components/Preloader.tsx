@@ -70,14 +70,14 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div ref={containerRef} className="fixed inset-0 z-[100] pointer-events-none">
-      <div ref={leftRef} className="curtain-left flex items-center justify-end pr-4">
+      <div ref={leftRef} className="curtain-left flex items-center justify-end pr-8">
         <div className="preloader-content flex flex-col items-end gap-4">
           <div className="preloader-lighthouse opacity-0 scale-75">
             <Lighthouse size={36} beam />
           </div>
         </div>
       </div>
-      <div ref={rightRef} className="curtain-right flex items-center justify-start pl-4">
+      <div ref={rightRef} className="curtain-right flex items-center justify-start pl-8">
         <div className="preloader-content">
           <div className="preloader-text overflow-hidden">
             {"FARO".split("").map((char, i) => (

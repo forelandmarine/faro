@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
 import SplitText from "./SplitText";
+import Lighthouse from "./Lighthouse";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,16 +17,34 @@ export default function Hero() {
   const contentRef = useRef<HTMLDivElement>(null);
   const { scrollTween, isHorizontal } = useHorizontalScroll();
 
+  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (!target) return;
+
+    if (window.innerWidth >= 768) {
+      const track = document.querySelector(".panel-track");
+      if (!track) return;
+      const style = window.getComputedStyle(track);
+      const matrix = new DOMMatrix(style.transform);
+      const currentX = matrix.m41;
+      const targetRect = target.getBoundingClientRect();
+      const trackRect = track.getBoundingClientRect();
+      const targetOffset = targetRect.left - trackRect.left + Math.abs(currentX);
+      const totalTrackOverflow = track.scrollWidth - window.innerWidth;
+      const mainTrigger = ScrollTrigger.getAll().find((t) => t.vars.pin);
+      if (mainTrigger) {
+        const scrollRatio = targetOffset / totalTrackOverflow;
+        const targetScroll = mainTrigger.start + (mainTrigger.end - mainTrigger.start) * scrollRatio;
+        window.scrollTo({ top: targetScroll, behavior: "smooth" });
+      }
+    } else {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".hero-reveal", {
-        y: 30,
-        stagger: 0.08,
-        duration: 0.7,
-        ease: "power3.out",
-        delay: 3.2,
-      });
-
       if (isHorizontal && scrollTween) {
         // Parallax: content drifts left as you scroll past
         gsap.to(contentRef.current, {
@@ -51,8 +70,8 @@ export default function Hero() {
     >
       <HeroScene />
 
-      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24">
-        <div className="hero-reveal">
+      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24 -translate-y-[10vh]">
+        <div className="hero-reveal flex items-center gap-[0.12em]">
           <SplitText
             as="h1"
             split="chars"
@@ -65,15 +84,33 @@ export default function Hero() {
           >
             FARO
           </SplitText>
+          <span className="inline-block h-[0.675em] w-auto" style={{ fontSize: "clamp(5rem,12vw,11rem)" }}>
+            <Lighthouse size={120} color="#ffffff" beam className="h-full w-auto" />
+          </span>
         </div>
 
-        <div className="hero-reveal mt-6">
+        <div className="hero-reveal -mt-3">
+          <SplitText
+            as="p"
+            split="words"
+            className="type-display text-[clamp(1.2rem,3vw,2.5rem)] leading-[1] text-white"
+            immediate
+            delay={3.4}
+            stagger={0.04}
+            duration={0.7}
+            weightFrom={300}
+          >
+            Creative Design
+          </SplitText>
+        </div>
+
+        <div className="hero-reveal mt-8">
           <SplitText
             as="p"
             split="words"
             className="text-lg md:text-xl font-medium text-white max-w-md"
             immediate
-            delay={3.5}
+            delay={3.7}
             stagger={0.05}
             duration={0.6}
           >
@@ -88,13 +125,15 @@ export default function Hero() {
         <div className="hero-reveal mt-6 flex items-center gap-6">
           <a
             href="#work"
-            className="text-xs font-medium tracking-[0.1em] uppercase text-white hover:text-accent transition-colors"
+            onClick={(e) => handleClick(e, "#work")}
+            className="text-xs font-medium tracking-[0.1em] uppercase text-white hover:text-accent transition-colors border-b border-white/30 pb-0.5 hover:border-accent"
           >
             View work
           </a>
           <span className="w-1 h-1 rounded-full bg-white/50" />
           <a
             href="#contact"
+            onClick={(e) => handleClick(e, "#contact")}
             className="text-xs font-medium tracking-[0.1em] uppercase text-white hover:text-accent transition-colors"
           >
             Get in touch
@@ -102,11 +141,6 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="hero-reveal absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-        <div className="w-px h-12 bg-gradient-to-b from-transparent via-white/20 to-transparent animate-pulse" />
-      </div>
-
-      <span className="panel-number">01</span>
     </section>
   );
 }

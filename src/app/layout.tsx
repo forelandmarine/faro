@@ -41,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${figtree.variable} antialiased`} suppressHydrationWarning>
-      <body className="bg-background text-foreground grain">{children}</body>
+      <body className="text-foreground grain">{children}</body>
     </html>
   );
 }

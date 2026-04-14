@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export const scrollState = { progress: 0 };
-
 export default function HeroScene() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
@@ -20,7 +18,6 @@ export default function HeroScene() {
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-black">
-      {/* Video background */}
       <video
         ref={videoRef}
         autoPlay
@@ -35,7 +32,6 @@ export default function HeroScene() {
         <source src="/hero.mp4" type="video/mp4" />
       </video>
 
-      {/* Fallback: animated gradient when no video */}
       {!videoLoaded && (
         <div className="absolute inset-0 bg-black">
           <div
@@ -48,11 +44,7 @@ export default function HeroScene() {
         </div>
       )}
 
-      {/* Overlay gradient: dark at top and bottom for text legibility */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/70" />
-
-      {/* Bottom fade to black for seamless transition to next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/40" />
     </div>
   );
 }

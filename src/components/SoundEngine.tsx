@@ -228,9 +228,9 @@ export function SoundToggle() {
         )}
       </svg>
 
-      {/* Pulse ring when enabled */}
+      {/* Active indicator dot */}
       {enabled && (
-        <span className="absolute inset-0 rounded-full border border-accent/20 animate-ping opacity-20" />
+        <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-accent/60" />
       )}
     </button>
   );

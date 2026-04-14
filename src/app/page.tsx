@@ -18,15 +18,12 @@ import Contact from "@/components/Contact";
 const CustomCursor = dynamic(() => import("@/components/CustomCursor"), {
   ssr: false,
 });
-const ScrollEffects = dynamic(() => import("@/components/ScrollEffects"), {
-  ssr: false,
-});
-const CursorDistortion = dynamic(
-  () => import("@/components/CursorDistortion"),
+const CoastlineScene = dynamic(
+  () => import("@/components/CoastlineScene"),
   { ssr: false }
 );
-const VelocityEffects = dynamic(
-  () => import("@/components/VelocityEffects"),
+const FlyingBirds = dynamic(
+  () => import("@/components/FlyingBirds"),
   { ssr: false }
 );
 
@@ -39,9 +36,8 @@ export default function Home() {
     <SoundProvider>
       <Preloader onComplete={handlePreloaderComplete} />
       <CustomCursor />
-      <ScrollEffects />
-      <CursorDistortion />
-      <VelocityEffects />
+      <CoastlineScene />
+      <FlyingBirds />
 
       <SmoothScroll>
         <Navbar />

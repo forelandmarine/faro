@@ -201,13 +201,27 @@ html.lenis, html.lenis body {
   }
 }
 
-/* All mobile — text scaling */
+/* All mobile — text scaling and spacing */
 @media (max-width: 767px) {
   .type-display {
     letter-spacing: -0.01em;
   }
   .panel {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+}
+
+/* Landscape mobile — content positioning for short viewports */
+@media (max-height: 500px) {
+  .panel {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+    font-size: 0.8rem;
+  }
+  .type-display {
+    font-size: 85% !important;
   }
 }
 

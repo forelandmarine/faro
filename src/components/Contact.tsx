@@ -72,7 +72,7 @@ export default function Contact() {
     <section
       id="contact"
       ref={sectionRef}
-      className="panel relative flex items-start justify-center px-6 md:px-16 lg:px-24 py-16 md:py-0 md:pt-[33vh] overflow-y-auto"
+      className="panel relative flex items-center md:items-start justify-center px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[33vh] overflow-y-auto"
     >
       <div className="max-w-5xl mx-auto relative z-10 w-full">
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-24">
@@ -82,7 +82,7 @@ export default function Contact() {
               <Lighthouse size={22} color="#4A8C86" className="mb-8" />
             </div>
 
-            <h2 className="letter-line type-display text-[clamp(2.5rem,5vw,4rem)] leading-[1.05] text-foreground mb-5">
+            <h2 className="letter-line type-display text-[clamp(1.8rem,5vw,4rem)] leading-[1.05] text-foreground mb-4">
               Write to us.
             </h2>
 

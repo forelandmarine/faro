@@ -96,18 +96,18 @@ export default function Process() {
     <section
       id="process"
       ref={sectionRef}
-      className="panel relative flex items-start px-6 md:px-16 lg:px-24 py-16 md:py-0 md:pt-[30vh]"
+      className="panel relative flex items-center md:items-start px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[30vh]"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_30%,rgba(77,134,156,0.06),transparent_70%)] pointer-events-none" />
 
       <div className="w-full max-w-6xl mx-auto relative z-10">
         {/* Title — offset, not centered */}
-        <p className="text-foreground/80 text-sm tracking-widest uppercase mb-16 md:mb-20">
+        <p className="text-foreground/80 text-xs md:text-sm tracking-widest uppercase mb-8 md:mb-20">
           The voyage
         </p>
 
         {/* The path visualization */}
-        <div className="relative w-full" style={{ height: "clamp(200px, 35vh, 400px)" }}>
+        <div className="relative w-full" style={{ height: "clamp(160px, 30vh, 400px)" }}>
           <svg
             viewBox="0 0 100 80"
             preserveAspectRatio="none"
@@ -146,10 +146,10 @@ export default function Process() {
                   i % 2 === 0 ? "top-6" : "bottom-6"
                 } whitespace-nowrap`}
               >
-                <span className="type-display text-base md:text-lg block text-foreground">
+                <span className="type-display text-xs md:text-lg block text-foreground">
                   {port.name}
                 </span>
-                <span className="text-foreground/80 text-xs md:text-sm block mt-1 max-w-[180px] whitespace-normal leading-snug">
+                <span className="text-foreground/80 text-[10px] md:text-sm block mt-0.5 max-w-[120px] md:max-w-[180px] whitespace-normal leading-snug">
                   {port.brief}
                 </span>
               </div>

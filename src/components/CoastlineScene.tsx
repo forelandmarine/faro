@@ -173,7 +173,7 @@ export default function CoastlineScene() {
     <div
       ref={wrapperRef}
       className="fixed bottom-0 left-0 w-full pointer-events-none z-[30] hidden landscape:block md:block"
-      style={{ height: "clamp(100px, 25vh, 300px)", opacity: 0 }}
+      style={{ height: "clamp(60px, 18vh, 300px)", opacity: 0 }}
     >
       <svg
         ref={svgRef}

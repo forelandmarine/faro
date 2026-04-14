@@ -60,7 +60,7 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="panel relative flex items-start px-6 md:px-16 lg:px-24 py-16 md:py-0 md:pt-[28vh]"
+      className="panel relative flex items-center md:items-start px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[28vh]"
     >
       <div className="max-w-6xl mx-auto relative z-10 w-full flex flex-col md:flex-row items-start gap-12 lg:gap-20">
         {/* Text */}
@@ -73,7 +73,7 @@ export default function About() {
           </div>
 
           <div className="about-reveal">
-            <p className="text-xl md:text-2xl leading-relaxed text-foreground/90 font-medium">
+            <p className="text-base md:text-2xl leading-relaxed text-foreground/90 font-medium">
               Faro is a creative studio for businesses that refuse to blend in.
             </p>
           </div>

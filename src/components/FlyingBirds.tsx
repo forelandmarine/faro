@@ -58,7 +58,7 @@ export default function FlyingBirds() {
   return (
     <div
       ref={containerRef}
-      className="fixed top-0 left-0 w-full h-[15vh] md:h-[20vh] pointer-events-none z-[30] hidden landscape:block md:block"
+      className="fixed top-0 left-0 w-full h-[10vh] md:h-[20vh] pointer-events-none z-[30] hidden landscape:block md:block"
     >
       {birds.map((bird, i) => (
         <div
@@ -68,11 +68,11 @@ export default function FlyingBirds() {
           style={{ top: `${bird.y}%`, left: 0 }}
         >
           <svg
-            width="28"
-            height="12"
+            width="20"
+            height="8"
             viewBox="0 0 28 12"
             fill="none"
-            className="text-foreground"
+            className="md:w-7 md:h-3 text-foreground"
           >
             {/* Left wing */}
             <path

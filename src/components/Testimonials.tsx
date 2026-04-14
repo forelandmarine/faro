@@ -45,7 +45,7 @@ export default function Testimonials() {
   return (
     <section
       ref={sectionRef}
-      className="panel relative flex items-start justify-center px-6 md:px-16 lg:px-24 py-16 md:py-0 md:pt-[25vh] overflow-hidden"
+      className="panel relative flex items-center md:items-start justify-center px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[25vh] overflow-hidden"
     >
       {/*
         No cards. No grid. No numbers. No statistics.
@@ -56,7 +56,7 @@ export default function Testimonials() {
         <SplitText
           as="h2"
           split="words"
-          className="type-display text-[clamp(2.5rem,6vw,5.5rem)] leading-[1.1] text-foreground"
+          className="type-display text-[clamp(1.6rem,5.5vw,5.5rem)] leading-[1.1] text-foreground"
           trigger={sectionRef}
           weightFrom={300}
           stagger={0.06}

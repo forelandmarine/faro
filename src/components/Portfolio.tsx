@@ -114,23 +114,23 @@ function ProjectPanel({
     <section
       id={index === 0 ? "work" : undefined}
       ref={panelRef}
-      className="panel relative flex flex-col items-center px-8 md:px-20 lg:px-28 py-16 md:py-0 md:pt-[18vh]"
+      className="panel relative flex flex-col items-center justify-center px-4 md:px-20 lg:px-28 py-8 md:py-0"
     >
       {/* iPad-style device container */}
-      <div className="w-full max-w-[92vw] md:max-w-[40vw]" style={{ perspective: "1200px" }}>
+      <div className="w-full max-w-[80vw] sm:max-w-[65vw] md:max-w-[40vw]" style={{ perspective: "1200px" }}>
         <div
           ref={imageRef}
           data-cursor-project
-          className="relative rounded-2xl overflow-hidden"
+          className="relative rounded-xl md:rounded-2xl overflow-hidden"
           style={{
-            border: "8px solid #1A2A35",
-            borderRadius: "20px",
-            boxShadow: "0 8px 40px rgba(26,42,53,0.15), 0 2px 10px rgba(26,42,53,0.1)",
+            border: "4px solid #1A3640",
+            borderRadius: "12px",
+            boxShadow: "0 4px 20px rgba(26,54,64,0.12), 0 1px 6px rgba(26,54,64,0.08)",
           }}
         >
           {/* Top bezel with camera dot */}
-          <div className="relative bg-[#1A2A35] h-5 flex items-center justify-center">
-            <div className="w-2 h-2 rounded-full bg-[#2A3E4A]" />
+          <div className="relative bg-[#1A3640] h-3 md:h-5 flex items-center justify-center">
+            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#2A4A52]" />
           </div>
 
           {/* Screen */}
@@ -147,11 +147,11 @@ function ProjectPanel({
       </div>
 
       {/* Caption */}
-      <div className={`project-caption-${index} mt-4 md:mt-5 flex items-center gap-6`}>
-        <span className="text-foreground text-lg md:text-xl font-semibold">
+      <div className={`project-caption-${index} mt-3 md:mt-5 flex items-center gap-3 md:gap-6`}>
+        <span className="text-foreground text-sm md:text-xl font-semibold">
           {project.name}
         </span>
-        <span className="text-foreground/60 text-sm font-medium">
+        <span className="text-foreground/60 text-xs md:text-sm font-medium">
           {project.category}
         </span>
         <a

@@ -82,12 +82,12 @@ export default function Hero() {
     >
       <HeroScene />
 
-      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24 -translate-y-[3vh] md:-translate-y-[10vh] md:-translate-x-[15%]">
+      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-16 lg:px-24 -translate-y-[3vh] md:-translate-y-[10vh] lg:-translate-x-[15%]">
         <div className="hero-reveal flex items-center gap-[0.12em]">
           <SplitText
             as="h1"
             split="chars"
-            className="type-display text-[clamp(3rem,12vw,11rem)] leading-[0.9] text-white -ml-[calc(0.07em-3px)]"
+            className="type-display text-[clamp(2.2rem,10vw,11rem)] leading-[0.9] text-white -ml-[calc(0.07em-3px)]"
             immediate
             delay={3.2}
             stagger={0.06}
@@ -96,7 +96,7 @@ export default function Hero() {
           >
             FARO
           </SplitText>
-          <span className="inline-block h-[0.675em] w-auto" style={{ fontSize: "clamp(5rem,12vw,11rem)" }}>
+          <span className="inline-block h-[0.675em] w-auto" style={{ fontSize: "clamp(2.2rem,10vw,11rem)" }}>
             <Lighthouse size={120} color="#ffffff" beam className="h-full w-auto" />
           </span>
         </div>

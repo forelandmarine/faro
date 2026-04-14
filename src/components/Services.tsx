@@ -46,7 +46,7 @@ export default function Services() {
     <section
       id="services"
       ref={sectionRef}
-      className="panel relative flex items-start px-6 md:px-16 lg:px-24 py-16 md:py-0 md:pt-[30vh]"
+      className="panel relative flex items-center md:items-start px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[30vh]"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(77,134,156,0.08),transparent_70%)] pointer-events-none" />
 
@@ -56,39 +56,39 @@ export default function Services() {
           The capabilities read as prose — a declaration, not a menu.
           Service names are typographic events: large, accented, breaking the flow.
         */}
-        <div className="space-y-6 md:space-y-8">
-          <p className="manifesto-line text-lg md:text-xl leading-relaxed text-foreground">
+        <div className="space-y-4 md:space-y-8">
+          <p className="manifesto-line text-base md:text-xl leading-relaxed text-foreground">
             We work end to end.
           </p>
 
-          <h2 className="manifesto-line type-display text-[clamp(2.5rem,6vw,5rem)] text-accent leading-[0.95]">
+          <h2 className="manifesto-line type-display text-[clamp(1.8rem,6vw,5rem)] text-accent leading-[0.95]">
             Websites
           </h2>
 
-          <p className="manifesto-line text-lg md:text-xl leading-relaxed text-foreground max-w-2xl">
+          <p className="manifesto-line text-sm md:text-xl leading-relaxed text-foreground max-w-2xl">
             that load fast, convert well, and make your competitors quietly
             redesign theirs. Strategy, design, and code. No handoffs,
             no telephone game.
           </p>
 
-          <h2 className="manifesto-line type-display text-[clamp(2rem,5vw,4rem)] text-foreground leading-[0.95]">
+          <h2 className="manifesto-line type-display text-[clamp(1.5rem,5vw,4rem)] text-foreground leading-[0.95]">
             Brand Identity
           </h2>
 
-          <p className="manifesto-line text-lg md:text-xl leading-relaxed text-foreground max-w-2xl">
+          <p className="manifesto-line text-sm md:text-xl leading-relaxed text-foreground max-w-2xl">
             Logo, typography, colour, tone of voice. The full system,
             built to scale from favicon to billboard. Guidelines you will
             actually open twice.
           </p>
 
-          <div className="manifesto-line flex flex-wrap gap-x-4 md:gap-x-8 gap-y-3 pt-4">
-            <span className="type-display text-[clamp(1.2rem,2.5vw,2rem)] text-accent/60">Motion</span>
-            <span className="text-foreground/50 type-display text-[clamp(1.2rem,2.5vw,2rem)]">/</span>
-            <span className="type-display text-[clamp(1.2rem,2.5vw,2rem)] text-accent/60">3D</span>
-            <span className="text-foreground/50 type-display text-[clamp(1.2rem,2.5vw,2rem)]">/</span>
-            <span className="type-display text-[clamp(1.2rem,2.5vw,2rem)] text-accent/60">Photography</span>
-            <span className="text-foreground/50 type-display text-[clamp(1.2rem,2.5vw,2rem)]">/</span>
-            <span className="type-display text-[clamp(1.2rem,2.5vw,2rem)] text-accent/60">Editorial</span>
+          <div className="manifesto-line flex flex-wrap gap-x-3 md:gap-x-8 gap-y-2 pt-4">
+            <span className="type-display text-[clamp(0.9rem,2.5vw,2rem)] text-accent/60">Motion</span>
+            <span className="text-foreground/50 type-display text-[clamp(0.9rem,2.5vw,2rem)]">/</span>
+            <span className="type-display text-[clamp(0.9rem,2.5vw,2rem)] text-accent/60">3D</span>
+            <span className="text-foreground/50 type-display text-[clamp(0.9rem,2.5vw,2rem)]">/</span>
+            <span className="type-display text-[clamp(0.9rem,2.5vw,2rem)] text-accent/60">Photography</span>
+            <span className="text-foreground/50 type-display text-[clamp(0.9rem,2.5vw,2rem)]">/</span>
+            <span className="type-display text-[clamp(0.9rem,2.5vw,2rem)] text-accent/60">Editorial</span>
           </div>
         </div>
       </div>

@@ -42,12 +42,12 @@ export default function OrientationPrompt() {
   if (!showPrompt) return null;
 
   return (
-    <div className="fixed bottom-6 left-4 right-4 z-[999] md:hidden">
-      <div className="bg-surface/95 backdrop-blur-lg border border-foreground/10 rounded-xl px-5 py-4 flex items-center gap-4 shadow-lg">
+    <div className="fixed bottom-4 left-3 right-3 z-[999] md:hidden">
+      <div className="bg-surface/95 backdrop-blur-lg border border-foreground/10 rounded-lg px-4 py-3 flex items-center gap-3 shadow-lg">
         {/* Rotate icon */}
         <svg
-          width="28"
-          height="28"
+          width="22"
+          height="22"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -63,11 +63,8 @@ export default function OrientationPrompt() {
         </svg>
 
         <div className="flex-1 min-w-0">
-          <p className="text-foreground text-sm font-medium">
+          <p className="text-foreground text-xs font-medium">
             Rotate for the best experience
-          </p>
-          <p className="text-foreground/50 text-xs mt-0.5">
-            This site is designed for landscape viewing
           </p>
         </div>
 

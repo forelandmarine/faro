@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const codeLines = [
   { text: "const faro = {", color: "#A8CCCA", indent: 0 },
   { text: '  name: "Faro Creative",', color: "#EEF7FF", indent: 0 },
-  { text: '  founder: "Jack",', color: "#EEF7FF", indent: 0 },
+  { text: '  captain: "Jack",', color: "#EEF7FF", indent: 0 },
   { text: '  craft: "Websites and stuff",', color: "#EEF7FF", indent: 0 },
   { text: "  approach: [", color: "#A8CCCA", indent: 0 },
   { text: '    "No templates",', color: "#D6E9E4", indent: 0 },

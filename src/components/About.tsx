@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
 import Lighthouse from "./Lighthouse";
-
-const LanyardComponent = dynamic(() => import("./Lanyard"), { ssr: false });
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -51,17 +48,11 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="panel relative flex items-center px-6 md:px-16 lg:px-24 py-16 md:py-0"
+      className="panel relative flex items-start px-6 md:px-16 lg:px-24 py-16 md:py-0 md:pt-[28vh]"
       style={{ overflow: "visible" }}
     >
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 lg:gap-16 relative z-10 w-full">
-        {/* Lanyard — left side, explicit dimensions for R3F canvas */}
-        <div className="hidden md:block md:w-[400px] lg:w-[450px] h-[65vh] ml-[50px] shrink-0" style={{ minHeight: "400px" }}>
-          <LanyardComponent fov={40} position={[0, 0, 14]} />
-        </div>
-
-        {/* Content — right side */}
-        <div className="max-w-lg flex-1">
+      <div className="max-w-5xl mx-auto relative z-10 w-full">
+        <div className="max-w-lg">
         <div className="about-reveal flex items-center gap-3 mb-8">
           <Lighthouse size={20} color="#4D869C" />
           <span className="text-foreground/70 text-xs tracking-widest uppercase">
@@ -96,7 +87,7 @@ export default function About() {
             <span className="text-foreground/70 text-sm">, Founder</span>
           </div>
         </div>
-      </div>
+        </div>
       </div>
 
     </section>

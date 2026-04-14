@@ -72,7 +72,7 @@ export default function Contact() {
     <section
       id="contact"
       ref={sectionRef}
-      className="panel relative flex items-start px-6 md:px-16 lg:px-24 py-16 md:py-0 md:pt-[22vh] overflow-y-auto"
+      className="panel relative flex items-start px-6 md:px-16 lg:px-24 py-16 md:py-0 md:pt-[30vh] overflow-y-auto"
     >
       <div className="max-w-5xl mx-auto relative z-10 w-full">
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-24">

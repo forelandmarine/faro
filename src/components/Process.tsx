@@ -96,7 +96,7 @@ export default function Process() {
     <section
       id="process"
       ref={sectionRef}
-      className="panel relative flex items-center px-6 md:px-16 lg:px-24 py-16 md:py-0"
+      className="panel relative flex items-start px-6 md:px-16 lg:px-24 py-16 md:py-0 md:pt-[26vh]"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_30%,rgba(77,134,156,0.06),transparent_70%)] pointer-events-none" />
 

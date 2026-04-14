@@ -275,9 +275,11 @@ html.lenis, html.lenis body {
 
 /* --- End film grain --- */
 
-/* Landscape mobile: enable horizontal scroll, show effects */
+/* Landscape mobile: enable horizontal scroll, show effects, nav */
 @media (orientation: landscape) and (max-width: 767px) {
   .landscape\:block { display: block !important; }
+  .landscape\:flex { display: flex !important; }
+  .landscape\:hidden { display: none !important; }
   .landscape\:flex-row { flex-direction: row !important; }
   .landscape\:flex-nowrap { flex-wrap: nowrap !important; }
 }

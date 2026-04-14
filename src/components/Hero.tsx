@@ -57,6 +57,18 @@ export default function Hero() {
             scrub: 1,
           },
         });
+
+        // Fade out scroll hint
+        gsap.to(".scroll-hint", {
+          opacity: 0,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            containerAnimation: scrollTween,
+            start: "left left",
+            end: "left -10%",
+            scrub: true,
+          },
+        });
       }
     }, sectionRef);
 
@@ -139,6 +151,14 @@ export default function Hero() {
             Get in touch
           </a>
         </div>
+      </div>
+
+      {/* Scroll affordance — horizontal arrow, fades on scroll */}
+      <div className="scroll-hint absolute bottom-10 right-10 z-10 hidden md:flex items-center gap-2 text-white/40 text-xs tracking-widest uppercase">
+        <span>Scroll</span>
+        <svg width="20" height="8" viewBox="0 0 20 8" fill="none">
+          <path d="M0 4h16M13 1l3 3-3 3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
       </div>
 
     </section>

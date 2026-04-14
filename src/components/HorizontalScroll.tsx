@@ -18,7 +18,7 @@ interface HorizontalScrollContextValue {
   isHorizontal: boolean;
 }
 
-/** Mutable scroll state — read imperatively by shader effects (no re-renders) */
+/** Mutable scroll state — read imperatively by effects (no re-renders) */
 export const scrollState = {
   progress: 0,
   velocity: 0,
@@ -33,6 +33,11 @@ export const HorizontalScrollContext =
 
 export function useHorizontalScroll() {
   return useContext(HorizontalScrollContext);
+}
+
+function isHorizontalMode() {
+  return typeof window !== "undefined" &&
+    (window.innerWidth >= 768 || window.innerWidth > window.innerHeight);
 }
 
 export default function HorizontalScroll({ children }: { children: ReactNode }) {
@@ -53,7 +58,6 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
 
     const ctx = gsap.context(() => {
       ScrollTrigger.matchMedia({
-        // Desktop: horizontal scroll
         "(min-width: 768px), (orientation: landscape)": function () {
           const tween = gsap.to(track, {
             x: () => -(track.scrollWidth - window.innerWidth),
@@ -61,13 +65,13 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
             scrollTrigger: {
               trigger: container,
               pin: true,
-              scrub: 1,
+              scrub: 0.5,
               end: () => "+=" + (track.scrollWidth - window.innerWidth),
               invalidateOnRefresh: true,
+              anticipatePin: 1,
               onUpdate: (self) => {
                 velocityRef.current = self.getVelocity();
                 scrollState.progress = self.progress;
-                // Update progress bar
                 if (progressBar) {
                   gsap.set(progressBar, { scaleX: self.progress, transformOrigin: "left center" });
                 }
@@ -75,17 +79,15 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
             },
           });
 
-          // Velocity-based skew + update global scroll state for shaders
+          // Gentle velocity skew
           const skewTick = () => {
-            const skew = gsap.utils.clamp(-2, 2, velocityRef.current / 1000);
+            const skew = gsap.utils.clamp(-1, 1, velocityRef.current / 2000);
             gsap.set(track, { skewX: skew });
-            velocityRef.current *= 0.92;
-            // Update mutable state (read by shader effects, no re-renders)
+            velocityRef.current *= 0.9;
             scrollState.velocity = velocityRef.current;
           };
           gsap.ticker.add(skewTick);
 
-          // Store cleanup for this matchMedia scope
           return () => {
             gsap.ticker.remove(skewTick);
           };
@@ -93,11 +95,10 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
       });
     });
 
-    // Count panels for shader transition system
     scrollState.panelCount = track.querySelectorAll(".panel").length;
 
-    // Small delay then refresh to ensure all panels are measured
-    const timer = setTimeout(() => ScrollTrigger.refresh(), 100);
+    // Refresh after layout settles
+    const timer = setTimeout(() => ScrollTrigger.refresh(), 150);
 
     return () => {
       clearTimeout(timer);
@@ -105,9 +106,8 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
     };
   }, []);
 
-  // Update context after ScrollTrigger is set up
+  // Grab tween reference for child components
   useEffect(() => {
-    // We need to grab the tween after it's created
     const timer = setTimeout(() => {
       const triggers = ScrollTrigger.getAll();
       const mainTrigger = triggers.find(
@@ -116,15 +116,15 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
       if (mainTrigger?.animation) {
         setContextValue({
           scrollTween: mainTrigger.animation as gsap.core.Tween,
-          isHorizontal: window.innerWidth >= 768 || (window.innerWidth > window.innerHeight),
+          isHorizontal: isHorizontalMode(),
         });
       }
-    }, 200);
+    }, 300);
 
     const handleResize = () => {
       setContextValue((prev) => ({
         ...prev,
-        isHorizontal: window.innerWidth >= 768 || (window.innerWidth > window.innerHeight),
+        isHorizontal: isHorizontalMode(),
       }));
     };
     window.addEventListener("resize", handleResize);
@@ -140,7 +140,7 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
       {/* Progress bar */}
       <div
         ref={progressRef}
-        className="fixed bottom-0 left-0 w-full h-[2px] bg-accent/60 z-50 hidden md:block origin-left"
+        className="fixed bottom-0 left-0 w-full h-[3px] bg-accent/50 z-50 hidden landscape:block md:block origin-left"
         style={{ transform: "scaleX(0)" }}
       />
 

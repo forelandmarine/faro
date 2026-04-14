@@ -184,7 +184,8 @@ html.lenis, html.lenis body {
 }
 
 /* Mobile: reset panel to normal flow */
-@media (max-width: 767px) {
+/* Portrait mobile only — stack panels vertically */
+@media (max-width: 767px) and (orientation: portrait) {
   .panel {
     width: 100%;
     height: auto;
@@ -274,9 +275,11 @@ html.lenis, html.lenis body {
 
 /* --- End film grain --- */
 
-/* Landscape mobile: show coastline and birds */
+/* Landscape mobile: enable horizontal scroll, show effects */
 @media (orientation: landscape) and (max-width: 767px) {
   .landscape\:block { display: block !important; }
+  .landscape\:flex-row { flex-direction: row !important; }
+  .landscape\:flex-nowrap { flex-wrap: nowrap !important; }
 }
 
 /* Scrollbar */

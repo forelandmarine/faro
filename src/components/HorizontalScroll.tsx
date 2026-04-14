@@ -54,7 +54,7 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
     const ctx = gsap.context(() => {
       ScrollTrigger.matchMedia({
         // Desktop: horizontal scroll
-        "(min-width: 768px)": function () {
+        "(min-width: 768px), (orientation: landscape)": function () {
           const tween = gsap.to(track, {
             x: () => -(track.scrollWidth - window.innerWidth),
             ease: "none",
@@ -116,7 +116,7 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
       if (mainTrigger?.animation) {
         setContextValue({
           scrollTween: mainTrigger.animation as gsap.core.Tween,
-          isHorizontal: window.innerWidth >= 768,
+          isHorizontal: window.innerWidth >= 768 || (window.innerWidth > window.innerHeight),
         });
       }
     }, 200);
@@ -124,7 +124,7 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
     const handleResize = () => {
       setContextValue((prev) => ({
         ...prev,
-        isHorizontal: window.innerWidth >= 768,
+        isHorizontal: window.innerWidth >= 768 || (window.innerWidth > window.innerHeight),
       }));
     };
     window.addEventListener("resize", handleResize);
@@ -147,7 +147,7 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
       <div ref={containerRef} className="horizontal-scroll-container">
         <div
           ref={trackRef}
-          className="panel-track flex flex-col md:flex-row md:flex-nowrap will-change-transform"
+          className="panel-track flex flex-col landscape:flex-row landscape:flex-nowrap md:flex-row md:flex-nowrap will-change-transform"
         >
           {children}
         </div>

@@ -26,7 +26,7 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       // In horizontal mode, use scroll progress; in vertical, use scrollY
-      const isHorizontalMode = window.innerWidth >= 768;
+      const isHorizontalMode = window.innerWidth >= 768 || (window.innerWidth > window.innerHeight);
       if (isHorizontalMode) {
         setScrolled(scrollState.progress > 0.02);
       } else {
@@ -56,7 +56,7 @@ export default function Navbar() {
 
     // In horizontal scroll mode, we need to calculate the equivalent
     // vertical scroll position for the target panel
-    const isHorizontal = window.innerWidth >= 768;
+    const isHorizontal = window.innerWidth >= 768 || (window.innerWidth > window.innerHeight);
 
     if (isHorizontal) {
       // Find the panel track and calculate position

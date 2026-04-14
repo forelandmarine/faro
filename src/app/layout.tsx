@@ -11,12 +11,12 @@ const figtree = Figtree({
 
 
 export const metadata: Metadata = {
-  title: "FARO — Creative Studio",
+  title: "FARO Creative Studio",
   description:
     "Brands designed to be found. Web design, brand identity, creative media, and interactive experiences.",
   metadataBase: new URL("https://faro.is"),
   openGraph: {
-    title: "FARO — Creative Studio",
+    title: "FARO Creative Studio",
     description: "Brands designed to be found.",
     url: "https://faro.is",
     siteName: "FARO",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "FARO — Creative Studio",
+    title: "FARO Creative Studio",
     description: "Brands designed to be found.",
   },
   icons: {

@@ -66,7 +66,7 @@ export default function About() {
         {/* Text */}
         <div className="max-w-lg flex-1">
           <div className="about-reveal flex items-center gap-3 mb-8">
-            <Lighthouse size={20} color="#4D869C" />
+            <Lighthouse size={20} color="#4A8C86" />
             <span className="text-foreground/70 text-xs tracking-widest uppercase">
               About Faro
             </span>

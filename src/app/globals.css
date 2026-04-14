@@ -1,46 +1,45 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #CDE8E5;
-  --color-foreground: #1A2A35;
-  --color-accent: #4D869C;
-  --color-accent-light: #3A7088;
-  --color-muted: #5A7A88;
-  --color-surface: #B8D8D4;
-  --color-surface-light: #D8EDE9;
+  --color-background: #D6E9E4;
+  --color-foreground: #1A3640;
+  --color-accent: #4A8C86;
+  --color-accent-light: #A8CCCA;
+  --color-muted: #4A6A72;
+  --color-surface: #A8CCCA;
+  --color-surface-light: #D6E9E4;
   --font-sans: var(--font-figtree);
   --font-display: var(--font-figtree);
 
   /* Nautical palette */
-  --color-sea-deep: #0D1B2A;
-  --color-sea-mid: #132636;
-  --color-sea-surface: #4D869C;
+  --color-sea-deep: #1A3640;
+  --color-sea-mid: #A8CCCA;
+  --color-sea-surface: #4A8C86;
   --color-coast-sand: #3A4A52;
   --color-coast-rock: #2A3840;
-  --color-sky-night: #0D1B2A;
-  --color-moon: #CDE8E5;
-  --color-beam: #CDE8E5;
-  --color-foam: #7AB2B2;
+  --color-sky-night: #1A3640;
+  --color-moon: #D6E9E4;
+  --color-beam: #D6E9E4;
+  --color-foam: #A8CCCA;
 }
 
 html {
   background: transparent;
-  color: #1A2A35;
+  color: #1A3640;
 }
 
 body {
   background:
     linear-gradient(
       to bottom,
-      #CDE8E5 0%,
-      #CDE8E5 25%,
-      #EEF7FF 25%,
-      #EEF7FF 50%,
-      #7AB2B2 50%,
-      #7AB2B2 72%,
-      #4D869C 78%,
-      #2C4F5C 88%,
-      #142D36 100%
+      #D6E9E4 0%,
+      #D6E9E4 25%,
+      #EAF1F8 25%,
+      #EAF1F8 50%,
+      #A8CCCA 50%,
+      #A8CCCA 75%,
+      #1A3640 75%,
+      #1A3640 100%
     ) fixed;
   color: var(--color-foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
@@ -123,7 +122,7 @@ html.lenis, html.lenis body {
   top: 0;
   width: 50%;
   height: 100vh;
-  background: #CDE8E5;
+  background: #D6E9E4;
   z-index: 100;
 }
 .curtain-left { left: 0; }
@@ -137,7 +136,7 @@ html.lenis, html.lenis body {
 /* Selection */
 ::selection {
   background: rgba(77, 134, 156, 0.3);
-  color: #1A2A35;
+  color: #1A3640;
 }
 
 /* --- Horizontal scroll panels --- */
@@ -210,15 +209,14 @@ html.lenis, html.lenis body {
   background:
     linear-gradient(
       to bottom,
-      #CDE8E5 0%,
-      #CDE8E5 25%,
-      #EEF7FF 25%,
-      #EEF7FF 50%,
-      #7AB2B2 50%,
-      #7AB2B2 72%,
-      #4D869C 78%,
-      #2C4F5C 88%,
-      #142D36 100%
+      #D6E9E4 0%,
+      #D6E9E4 25%,
+      #EAF1F8 25%,
+      #EAF1F8 50%,
+      #A8CCCA 50%,
+      #A8CCCA 75%,
+      #1A3640 75%,
+      #1A3640 100%
     );
 }
 
@@ -231,14 +229,14 @@ html.lenis, html.lenis body {
     background:
       linear-gradient(
         to bottom,
-        #CDE8E5 0%,
-        #CDE8E5 25%,
-        #EEF7FF 25%,
-        #EEF7FF 50%,
-        #7AB2B2 50%,
-        #7AB2B2 75%,
-        #4D869C 75%,
-        #4D869C 100%
+        #D6E9E4 0%,
+        #D6E9E4 25%,
+        #EAF1F8 25%,
+        #EAF1F8 50%,
+        #A8CCCA 50%,
+        #A8CCCA 75%,
+        #4A8C86 75%,
+        #4A8C86 100%
       );
   }
 }

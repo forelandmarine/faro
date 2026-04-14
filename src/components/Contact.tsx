@@ -79,7 +79,7 @@ export default function Contact() {
           {/* Left — heading and info */}
           <div className="flex-1 max-w-md">
             <div className="letter-line">
-              <Lighthouse size={22} color="#4D869C" className="mb-8" />
+              <Lighthouse size={22} color="#4A8C86" className="mb-8" />
             </div>
 
             <h2 className="letter-line type-display text-[clamp(2.5rem,5vw,4rem)] leading-[1.05] text-foreground mb-5">
@@ -185,7 +185,7 @@ export default function Contact() {
       <div className="absolute bottom-6 left-0 right-0 px-6 md:px-16 lg:px-24 z-10">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-foreground/60 text-xs">
           <div className="flex items-center gap-2">
-            <Lighthouse size={12} color="#4D869C" />
+            <Lighthouse size={12} color="#4A8C86" />
             <span className="type-display text-xs">FARO</span>
           </div>
           <p>&copy; {new Date().getFullYear()} Faro Creative</p>

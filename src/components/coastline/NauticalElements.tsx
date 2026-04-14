@@ -57,9 +57,9 @@ export function NauticalDefs() {
         {/* Spire */}
         <line x1="15" y1="10" x2="15" y2="6" stroke="currentColor" strokeWidth="1.2" opacity="0.7" />
         {/* Blue stripes */}
-        <rect x="12.8" y="26" width="4.4" height="5" fill="#4D869C" opacity="0.7" />
-        <rect x="12.2" y="36" width="5.6" height="5" fill="#4D869C" opacity="0.7" />
-        <rect x="11.6" y="46" width="6.8" height="5" fill="#4D869C" opacity="0.7" />
+        <rect x="12.8" y="26" width="4.4" height="5" fill="#4A8C86" opacity="0.7" />
+        <rect x="12.2" y="36" width="5.6" height="5" fill="#4A8C86" opacity="0.7" />
+        <rect x="11.6" y="46" width="6.8" height="5" fill="#4A8C86" opacity="0.7" />
         {/* Base */}
         <rect x="9" y="53" width="12" height="3" rx="1" fill="currentColor" opacity="0.7" />
         {/* Light glow */}
@@ -186,23 +186,23 @@ export function NauticalDefs() {
       {/* ── Gradients — white/mint/ice for light scene ── */}
       <linearGradient id="water-gradient" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.1" />
-        <stop offset="100%" stopColor="#CDE8E5" stopOpacity="0.05" />
+        <stop offset="100%" stopColor="#D6E9E4" stopOpacity="0.05" />
       </linearGradient>
 
       <linearGradient id="coast-fill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#7AB2B2" stopOpacity="1" />
-        <stop offset="40%" stopColor="#4D869C" stopOpacity="1" />
-        <stop offset="100%" stopColor="#4D869C" stopOpacity="0.95" />
+        <stop offset="0%" stopColor="#A8CCCA" stopOpacity="1" />
+        <stop offset="40%" stopColor="#4A8C86" stopOpacity="1" />
+        <stop offset="100%" stopColor="#4A8C86" stopOpacity="0.95" />
       </linearGradient>
 
       <linearGradient id="hill-fill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#CDE8E5" stopOpacity="0.15" />
+        <stop offset="0%" stopColor="#D6E9E4" stopOpacity="0.15" />
         <stop offset="100%" stopColor="#EEF7FF" stopOpacity="0.03" />
       </linearGradient>
 
       <linearGradient id="water-surface" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.08" />
-        <stop offset="100%" stopColor="#CDE8E5" stopOpacity="0.03" />
+        <stop offset="100%" stopColor="#D6E9E4" stopOpacity="0.03" />
       </linearGradient>
 
       <radialGradient id="beam-glow" cx="0" cy="0.5" r="1">

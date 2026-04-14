@@ -16,14 +16,14 @@ const PANEL_COUNT = 8;
 
 /* Palette constants */
 const C = {
-  foreground: "#1A2A35",
+  foreground: "#1A3640",
   white: "#FFFFFF",
-  ice: "#EEF7FF",
-  mint: "#CDE8E5",
-  accent: "#7AB2B2",
-  sea: "#4D869C",
-  foam: "#CDE8E5",
-  sand: "#5A7A88",
+  ice: "#EAF1F8",
+  mint: "#D6E9E4",
+  accent: "#A8CCCA",
+  sea: "#4A8C86",
+  foam: "#D6E9E4",
+  sand: "#4A6A72",
   beam: "#FFFFFF",
 };
 

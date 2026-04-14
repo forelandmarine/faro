@@ -83,11 +83,11 @@ export default function CoastlineScene() {
       if (water) water.style.transform = `translateX(${-p * shift * 0.65}px)`;
       if (coast) coast.style.transform = `translateX(${-p * shift * 1.0}px)`;
       if (foam) foam.style.transform = `translateX(${-p * shift * 1.1}px)`;
-      // Hard hide on hero panel — only show once fully past it
+      // Hidden on hero, gentle fade in between hero and panel 2
       if (wrapperRef.current) {
-        const show = p > 0.13;
-        wrapperRef.current.style.opacity = show ? "1" : "0";
-        wrapperRef.current.style.visibility = show ? "visible" : "hidden";
+        const opacity = p < 0.06 ? 0 : p > 0.16 ? 1 : (p - 0.06) / 0.10;
+        wrapperRef.current.style.opacity = String(opacity);
+        wrapperRef.current.style.visibility = p < 0.06 ? "hidden" : "visible";
       }
     };
     gsap.ticker.add(tick);

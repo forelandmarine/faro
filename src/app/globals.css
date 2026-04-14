@@ -37,9 +37,10 @@ body {
       #EEF7FF 25%,
       #EEF7FF 50%,
       #7AB2B2 50%,
-      #7AB2B2 75%,
-      #1E3A45 75%,
-      #1E3A45 100%
+      #7AB2B2 72%,
+      #4D869C 78%,
+      #2C4F5C 88%,
+      #142D36 100%
     ) fixed;
   color: var(--color-foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
@@ -214,9 +215,10 @@ html.lenis, html.lenis body {
       #EEF7FF 25%,
       #EEF7FF 50%,
       #7AB2B2 50%,
-      #7AB2B2 75%,
-      #1E3A45 75%,
-      #1E3A45 100%
+      #7AB2B2 72%,
+      #4D869C 78%,
+      #2C4F5C 88%,
+      #142D36 100%
     );
 }
 

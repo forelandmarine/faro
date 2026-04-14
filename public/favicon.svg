@@ -1,23 +1,23 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="32" height="32" rx="6" fill="#1A2A35"/>
+  <rect width="32" height="32" rx="6" fill="#1A3640"/>
   <!-- Tower body -->
-  <path d="M13.5 28L14.5 12H17.5L18.5 28Z" fill="#7AB2B2"/>
+  <path d="M13.5 28L14.5 12H17.5L18.5 28Z" fill="#A8CCCA"/>
   <!-- Lamp room -->
-  <rect x="13" y="9" width="6" height="3.5" rx="0.5" fill="#CDE8E5"/>
+  <rect x="13" y="9" width="6" height="3.5" rx="0.5" fill="#D6E9E4"/>
   <!-- Light glow -->
   <circle cx="16" cy="10.5" r="1.2" fill="#FFFFFF" opacity="0.9"/>
   <!-- Cap -->
-  <path d="M13 9L16 5L19 9Z" fill="#4D869C"/>
+  <path d="M13 9L16 5L19 9Z" fill="#4A8C86"/>
   <!-- Spire -->
-  <line x1="16" y1="5" x2="16" y2="2.5" stroke="#7AB2B2" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="16" y1="5" x2="16" y2="2.5" stroke="#A8CCCA" stroke-width="1.2" stroke-linecap="round"/>
   <!-- Gallery rail -->
-  <line x1="11.5" y1="9" x2="20.5" y2="9" stroke="#7AB2B2" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="11.5" y1="9" x2="20.5" y2="9" stroke="#A8CCCA" stroke-width="1.2" stroke-linecap="round"/>
   <!-- Blue stripes -->
-  <rect x="14.3" y="16" width="3.4" height="2" fill="#4D869C" opacity="0.7"/>
-  <rect x="14" y="22" width="4" height="2" fill="#4D869C" opacity="0.7"/>
+  <rect x="14.3" y="16" width="3.4" height="2" fill="#4A8C86" opacity="0.7"/>
+  <rect x="14" y="22" width="4" height="2" fill="#4A8C86" opacity="0.7"/>
   <!-- Base -->
-  <rect x="11" y="27" width="10" height="2" rx="0.5" fill="#7AB2B2"/>
+  <rect x="11" y="27" width="10" height="2" rx="0.5" fill="#A8CCCA"/>
   <!-- Beam rays -->
-  <line x1="16" y1="10.5" x2="6" y2="6" stroke="#CDE8E5" stroke-width="0.7" opacity="0.5" stroke-linecap="round"/>
-  <line x1="16" y1="10.5" x2="26" y2="6" stroke="#CDE8E5" stroke-width="0.7" opacity="0.5" stroke-linecap="round"/>
+  <line x1="16" y1="10.5" x2="6" y2="6" stroke="#D6E9E4" stroke-width="0.7" opacity="0.5" stroke-linecap="round"/>
+  <line x1="16" y1="10.5" x2="26" y2="6" stroke="#D6E9E4" stroke-width="0.7" opacity="0.5" stroke-linecap="round"/>
 </svg>

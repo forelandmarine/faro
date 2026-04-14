@@ -20,6 +20,7 @@ import {
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
 import * as THREE from "three";
 import { generateCardCanvas } from "./LanyardCardTexture";
+import { scrollState } from "./HorizontalScroll";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
@@ -43,9 +44,11 @@ export default function Lanyard({
   fov = 20,
   transparent = true,
 }: LanyardProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 768
   );
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -53,8 +56,21 @@ export default function Lanyard({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Start physics only when the container enters the viewport
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || visible) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [visible]);
+
   return (
-    <div className="relative z-0 w-full h-full">
+    <div ref={containerRef} className="relative z-0 w-full h-full">
+      {visible && (
       <Canvas
         camera={{ position, fov }}
         dpr={[1, isMobile ? 1.5 : 2]}
@@ -74,6 +90,7 @@ export default function Lanyard({
           <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
         </Environment>
       </Canvas>
+      )}
     </div>
   );
 }
@@ -172,6 +189,15 @@ function Band({
       ang.copy(card.current.angvel());
       rot.copy(card.current.rotation());
       card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
+
+      // Scroll-driven kinetic energy — push the card based on scroll velocity
+      if (!dragged) {
+        const scrollVel = scrollState.velocity;
+        const impulse = scrollVel / 8000; // normalize to gentle force
+        if (Math.abs(impulse) > 0.005) {
+          card.current.applyImpulse({ x: impulse * 0.3, y: 0, z: impulse * 0.1 }, true);
+        }
+      }
     }
   });
 

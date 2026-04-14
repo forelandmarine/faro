@@ -118,7 +118,7 @@ function ProjectPanel({
       style={{ justifyContent: "center", paddingBottom: "clamp(1rem, 10vh, 15vh)" }}
     >
       {/* iPad-style device container */}
-      <div className="w-full max-w-[92vw] md:max-w-[52vw]" style={{ perspective: "1200px" }}>
+      <div className="w-full max-w-[92vw] md:max-w-[40vw]" style={{ perspective: "1200px" }}>
         <div
           ref={imageRef}
           data-cursor-project

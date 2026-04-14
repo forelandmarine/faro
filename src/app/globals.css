@@ -274,5 +274,10 @@ html.lenis, html.lenis body {
 
 /* --- End film grain --- */
 
+/* Landscape mobile: show coastline and birds */
+@media (orientation: landscape) and (max-width: 767px) {
+  .landscape\:block { display: block !important; }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 0; }

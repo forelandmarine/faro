@@ -5,6 +5,8 @@
  */
 
 let cachedCanvas: HTMLCanvasElement | null = null;
+// Bump this to invalidate cache during dev
+const CACHE_VERSION = 3;
 
 export function generateCardCanvas(): HTMLCanvasElement {
   if (cachedCanvas) return cachedCanvas;
@@ -17,10 +19,7 @@ export function generateCardCanvas(): HTMLCanvasElement {
   canvas.height = H;
   const ctx = canvas.getContext("2d")!;
 
-  // The GLB UVs are mirrored — we flip the entire context
-  // so we can draw normally and it appears correct on the model
-  ctx.translate(W, H);
-  ctx.scale(-1, -1);
+  // No transform — draw normally, let Three.js handle UV mapping
 
   // White card background
   ctx.fillStyle = "#FFFFFF";

@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
 import Lighthouse from "./Lighthouse";
+
+const LanyardComponent = dynamic(() => import("./Lanyard"), { ssr: false });
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -37,32 +40,8 @@ export default function About() {
         },
       });
 
-      // The large initials — scale in from slightly larger
-      gsap.from(".about-initials", {
-        scale: 1.1,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          ...triggerBase,
-        },
-      });
 
-      if (isHorizontal && scrollTween) {
-        // Initials parallax — move slower than content
-        gsap.to(".about-initials", {
-          x: 80,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            containerAnimation: scrollTween,
-            start: "left right",
-            end: "right left",
-            scrub: 1,
-          },
-        });
 
-      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -72,25 +51,17 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="panel relative flex items-center px-6 md:px-16 lg:px-24 py-16 md:py-0 overflow-hidden"
+      className="panel relative flex items-center px-6 md:px-16 lg:px-24 py-16 md:py-0"
+      style={{ overflow: "visible" }}
     >
-      {/*
-        No card. No gradient box. No centred icon.
-        The initials ARE the visual — a typographic signature
-        that sits behind the text like a watermark.
-      */}
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 lg:gap-16 relative z-10 w-full">
+        {/* Lanyard — left side, explicit dimensions for R3F canvas */}
+        <div className="hidden md:block md:w-[400px] lg:w-[450px] h-[65vh] ml-[50px] shrink-0" style={{ minHeight: "400px" }}>
+          <LanyardComponent />
+        </div>
 
-      {/* Giant initials — the visual identity of this section */}
-      <div className="about-initials absolute left-[5%] md:left-[8%] top-1/2 -translate-y-1/2 select-none pointer-events-none">
-        <span
-          className="type-display text-[clamp(5rem,30vw,28rem)] leading-none text-accent/[0.07]"
-        >
-          JW
-        </span>
-      </div>
-
-      {/* Content — offset right, reads against the initials */}
-      <div className="max-w-lg mx-auto md:ml-auto md:mr-[10%] relative z-10">
+        {/* Content — right side */}
+        <div className="max-w-lg flex-1">
         <div className="about-reveal flex items-center gap-3 mb-8">
           <Lighthouse size={20} color="#4D869C" />
           <span className="text-foreground/70 text-xs tracking-widest uppercase">
@@ -125,6 +96,7 @@ export default function About() {
             <span className="text-foreground/70 text-sm">, Founder</span>
           </div>
         </div>
+      </div>
       </div>
 
     </section>

@@ -19,7 +19,6 @@ import {
 } from "@react-three/rapier";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
 import * as THREE from "three";
-import { generateCardCanvas } from "./LanyardCardTexture";
 import { scrollState } from "./HorizontalScroll";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
@@ -48,29 +47,14 @@ export default function Lanyard({
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 768
   );
-  const [visible, setVisible] = useState(false);
-
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Start physics only when the container enters the viewport
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el || visible) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [visible]);
-
   return (
     <div ref={containerRef} className="relative z-0 w-full h-full">
-      {visible && (
       <Canvas
         camera={{ position, fov }}
         dpr={[1, isMobile ? 1.5 : 2]}
@@ -90,7 +74,6 @@ export default function Lanyard({
           <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
         </Environment>
       </Canvas>
-      )}
     </div>
   );
 }
@@ -130,16 +113,6 @@ function Band({
   };
   const texture = useTexture("/lanyard/lanyard.png");
 
-  const [cardTexture] = useState(() => {
-    const canvas = generateCardCanvas();
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.flipY = false;
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.minFilter = THREE.LinearMipmapLinearFilter;
-    tex.magFilter = THREE.LinearFilter;
-    tex.generateMipmaps = true;
-    return tex;
-  });
 
   const [curve] = useState(
     () => new THREE.CatmullRomCurve3([
@@ -207,7 +180,7 @@ function Band({
   return (
     <>
       {/* Offset left and down — only change from original positioning */}
-      <group position={[-3, 3, 0]}>
+      <group position={[0, 4, 0]}>
         {/* Original segment layout — DO NOT CHANGE */}
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
@@ -231,12 +204,12 @@ function Band({
           >
             <mesh geometry={nodes.card.geometry}>
               <meshPhysicalMaterial
-                map={cardTexture}
+                map={materials.base.map}
                 map-anisotropy={16}
-                clearcoat={isMobile ? 0 : 0.5}
-                clearcoatRoughness={0.3}
-                roughness={0.95}
-                metalness={0.05}
+                clearcoat={isMobile ? 0 : 1}
+                clearcoatRoughness={0.15}
+                roughness={0.9}
+                metalness={0.8}
               />
             </mesh>
             <mesh geometry={nodes.clip.geometry} material={materials.metal} material-roughness={0.3} />

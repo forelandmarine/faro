@@ -57,7 +57,7 @@ export default function About() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 lg:gap-16 relative z-10 w-full">
         {/* Lanyard — left side, explicit dimensions for R3F canvas */}
         <div className="hidden md:block md:w-[400px] lg:w-[450px] h-[65vh] ml-[50px] shrink-0" style={{ minHeight: "400px" }}>
-          <LanyardComponent />
+          <LanyardComponent fov={40} position={[0, 0, 14]} />
         </div>
 
         {/* Content — right side */}

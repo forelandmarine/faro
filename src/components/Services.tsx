@@ -81,7 +81,7 @@ export default function Services() {
             actually open twice.
           </p>
 
-          <div className="manifesto-line flex flex-wrap gap-x-8 gap-y-3 pt-4">
+          <div className="manifesto-line flex flex-wrap gap-x-4 md:gap-x-8 gap-y-3 pt-4">
             <span className="type-display text-[clamp(1.2rem,2.5vw,2rem)] text-accent/60">Motion</span>
             <span className="text-foreground/50 type-display text-[clamp(1.2rem,2.5vw,2rem)]">/</span>
             <span className="type-display text-[clamp(1.2rem,2.5vw,2rem)] text-accent/60">3D</span>

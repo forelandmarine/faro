@@ -107,7 +107,7 @@ export default function Process() {
         </p>
 
         {/* The path visualization */}
-        <div className="relative w-full" style={{ height: "clamp(280px, 40vh, 400px)" }}>
+        <div className="relative w-full" style={{ height: "clamp(200px, 35vh, 400px)" }}>
           <svg
             viewBox="0 0 100 80"
             preserveAspectRatio="none"

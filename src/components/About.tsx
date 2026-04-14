@@ -83,14 +83,14 @@ export default function About() {
       {/* Giant initials — the visual identity of this section */}
       <div className="about-initials absolute left-[5%] md:left-[8%] top-1/2 -translate-y-1/2 select-none pointer-events-none">
         <span
-          className="type-display text-[clamp(14rem,30vw,28rem)] leading-none text-accent/[0.07]"
+          className="type-display text-[clamp(5rem,30vw,28rem)] leading-none text-accent/[0.07]"
         >
           JW
         </span>
       </div>
 
       {/* Content — offset right, reads against the initials */}
-      <div className="max-w-lg ml-auto mr-[5%] md:mr-[10%] relative z-10">
+      <div className="max-w-lg mx-auto md:ml-auto md:mr-[10%] relative z-10">
         <div className="about-reveal flex items-center gap-3 mb-8">
           <Lighthouse size={20} color="#4D869C" />
           <span className="text-foreground/70 text-xs tracking-widest uppercase">

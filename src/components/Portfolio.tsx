@@ -115,10 +115,10 @@ function ProjectPanel({
       id={index === 0 ? "work" : undefined}
       ref={panelRef}
       className="panel relative flex flex-col items-center px-8 md:px-20 lg:px-28 py-16 md:py-0"
-      style={{ justifyContent: "center", paddingBottom: "15vh" }}
+      style={{ justifyContent: "center", paddingBottom: "clamp(1rem, 10vh, 15vh)" }}
     >
       {/* iPad-style device container */}
-      <div className="w-full max-w-[65vw] md:max-w-[52vw]" style={{ perspective: "1200px" }}>
+      <div className="w-full max-w-[92vw] md:max-w-[52vw]" style={{ perspective: "1200px" }}>
         <div
           ref={imageRef}
           data-cursor-project

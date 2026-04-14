@@ -75,7 +75,7 @@ export default function Contact() {
       className="panel relative flex items-center px-6 md:px-16 lg:px-24 py-16 md:py-0 overflow-y-auto"
     >
       <div className="max-w-5xl mx-auto relative z-10 w-full">
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-24">
           {/* Left — heading and info */}
           <div className="flex-1 max-w-md">
             <div className="letter-line">
@@ -103,7 +103,7 @@ export default function Contact() {
           </div>
 
           {/* Right — form */}
-          <div className="flex-1 max-w-lg">
+          <div className="flex-1 w-full max-w-lg">
             {status === "sent" ? (
               <div className="letter-line pt-4">
                 <p className="text-foreground text-xl font-semibold">Sent.</p>

@@ -75,7 +75,7 @@ export default function Hero() {
           <SplitText
             as="h1"
             split="chars"
-            className="type-display text-[clamp(5rem,12vw,11rem)] leading-[0.9] text-white -ml-[calc(0.07em-3px)]"
+            className="type-display text-[clamp(3rem,12vw,11rem)] leading-[0.9] text-white -ml-[calc(0.07em-3px)]"
             immediate
             delay={3.2}
             stagger={0.06}

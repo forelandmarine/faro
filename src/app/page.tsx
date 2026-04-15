@@ -15,6 +15,7 @@ import About from "@/components/About";
 import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
 import OrientationPrompt from "@/components/OrientationPrompt";
+import MobileCoastline from "@/components/MobileCoastline";
 
 const CustomCursor = dynamic(() => import("@/components/CustomCursor"), {
   ssr: false,
@@ -52,6 +53,7 @@ export default function Home() {
           <Testimonials />
           <Contact />
         </HorizontalScroll>
+        <MobileCoastline />
       </SmoothScroll>
     </SoundProvider>
   );

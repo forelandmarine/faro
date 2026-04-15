@@ -114,10 +114,10 @@ function ProjectPanel({
     <section
       id={index === 0 ? "work" : undefined}
       ref={panelRef}
-      className="panel relative flex flex-col items-center justify-center px-4 md:px-20 lg:px-28 py-8 md:py-0"
+      className="panel relative flex flex-col items-center md:justify-center px-4 md:px-20 lg:px-28 py-4 md:py-0"
     >
       {/* iPad-style device container */}
-      <div className="w-full max-w-[80vw] sm:max-w-[65vw] md:max-w-[40vw]" style={{ perspective: "1200px" }}>
+      <div className="w-full max-w-[70vw] sm:max-w-[55vw] md:max-w-[40vw]" style={{ perspective: "1200px" }}>
         <div
           ref={imageRef}
           data-cursor-project

@@ -72,7 +72,7 @@ export default function Contact() {
     <section
       id="contact"
       ref={sectionRef}
-      className="panel relative flex items-center md:items-start justify-center px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[33vh] overflow-y-auto"
+      className="panel contact-panel relative flex items-center md:items-start justify-center px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[33vh] overflow-y-auto"
     >
       <div className="max-w-5xl mx-auto relative z-10 w-full">
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-24">
@@ -129,7 +129,7 @@ export default function Contact() {
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                     required
-                    className="w-full bg-transparent border-b border-foreground/15 pb-3 text-foreground text-base focus:border-accent focus:outline-none transition-colors"
+                    className="w-full bg-transparent border-b border-foreground/20 md:border-foreground/15 pb-3 text-foreground text-base focus:border-accent focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -143,7 +143,7 @@ export default function Contact() {
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                     required
-                    className="w-full bg-transparent border-b border-foreground/15 pb-3 text-foreground text-base focus:border-accent focus:outline-none transition-colors"
+                    className="w-full bg-transparent border-b border-foreground/20 md:border-foreground/15 pb-3 text-foreground text-base focus:border-accent focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -157,7 +157,7 @@ export default function Contact() {
                     value={form.message}
                     onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
                     required
-                    className="w-full bg-transparent border-b border-foreground/15 pb-3 text-foreground text-base focus:border-accent focus:outline-none transition-colors resize-none"
+                    className="w-full bg-transparent border-b border-foreground/20 md:border-foreground/15 pb-3 text-foreground text-base focus:border-accent focus:outline-none transition-colors resize-none"
                   />
                 </div>
 

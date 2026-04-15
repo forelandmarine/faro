@@ -114,7 +114,7 @@ function ProjectPanel({
     <section
       id={index === 0 ? "work" : undefined}
       ref={panelRef}
-      className="panel relative flex flex-col items-center md:justify-center px-4 md:px-20 lg:px-28"
+      className="panel relative flex flex-col items-center md:justify-center md:-translate-y-[12vh] px-4 md:px-20 lg:px-28"
     >
       {/* iPad-style device container */}
       <div className="w-full max-w-[70vw] sm:max-w-[55vw] md:max-w-[40vw]" style={{ perspective: "1200px" }}>

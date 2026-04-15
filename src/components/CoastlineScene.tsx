@@ -172,7 +172,7 @@ export default function CoastlineScene() {
   return (
     <div
       ref={wrapperRef}
-      className="fixed bottom-0 left-0 w-full pointer-events-none z-[30] hidden md:block"
+      className="fixed bottom-0 left-0 w-full pointer-events-none z-[30] hidden md:block coastline-scene"
       style={{ height: "clamp(60px, 18vh, 300px)", opacity: 0 }}
     >
       <svg

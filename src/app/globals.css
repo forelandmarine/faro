@@ -226,6 +226,130 @@ html.lenis, html.lenis body {
   }
 }
 
+/* ============================================================
+   LANDSCAPE MOBILE
+   Opaque panels — the ONLY reliable approach because GSAP's
+   ScrollTrigger pin creates a stacking context that lets
+   fixed overlays (coastline z-30, birds z-30) paint on top
+   of panel content. Opaque backgrounds hide them completely.
+   ============================================================ */
+@media (orientation: landscape) and (max-height: 600px) {
+
+  /* ---- 0. BODY BG: solid colour prevents dark gradient bleeding ---- */
+  body { background: #D6E9E4 !important; }
+
+  /* ---- 1. KILL OVERLAYS ---- */
+  .coastline-scene,
+  .flying-birds,
+  .mobile-coastline { display: none !important; }
+
+  /* ---- 2. OPAQUE BACKGROUNDS ---- */
+  .panel-track { background: #D6E9E4 !important; }
+  .panel:nth-child(odd)  { background: #D6E9E4 !important; }
+  .panel:nth-child(even) { background: #EAF1F8 !important; }
+  /* Hero: transparent — video covers it */
+  .panel:first-child { background: transparent !important; }
+  /* Contact: dark teal */
+  .contact-panel {
+    background: linear-gradient(170deg, #1A3640 0%, #1A3640 40%, #2A4A50 70%, #4A8C86 100%) !important;
+  }
+
+  /* ---- 3. POSITIONING ---- */
+  .panel {
+    padding-top: max(1rem, 6vh) !important;
+    padding-bottom: 1rem !important;
+    align-items: flex-start !important;
+  }
+  /* Hero: centered, no padding override */
+  .panel:first-child {
+    align-items: center !important;
+    justify-content: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  /* Portfolio: centered device mockups */
+  .panel:nth-child(3),
+  .panel:nth-child(4) {
+    align-items: center !important;
+    justify-content: center !important;
+    padding-top: 0 !important;
+  }
+  /* Testimonials: centered statement */
+  .panel:nth-child(7) {
+    align-items: center !important;
+    justify-content: center !important;
+    padding-top: 0 !important;
+  }
+
+  /* ---- 4. ABOUT: show code block + row layout ---- */
+  .about-lighthouse {
+    display: block !important;
+    width: 200px !important;
+    flex-shrink: 0 !important;
+  }
+  #about .flex-col {
+    flex-direction: row !important;
+    gap: 1.5rem !important;
+  }
+
+  /* ---- 5. PROCESS: show desktop SVG diagram ---- */
+  .process-diagram { display: block !important; }
+  .process-list { display: none !important; }
+
+  /* ---- 6. CONTACT: two-column + compact + light text ---- */
+  .contact-panel .flex-col.lg\:flex-row {
+    flex-direction: row !important;
+    gap: 1.5rem !important;
+    align-items: flex-start !important;
+  }
+  .contact-panel .space-y-7 > * + * { margin-top: 0.35rem !important; }
+  .contact-panel textarea { max-height: 2.5rem; }
+  .contact-panel .mb-10 { margin-bottom: 0.5rem !important; }
+  .contact-panel .mb-8  { margin-bottom: 0.25rem !important; }
+  .contact-panel .mb-4  { margin-bottom: 0.25rem !important; }
+  .contact-panel .pt-3  { padding-top: 0.25rem !important; }
+  /* Light text on dark background */
+  .contact-panel,
+  .contact-panel .text-foreground,
+  .contact-panel [class*="text-foreground"],
+  .contact-panel .type-display,
+  .contact-panel label,
+  .contact-panel h2,
+  .contact-panel p,
+  .contact-panel a {
+    color: #EAF1F8 !important;
+  }
+  .contact-panel .text-accent { color: #A8CCCA !important; }
+  .contact-panel input,
+  .contact-panel textarea {
+    color: #EAF1F8 !important;
+    border-color: rgba(234,241,248,0.25) !important;
+  }
+  .contact-panel input::placeholder,
+  .contact-panel textarea::placeholder {
+    color: rgba(234,241,248,0.4) !important;
+  }
+  .contact-panel button[type="submit"] {
+    background: #A8CCCA !important;
+    color: #1A3640 !important;
+  }
+
+  /* ---- 7. PANEL DIVIDERS: hide on landscape ---- */
+  .panel + .panel::before { display: none; }
+
+  /* ---- 8. TIGHTEN SPACING for 393px viewports ---- */
+  /* Services: reduce gaps between manifesto lines */
+  #services .space-y-4 > * + *,
+  #services .space-y-8 > * + * {
+    margin-top: 0.5rem !important;
+  }
+  /* General: reduce any md:space-y-8 gaps */
+  .panel .space-y-8 > * + * {
+    margin-top: 0.5rem !important;
+  }
+
+}
+
 /* All mobile — text scaling */
 @media (max-width: 767px) {
   .type-display {
@@ -240,11 +364,6 @@ html.lenis, html.lenis body {
 
 /* Short viewports (landscape mobile) */
 @media (max-height: 500px) {
-  .panel {
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
-    font-size: 0.8rem;
-  }
   .type-display {
     font-size: 85% !important;
   }
@@ -326,6 +445,7 @@ html.lenis, html.lenis body {
   .landscape\:block { display: block !important; }
   .landscape\:flex-row { flex-direction: row !important; }
   .landscape\:flex-nowrap { flex-wrap: nowrap !important; }
+  .landscape\:hidden { display: none !important; }
 }
 
 /* Scrollbar */

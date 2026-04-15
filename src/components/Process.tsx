@@ -84,7 +84,7 @@ export default function Process() {
         </p>
 
         {/* Desktop: SVG path diagram */}
-        <div className="hidden md:block relative w-full" style={{ height: "clamp(160px, 30vh, 400px)" }}>
+        <div className="process-diagram hidden md:block relative w-full" style={{ height: "clamp(160px, 30vh, 400px)" }}>
           <svg viewBox="0 0 100 80" preserveAspectRatio="none" className="absolute inset-0 w-full h-full" fill="none">
             <path className="voyage-path" d={pathD} stroke="#4A8C86" strokeWidth="0.3" strokeLinecap="round" fill="none" opacity="0.5" />
           </svg>
@@ -100,7 +100,7 @@ export default function Process() {
         </div>
 
         {/* Mobile: simple vertical list */}
-        <div className="md:hidden space-y-6">
+        <div className="process-list md:hidden space-y-6">
           {steps.map((step, i) => (
             <div key={step.name} className="port-label flex items-start gap-4">
               <div className="flex flex-col items-center mt-1.5">

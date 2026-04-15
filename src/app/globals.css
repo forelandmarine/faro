@@ -193,8 +193,8 @@ html.lenis, html.lenis body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding-top: 3rem;
-    padding-bottom: 3rem;
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
   }
   .panel + .panel::before {
     display: none;

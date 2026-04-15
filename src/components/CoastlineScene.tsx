@@ -179,7 +179,7 @@ export default function CoastlineScene() {
         ref={svgRef}
         className="w-full h-full"
         viewBox={`0 0 ${vw} ${SCENE_HEIGHT}`}
-        preserveAspectRatio="none"
+        preserveAspectRatio="xMidYMax slice"
         style={{ overflow: "visible" }}
       >
         <NauticalDefs />

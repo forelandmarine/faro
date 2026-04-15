@@ -249,9 +249,9 @@ html.lenis, html.lenis body {
   .panel:nth-child(even) { background: #EAF1F8 !important; }
   /* Hero: transparent — video covers it */
   .panel:first-child { background: transparent !important; }
-  /* Contact: dark teal — #contact beats .panel:nth-child(even) specificity */
+  /* Contact: same as desktop — transparent over the gradient */
   #contact {
-    background: linear-gradient(170deg, #1A3640 0%, #1A3640 40%, #2A4A50 70%, #4A8C86 100%) !important;
+    background: transparent !important;
   }
 
   /* ---- 3. POSITIONING ---- */
@@ -297,7 +297,7 @@ html.lenis, html.lenis body {
   .process-diagram { display: block !important; }
   .process-list { display: none !important; }
 
-  /* ---- 6. CONTACT: two-column + compact + light text ---- */
+  /* ---- 6. CONTACT: two-column compact layout (colours match desktop) ---- */
   .contact-panel .flex-col.lg\:flex-row {
     flex-direction: row !important;
     gap: 1.5rem !important;
@@ -309,31 +309,6 @@ html.lenis, html.lenis body {
   .contact-panel .mb-8  { margin-bottom: 0.25rem !important; }
   .contact-panel .mb-4  { margin-bottom: 0.25rem !important; }
   .contact-panel .pt-3  { padding-top: 0.25rem !important; }
-  /* Light text on dark background */
-  .contact-panel,
-  .contact-panel .text-foreground,
-  .contact-panel [class*="text-foreground"],
-  .contact-panel .type-display,
-  .contact-panel label,
-  .contact-panel h2,
-  .contact-panel p,
-  .contact-panel a {
-    color: #EAF1F8 !important;
-  }
-  .contact-panel .text-accent { color: #A8CCCA !important; }
-  .contact-panel input,
-  .contact-panel textarea {
-    color: #EAF1F8 !important;
-    border-color: rgba(234,241,248,0.25) !important;
-  }
-  .contact-panel input::placeholder,
-  .contact-panel textarea::placeholder {
-    color: rgba(234,241,248,0.4) !important;
-  }
-  .contact-panel button[type="submit"] {
-    background: #A8CCCA !important;
-    color: #1A3640 !important;
-  }
 
   /* ---- 7. PANEL DIVIDERS: hide on landscape ---- */
   .panel + .panel::before { display: none; }
@@ -362,11 +337,18 @@ html.lenis, html.lenis body {
     padding-right: 1.5rem;
   }
 }
-/* Landscape mobile — keep desktop font sizes, just tighten horizontal padding */
+/* Landscape mobile — safe area insets for notched phones + padding */
 @media (max-width: 767px) and (orientation: landscape) {
   .panel {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: max(2rem, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(2rem, env(safe-area-inset-right, 0px)) !important;
+  }
+}
+/* Also apply safe areas on all landscape for hero text */
+@media (orientation: landscape) and (max-height: 600px) {
+  .panel:first-child > div {
+    padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
   }
 }
 
@@ -450,6 +432,11 @@ html.lenis, html.lenis body {
   .landscape\:flex-row { flex-direction: row !important; }
   .landscape\:flex-nowrap { flex-wrap: nowrap !important; }
   .landscape\:hidden { display: none !important; }
+}
+
+/* Mobile coastline visibility: show on mobile, hide on desktop (CoastlineScene handles it) */
+@media (min-width: 768px) and (min-height: 601px) {
+  .mobile-coastline { display: none !important; }
 }
 
 /* Scrollbar */

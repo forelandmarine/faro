@@ -28,19 +28,19 @@ export default function HeroScene() {
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-black">
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <video
         ref={videoRef}
         autoPlay
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
           videoLoaded ? "opacity-100" : "opacity-0"
         }`}
-      >
-        <source src="/hero.mp4" type="video/mp4" />
-      </video>
+        src="/hero.mp4"
+      />
 
       {!videoLoaded && (
         <div className="absolute inset-0 bg-black">

@@ -10,6 +10,12 @@ const figtree = Figtree({
 });
 
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover" as const,
+};
+
 export const metadata: Metadata = {
   title: "FARO Creative Studio",
   description:

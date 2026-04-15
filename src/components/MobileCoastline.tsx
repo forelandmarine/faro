@@ -19,7 +19,7 @@ export default function MobileCoastline() {
   }), []);
 
   return (
-    <div className="w-full md:hidden overflow-hidden mobile-coastline" style={{ height: "220px", background: "linear-gradient(to bottom, #1A3640 0%, #1A3640 20%, #2A4A50 50%, #4A8C86 80%, #A8CCCA 100%)" }}>
+    <div className="w-full overflow-hidden mobile-coastline" style={{ height: "220px", background: "linear-gradient(to bottom, #1A3640 0%, #1A3640 20%, #2A4A50 50%, #4A8C86 80%, #A8CCCA 100%)" }}>
       <svg
         viewBox={`0 0 ${width} 160`}
         preserveAspectRatio="xMidYMax slice"

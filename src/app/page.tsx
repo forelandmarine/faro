@@ -38,13 +38,12 @@ export default function Home() {
     <SoundProvider>
       <Preloader onComplete={handlePreloaderComplete} />
       <CustomCursor />
-      <CoastlineScene />
       <FlyingBirds />
       <OrientationPrompt />
 
       <SmoothScroll>
         <Navbar />
-        <HorizontalScroll>
+        <HorizontalScroll footer={<CoastlineScene />}>
           <Hero />
           <Services />
           <Portfolio />

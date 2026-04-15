@@ -238,10 +238,29 @@ html.lenis, html.lenis body {
   /* ---- 0. BODY BG: solid colour prevents dark gradient bleeding ---- */
   body { background: #D6E9E4 !important; }
 
-  /* ---- 1. KILL OVERLAYS (keep mobile coastline as footer scene) ---- */
-  .coastline-scene,
+  /* ---- 1. OVERLAYS ---- */
+  /* CoastlineScene: SHOW as fixed footer on every panel, just like desktop.
+     Reduced height for short viewports. Sits on top of opaque panel bgs. */
+  .coastline-scene {
+    display: block !important;
+    height: clamp(50px, 14vh, 120px) !important;
+    overflow: hidden !important; /* clip the SVG — it has overflow:visible */
+    z-index: 50 !important; /* beats panels (z-31) within the pinned container */
+    /* Gradient fallback so the scene is always visible even if SVG clips */
+    background: linear-gradient(to bottom,
+      rgba(26,54,64,0.0) 0%,
+      #1A3640 15%,
+      #2A4A50 50%,
+      #4A8C86 80%,
+      #A8CCCA 100%
+    ) !important;
+  }
+  .coastline-scene svg {
+    position: relative;
+    z-index: 1;
+  }
   .flying-birds { display: none !important; }
-  .mobile-coastline { display: block !important; }
+  .mobile-coastline { display: none !important; }
 
   /* ---- 2. OPAQUE BACKGROUNDS ---- */
   .panel-track { background: #D6E9E4 !important; }
@@ -257,10 +276,14 @@ html.lenis, html.lenis body {
   /* ---- 3. POSITIONING ---- */
   .panel {
     padding-top: max(1rem, 6vh) !important;
-    padding-bottom: 1rem !important;
+    /* Bottom padding keeps content above the fixed coastline (14vh) */
+    padding-bottom: max(1rem, calc(14vh + 0.5rem)) !important;
     align-items: flex-start !important;
+    /* Safe area insets for notched phones */
+    padding-left: max(2rem, env(safe-area-inset-left, 2rem)) !important;
+    padding-right: max(2rem, env(safe-area-inset-right, 2rem)) !important;
   }
-  /* Hero: centered, no padding override */
+  /* Hero: centered, no top/bottom padding but keep safe area sides */
   .panel:first-child {
     align-items: center !important;
     justify-content: center !important;
@@ -335,20 +358,6 @@ html.lenis, html.lenis body {
     font-size: 0.875rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
-  }
-}
-/* Landscape mobile — safe area insets for notched phones + padding */
-@media (max-width: 767px) and (orientation: landscape) {
-  .panel {
-    padding-left: max(2rem, env(safe-area-inset-left, 0px)) !important;
-    padding-right: max(2rem, env(safe-area-inset-right, 0px)) !important;
-  }
-}
-/* Also apply safe areas on all landscape for hero text */
-@media (orientation: landscape) and (max-height: 600px) {
-  .panel:first-child > div {
-    padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
-    padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
   }
 }
 

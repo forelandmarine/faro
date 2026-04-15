@@ -40,7 +40,7 @@ function isHorizontalMode() {
     (window.innerWidth >= 768 || window.innerWidth > window.innerHeight);
 }
 
-export default function HorizontalScroll({ children }: { children: ReactNode }) {
+export default function HorizontalScroll({ children, footer }: { children: ReactNode; footer?: ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -151,6 +151,9 @@ export default function HorizontalScroll({ children }: { children: ReactNode }) 
         >
           {children}
         </div>
+        {/* Footer scene: inside container (shares stacking context with panels)
+            but outside track (not affected by will-change-transform) */}
+        {footer}
       </div>
     </HorizontalScrollContext.Provider>
   );

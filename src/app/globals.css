@@ -238,10 +238,10 @@ html.lenis, html.lenis body {
   /* ---- 0. BODY BG: solid colour prevents dark gradient bleeding ---- */
   body { background: #D6E9E4 !important; }
 
-  /* ---- 1. KILL OVERLAYS ---- */
+  /* ---- 1. KILL OVERLAYS (keep mobile coastline as footer scene) ---- */
   .coastline-scene,
-  .flying-birds,
-  .mobile-coastline { display: none !important; }
+  .flying-birds { display: none !important; }
+  .mobile-coastline { display: block !important; }
 
   /* ---- 2. OPAQUE BACKGROUNDS ---- */
   .panel-track { background: #D6E9E4 !important; }
@@ -249,8 +249,8 @@ html.lenis, html.lenis body {
   .panel:nth-child(even) { background: #EAF1F8 !important; }
   /* Hero: transparent — video covers it */
   .panel:first-child { background: transparent !important; }
-  /* Contact: dark teal */
-  .contact-panel {
+  /* Contact: dark teal — #contact beats .panel:nth-child(even) specificity */
+  #contact {
     background: linear-gradient(170deg, #1A3640 0%, #1A3640 40%, #2A4A50 70%, #4A8C86 100%) !important;
   }
 
@@ -284,12 +284,13 @@ html.lenis, html.lenis body {
   /* ---- 4. ABOUT: show code block + row layout ---- */
   .about-lighthouse {
     display: block !important;
-    width: 200px !important;
+    width: clamp(180px, 25vw, 320px) !important;
+    min-width: 180px !important;
     flex-shrink: 0 !important;
   }
   #about .flex-col {
     flex-direction: row !important;
-    gap: 1.5rem !important;
+    gap: 1rem !important;
   }
 
   /* ---- 5. PROCESS: show desktop SVG diagram ---- */
@@ -350,8 +351,8 @@ html.lenis, html.lenis body {
 
 }
 
-/* All mobile — text scaling */
-@media (max-width: 767px) {
+/* Portrait mobile only — text scaling (NOT landscape, it uses desktop sizes) */
+@media (max-width: 767px) and (orientation: portrait) {
   .type-display {
     letter-spacing: -0.01em;
   }
@@ -361,13 +362,16 @@ html.lenis, html.lenis body {
     padding-right: 1.5rem;
   }
 }
-
-/* Short viewports (landscape mobile) */
-@media (max-height: 500px) {
-  .type-display {
-    font-size: 85% !important;
+/* Landscape mobile — keep desktop font sizes, just tighten horizontal padding */
+@media (max-width: 767px) and (orientation: landscape) {
+  .panel {
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 }
+
+/* Short viewports — removed font-size: 85% override that was breaking
+   all type-display clamp() sizes by resolving to 85% of parent (14px) */
 
 /* Horizontal colour bands — calm seascape stripes behind all content */
 .panel-track {

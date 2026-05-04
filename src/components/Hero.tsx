@@ -82,7 +82,7 @@ export default function Hero() {
     >
       <HeroScene />
 
-      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-[max(1.5rem,env(safe-area-inset-left,1.5rem))] md:px-[max(4rem,env(safe-area-inset-left,4rem))] lg:pl-[6vw] lg:pr-24 -translate-y-[3vh] md:-translate-y-[25vh]">
+      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-[max(1.5rem,env(safe-area-inset-left,1.5rem))] md:px-[max(4rem,env(safe-area-inset-left,4rem))] lg:pl-[6vw] lg:pr-24 -translate-y-[3vh] md:-translate-y-[18vh]">
         <div className="hero-reveal flex items-center gap-[0.12em]">
           <SplitText
             as="h1"

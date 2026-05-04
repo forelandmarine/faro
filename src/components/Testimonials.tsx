@@ -45,7 +45,7 @@ export default function Testimonials() {
   return (
     <section
       ref={sectionRef}
-      className="panel relative flex items-center md:items-start justify-center px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[25vh] overflow-hidden"
+      className="panel relative flex items-center md:items-start justify-center px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[10vh] overflow-hidden"
     >
       {/*
         No cards. No grid. No numbers. No statistics.

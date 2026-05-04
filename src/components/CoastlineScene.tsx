@@ -57,7 +57,7 @@ export default function CoastlineScene() {
   const paths = useMemo(() => {
     if (!totalWidth) return null;
     return {
-      coastline: generateCoastlinePath({ totalWidth, baseY: 140, amplitude: 35 }),
+      coastline: generateCoastlinePath({ totalWidth, baseY: 220, amplitude: 28 }),
       hill1: generateHillPath(totalWidth, 80, 1.2, 0),
       hill2: generateHillPath(totalWidth, 100, 0.8, 100),
       hill3: generateHillPath(totalWidth, 115, 0.5, 200),
@@ -83,11 +83,18 @@ export default function CoastlineScene() {
       if (water) water.style.transform = `translateX(${-p * shift * 0.65}px)`;
       if (coast) coast.style.transform = `translateX(${-p * shift * 1.0}px)`;
       if (foam) foam.style.transform = `translateX(${-p * shift * 1.1}px)`;
-      // Hidden on hero, gentle fade in between hero and panel 2
+      // Hidden on hero (desktop), always visible on landscape mobile
       if (wrapperRef.current) {
-        const opacity = p < 0.06 ? 0 : p > 0.16 ? 1 : (p - 0.06) / 0.10;
-        wrapperRef.current.style.opacity = String(opacity);
-        wrapperRef.current.style.visibility = p < 0.06 ? "hidden" : "visible";
+        const landscape = window.innerWidth > window.innerHeight && window.innerHeight < 600;
+        if (landscape) {
+          // Always visible on landscape mobile — fixed footer on every panel
+          wrapperRef.current.style.opacity = "1";
+          wrapperRef.current.style.visibility = "visible";
+        } else {
+          const opacity = p < 0.06 ? 0 : p > 0.16 ? 1 : (p - 0.06) / 0.10;
+          wrapperRef.current.style.opacity = String(opacity);
+          wrapperRef.current.style.visibility = p < 0.06 ? "hidden" : "visible";
+        }
       }
     };
     gsap.ticker.add(tick);
@@ -116,9 +123,9 @@ export default function CoastlineScene() {
         { x: vw * 6.8, y: 102, scale: 0.8, delay: "0.9s" },
       ],
       lighthouses: [
-        { x: vw * 1.5, y: 20, scale: 2.0 },
-        { x: vw * 4.5, y: 35, scale: 1.4 },
-        { x: vw * 7.4, y: 25, scale: 1.8 },
+        { x: vw * 1.5, y: 100, scale: 2.0 },
+        { x: vw * 4.5, y: 115, scale: 1.4 },
+        { x: vw * 7.4, y: 105, scale: 1.8 },
       ],
       buoys: [
         { x: vw * 0.9, y: 105, delay: "0s" },
@@ -149,10 +156,10 @@ export default function CoastlineScene() {
         delay: `${(i * 0.37) % 4}s`,
       })),
       anchors: [
-        { x: vw * 1.2, y: 145, scale: 1.4 },
-        { x: vw * 3.5, y: 142, scale: 1.2 },
-        { x: vw * 5.2, y: 148, scale: 1.0 },
-        { x: vw * 7.0, y: 144, scale: 1.3 },
+        { x: vw * 1.2, y: 225, scale: 1.4 },
+        { x: vw * 3.5, y: 222, scale: 1.2 },
+        { x: vw * 5.2, y: 228, scale: 1.0 },
+        { x: vw * 7.0, y: 224, scale: 1.3 },
       ],
       compasses: [
         { x: vw * 0.5, y: 40, scale: 4.0 },

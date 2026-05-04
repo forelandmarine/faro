@@ -60,7 +60,7 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="panel relative flex items-center md:items-start px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[28vh]"
+      className="panel relative flex items-center md:items-start px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[13vh]"
     >
       <div className="max-w-6xl mx-auto relative z-10 w-full flex flex-col md:flex-row items-start gap-12 lg:gap-20">
         {/* Text */}

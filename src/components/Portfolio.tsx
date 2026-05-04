@@ -21,6 +21,12 @@ const projects = [
     category: "Web / Brand",
     image: "/portfolio/nimara.png",
   },
+  {
+    name: "First Owner's Reference",
+    url: "firstownersreference.com",
+    category: "Web / Editorial",
+    image: "/portfolio/first-owners-reference.png",
+  },
 ];
 
 function ProjectPanel({

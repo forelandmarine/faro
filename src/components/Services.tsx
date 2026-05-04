@@ -46,7 +46,7 @@ export default function Services() {
     <section
       id="services"
       ref={sectionRef}
-      className="panel relative flex items-center md:items-start px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[30vh]"
+      className="panel relative flex items-center md:items-center px-5 md:px-16 lg:px-24 py-12 md:py-0"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(77,134,156,0.08),transparent_70%)] pointer-events-none" />
 

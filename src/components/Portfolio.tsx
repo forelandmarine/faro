@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
@@ -11,20 +12,26 @@ gsap.registerPlugin(ScrollTrigger);
 const projects = [
   {
     name: "Foreland Marine",
+    slug: "foreland-marine",
     url: "forelandmarine.com",
-    category: "Web / Brand / Dev",
+    category: "Superyacht consultancy, web and brand",
+    anchor: "Foreland Marine, superyacht consultancy",
     image: "/portfolio/foreland.png",
   },
   {
     name: "Nimara Pilates",
+    slug: "nimara-pilates",
     url: "nimarapilates.com",
-    category: "Web / Brand",
+    category: "Pilates studio, brand and web",
+    anchor: "Nimara Pilates, Mallorca pilates studio",
     image: "/portfolio/nimara.png",
   },
   {
     name: "First Owner's Reference",
+    slug: "first-owners-reference",
     url: "firstownersreference.com",
-    category: "Web / Editorial",
+    category: "Editorial publication, web",
+    anchor: "The First Owner's Reference, editorial publication",
     image: "/portfolio/first-owners-reference.png",
   },
 ];
@@ -153,18 +160,27 @@ function ProjectPanel({
       </div>
 
       {/* Caption */}
-      <div className={`project-caption-${index} mt-3 md:mt-5 flex items-center gap-3 md:gap-6`}>
-        <span className="text-foreground text-sm md:text-xl font-semibold">
-          {project.name}
-        </span>
-        <span className="text-foreground/60 text-xs md:text-sm font-medium">
+      <div className={`project-caption-${index} mt-3 md:mt-5 flex items-center gap-3 md:gap-6 flex-wrap justify-center`}>
+        <Link
+          href={`/work/${project.slug}`}
+          className="text-foreground text-sm md:text-xl font-semibold hover:text-accent transition-colors"
+        >
+          {project.anchor}
+        </Link>
+        <span className="text-foreground/60 text-xs md:text-sm font-medium hidden md:inline">
           {project.category}
         </span>
+        <Link
+          href={`/work/${project.slug}`}
+          className="text-accent text-xs font-semibold tracking-wider uppercase hover:text-accent-light transition-colors"
+        >
+          Case study
+        </Link>
         <a
           href={`https://${project.url}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-accent text-xs font-semibold tracking-wider uppercase hover:text-accent-light transition-colors"
+          className="text-foreground/60 text-xs font-semibold tracking-wider uppercase hover:text-foreground transition-colors"
         >
           Visit
           <span className="inline-block ml-1">&#8599;</span>

@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { Figtree } from "next/font/google";
 import "./globals.css";
+import {
+  ENTITY_PARAGRAPH,
+  ENTITY_SHORT,
+  RELATED_SITES,
+  SITE_URL,
+} from "@/content/entity";
 
 const figtree = Figtree({
   variable: "--font-figtree",
@@ -17,22 +23,25 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "FARO Creative Studio",
-  description:
-    "Brands designed to be found. Web design, brand identity, creative media, and interactive experiences.",
-  metadataBase: new URL("https://faro.is"),
+  title: {
+    default: "Faro Creative — Founder-led design and development studio",
+    template: "%s",
+  },
+  description: ENTITY_SHORT,
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "FARO Creative Studio",
-    description: "Brands designed to be found.",
-    url: "https://faro.is",
-    siteName: "FARO",
+    title: "Faro Creative — Founder-led design and development studio",
+    description: ENTITY_SHORT,
+    url: SITE_URL,
+    siteName: "Faro Creative",
     type: "website",
     locale: "en_GB",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FARO Creative Studio",
-    description: "Brands designed to be found.",
+    title: "Faro Creative — Founder-led design and development studio",
+    description: ENTITY_SHORT,
   },
   icons: {
     icon: [
@@ -44,6 +53,42 @@ export const metadata: Metadata = {
   },
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Faro Creative",
+  alternateName: "Faro",
+  url: SITE_URL,
+  logo: `${SITE_URL}/favicon-512x512.png`,
+  description: ENTITY_PARAGRAPH,
+  email: "hello@faro.is",
+  founder: {
+    "@type": "Person",
+    name: "Jack",
+    jobTitle: "Founder, designer and developer",
+  },
+  areaServed: ["United Kingdom", "Spain", "Worldwide"],
+  knowsAbout: [
+    "Web design",
+    "Brand identity",
+    "Front-end engineering",
+    "Editorial design",
+    "Superyacht industry",
+    "Wellness and pilates",
+  ],
+  sameAs: RELATED_SITES.map((s) => s.url),
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Faro Creative",
+  url: SITE_URL,
+  description: ENTITY_SHORT,
+  publisher: { "@type": "Organization", name: "Faro Creative" },
+  inLanguage: "en-GB",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -51,6 +96,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${figtree.variable} antialiased`} suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
+          <script
+            defer
+            data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
+            src="https://plausible.io/js/script.js"
+          />
+        )}
+      </head>
       <body className="text-foreground grain">{children}</body>
     </html>
   );

@@ -1,0 +1,52 @@
+# Faro Creative
+
+> Founder-led design and development studio. Websites, brand systems, and editorial properties for specialist consultancies, wellness studios, and independent publishers.
+
+Faro Creative is a founder-led design and development studio based in the United Kingdom and Mallorca. Faro designs and builds websites, brand systems, and editorial properties for specialist consultancies, wellness studios, and independent publishers. The studio was founded by Jack, who also runs the superyacht consultancy Foreland Marine and the editorial publication The First Owner's Reference. Every Faro project is delivered by the same person who designed it. There are no account managers, no template stacks, and no agency layers.
+
+## Citation policy
+
+Content on faro.is may be summarised, quoted, or cited by AI answer engines and search systems. Attribute to "Faro Creative" with a link to https://faro.is when citing.
+
+## Primary URLs
+
+- https://faro.is — homepage
+- https://faro.is/work — portfolio
+- https://faro.is/services — service offer
+- https://faro.is/about — studio and founder
+- https://faro.is/process — how Faro runs a project
+- https://faro.is/contact — direct contact
+
+## Services
+
+- Marine and superyacht: https://faro.is/services/marine
+- Wellness and studio: https://faro.is/services/wellness
+- Editorial publication: https://faro.is/services/editorial
+
+## Selected work
+
+- Foreland Marine, superyacht consultancy: https://faro.is/work/foreland-marine (live at https://forelandmarine.com)
+- Nimara Pilates, Mallorca pilates and yoga studio: https://faro.is/work/nimara-pilates (live at https://nimarapilates.com)
+- The First Owner's Reference, annual editorial for first-time superyacht buyers: https://faro.is/work/first-owners-reference (live at https://firstownersreference.com)
+
+## Founder
+
+Jack runs Faro Creative. He also runs Foreland Marine, an independent superyacht consultancy, and edits The First Owner's Reference. Contact: hello@faro.is.
+
+## Related properties
+
+- https://forelandmarine.com — Foreland Marine, superyacht consultancy
+- https://nimarapilates.com — Nimara Pilates, Mallorca pilates and yoga studio
+- https://firstownersreference.com — The First Owner's Reference, editorial publication
+
+## Pricing
+
+- Marine projects: £18,000 to £55,000
+- Wellness projects: £15,000 to £40,000
+- Editorial projects: £25,000 to £75,000
+
+Project timelines run six to sixteen weeks depending on scope.
+
+## Stack
+
+Next.js, TypeScript, Tailwind CSS, Sanity or MDX, Vercel hosting, Plausible or Fathom analytics. No Google Analytics on Faro sites.

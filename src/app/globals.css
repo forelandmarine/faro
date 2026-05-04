@@ -24,7 +24,7 @@
 }
 
 html {
-  background: transparent;
+  background: #D6E9E4;
   color: #1A3640;
 }
 
@@ -235,18 +235,41 @@ html.lenis, html.lenis body {
    ============================================================ */
 @media (orientation: landscape) and (max-height: 600px) {
 
-  /* ---- 0. BODY BG: solid colour prevents dark gradient bleeding ---- */
-  body { background: #D6E9E4 !important; }
+  /* ---- 0. NATIVE HORIZONTAL SCROLL ---- */
+  /* No GSAP, no Lenis — browser handles swiping + snap natively.
+     Eliminates scroll-position bugs and unnatural vertical-to-horizontal. */
+  body { background: #D6E9E4 !important; overflow: hidden !important; }
+  .horizontal-scroll-container {
+    width: 100vw;
+    height: 100vh;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .panel-track {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    will-change: auto !important; /* disable GSAP's will-change-transform */
+    transform: none !important;   /* prevent any stale GSAP x-offset */
+  }
+  .panel {
+    scroll-snap-align: start;
+    width: 100vw !important;
+    height: 100vh !important;
+    flex-shrink: 0;
+  }
 
   /* ---- 1. OVERLAYS ---- */
-  /* CoastlineScene: SHOW as fixed footer on every panel, just like desktop.
-     Reduced height for short viewports. Sits on top of opaque panel bgs. */
+  /* Hide the in-container CoastlineScene (iOS breaks fixed inside overflow:auto).
+     The outer .landscape-coastline-outer instance is shown instead. */
+  .horizontal-scroll-container > .coastline-scene { display: none !important; }
   .coastline-scene {
     display: block !important;
     height: clamp(50px, 14vh, 120px) !important;
-    overflow: hidden !important; /* clip the SVG — it has overflow:visible */
-    z-index: 50 !important; /* beats panels (z-31) within the pinned container */
-    /* Gradient fallback so the scene is always visible even if SVG clips */
+    overflow: hidden !important;
+    z-index: 50 !important;
     background: linear-gradient(to bottom,
       rgba(26,54,64,0.0) 0%,
       #1A3640 15%,
@@ -283,38 +306,75 @@ html.lenis, html.lenis body {
     padding-left: max(2rem, env(safe-area-inset-left, 2rem)) !important;
     padding-right: max(2rem, env(safe-area-inset-right, 2rem)) !important;
   }
-  /* Hero: centered, no top/bottom padding but keep safe area sides */
+  /* Hero: full-bleed — zero padding so video covers edge-to-edge */
   .panel:first-child {
     align-items: center !important;
     justify-content: center !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
+    padding: 0 !important;
   }
-  /* Portfolio: centered device mockups */
+  /* Portfolio: centered device mockups (3 panels: indices 3,4,5) */
   .panel:nth-child(3),
-  .panel:nth-child(4) {
+  .panel:nth-child(4),
+  .panel:nth-child(5) {
     align-items: center !important;
     justify-content: center !important;
     padding-top: 0 !important;
+    transform: none !important;
   }
-  /* Testimonials: centered statement */
-  .panel:nth-child(7) {
+  /* Testimonials: centered statement (now :nth-child(8) with 3 portfolio panels) */
+  .panel:nth-child(8) {
     align-items: center !important;
     justify-content: center !important;
     padding-top: 0 !important;
   }
 
-  /* ---- 4. ABOUT: show code block + row layout ---- */
+  /* Reset desktop translate-y shifts on landscape mobile */
+  .panel:first-child > div,
+  #services,
+  #about,
+  #process,
+  #contact,
+  #testimonials {
+    transform: none !important;
+  }
+
+  /* ---- 4. ABOUT: show code block + row layout, tightened ---- */
   .about-lighthouse {
     display: block !important;
-    width: clamp(180px, 25vw, 320px) !important;
-    min-width: 180px !important;
+    width: clamp(160px, 30vw, 260px) !important;
+    min-width: 160px !important;
     flex-shrink: 0 !important;
   }
   #about .flex-col {
     flex-direction: row !important;
     gap: 1rem !important;
   }
+  /* Tighten About text so it fits the 390px height */
+  #about .max-w-lg p {
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+  }
+  #about .text-2xl,
+  #about .md\:text-2xl {
+    font-size: 0.95rem !important;
+    line-height: 1.3 !important;
+  }
+  #about .mb-8 { margin-bottom: 0.5rem !important; }
+  #about .mt-6 { margin-top: 0.5rem !important; }
+  #about .mt-10 { margin-top: 0.6rem !important; }
+  #about .space-y-4 > * + * { margin-top: 0.4rem !important; }
+  /* Shrink the code block */
+  .about-lighthouse .font-mono,
+  .about-lighthouse [class*="text-sm"],
+  .about-lighthouse [class*="text-base"] {
+    font-size: 0.55rem !important;
+    line-height: 1.35 !important;
+  }
+  .about-lighthouse .p-5,
+  .about-lighthouse .md\:p-6 {
+    padding: 0.6rem !important;
+  }
+  .about-lighthouse .mb-4 { margin-bottom: 0.4rem !important; }
 
   /* ---- 5. PROCESS: show desktop SVG diagram ---- */
   .process-diagram { display: block !important; }
@@ -336,11 +396,23 @@ html.lenis, html.lenis body {
   /* ---- 7. PANEL DIVIDERS: hide on landscape ---- */
   .panel + .panel::before { display: none; }
 
-  /* ---- 8. TIGHTEN SPACING for 393px viewports ---- */
-  /* Services: reduce gaps between manifesto lines */
+  /* ---- 8. TIGHTEN SPACING + TYPOGRAPHY for short landscape viewports ---- */
+  /* Services: reduce gaps and font sizes so content fits */
   #services .space-y-4 > * + *,
   #services .space-y-8 > * + * {
-    margin-top: 0.5rem !important;
+    margin-top: 0.4rem !important;
+  }
+  #services p.manifesto-line {
+    font-size: 0.8rem !important;
+    line-height: 1.35 !important;
+  }
+  #services h2.manifesto-line {
+    font-size: clamp(1.4rem, 4vw, 2.2rem) !important;
+    line-height: 1 !important;
+  }
+  #services .pt-4 { padding-top: 0.3rem !important; }
+  #services .manifesto-line span.type-display {
+    font-size: clamp(0.8rem, 2vw, 1.4rem) !important;
   }
   /* General: reduce any md:space-y-8 gaps */
   .panel .space-y-8 > * + * {
@@ -446,6 +518,12 @@ html.lenis, html.lenis body {
 /* Mobile coastline visibility: show on mobile, hide on desktop (CoastlineScene handles it) */
 @media (min-width: 768px) and (min-height: 601px) {
   .mobile-coastline { display: none !important; }
+}
+
+/* Landscape-outer coastline: hidden by default, shown only on landscape mobile */
+.landscape-coastline-outer { display: none; }
+@media (orientation: landscape) and (max-height: 600px) {
+  .landscape-coastline-outer { display: block; }
 }
 
 /* Scrollbar */

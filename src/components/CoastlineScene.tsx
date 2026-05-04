@@ -83,18 +83,11 @@ export default function CoastlineScene() {
       if (water) water.style.transform = `translateX(${-p * shift * 0.65}px)`;
       if (coast) coast.style.transform = `translateX(${-p * shift * 1.0}px)`;
       if (foam) foam.style.transform = `translateX(${-p * shift * 1.1}px)`;
-      // Hidden on hero (desktop), always visible on landscape mobile
+      // Hidden on hero, fades in across the first panel transition
       if (wrapperRef.current) {
-        const landscape = window.innerWidth > window.innerHeight && window.innerHeight < 600;
-        if (landscape) {
-          // Always visible on landscape mobile — fixed footer on every panel
-          wrapperRef.current.style.opacity = "1";
-          wrapperRef.current.style.visibility = "visible";
-        } else {
-          const opacity = p < 0.06 ? 0 : p > 0.16 ? 1 : (p - 0.06) / 0.10;
-          wrapperRef.current.style.opacity = String(opacity);
-          wrapperRef.current.style.visibility = p < 0.06 ? "hidden" : "visible";
-        }
+        const opacity = p < 0.06 ? 0 : p > 0.16 ? 1 : (p - 0.06) / 0.10;
+        wrapperRef.current.style.opacity = String(opacity);
+        wrapperRef.current.style.visibility = p < 0.06 ? "hidden" : "visible";
       }
     };
     gsap.ticker.add(tick);

@@ -69,6 +69,15 @@ export default function Hero() {
             scrub: true,
           },
         });
+      } else {
+        // Portrait mobile: gentle entrance so the hero isn't inert.
+        gsap.from(contentRef.current, {
+          y: 24,
+          opacity: 0,
+          duration: 1.2,
+          delay: 3.0,
+          ease: "power3.out",
+        });
       }
     }, sectionRef);
 
@@ -82,12 +91,12 @@ export default function Hero() {
     >
       <HeroScene />
 
-      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-[max(1.5rem,env(safe-area-inset-left,1.5rem))] md:px-[max(4rem,env(safe-area-inset-left,4rem))] lg:pl-[6vw] lg:pr-24 -translate-y-[3vh] md:-translate-y-[18vh]">
+      <div ref={contentRef} className="relative z-10 w-full max-w-7xl mx-auto px-[max(1.5rem,env(safe-area-inset-left,1.5rem))] md:px-[max(4rem,env(safe-area-inset-left,4rem))] lg:pl-[6vw] lg:pr-24 md:-translate-y-[18vh]">
         <div className="hero-reveal flex items-center gap-[0.12em]">
           <SplitText
             as="h1"
             split="chars"
-            className="type-display text-[clamp(2.2rem,10vw,11rem)] leading-[0.9] text-white -ml-[calc(0.07em-3px)]"
+            className="type-display text-[clamp(4.2rem,18vw,11rem)] md:text-[clamp(2.2rem,10vw,11rem)] leading-[0.9] text-white -ml-[calc(0.07em-3px)]"
             immediate
             delay={3.2}
             stagger={0.06}
@@ -96,16 +105,16 @@ export default function Hero() {
           >
             FARO
           </SplitText>
-          <span className="inline-block h-[0.675em] w-auto" style={{ fontSize: "clamp(2.2rem,10vw,11rem)" }}>
+          <span className="inline-block h-[0.675em] w-auto text-[clamp(4.2rem,18vw,11rem)] md:text-[clamp(2.2rem,10vw,11rem)]">
             <Lighthouse size={120} color="#ffffff" beam className="h-full w-auto" />
           </span>
         </div>
 
-        <div className="hero-reveal mt-2">
+        <div className="hero-reveal mt-4 md:mt-2">
           <SplitText
             as="p"
             split="words"
-            className="text-base md:text-xl font-medium text-white/80 max-w-md"
+            className="text-lg md:text-xl font-medium text-white/80 max-w-md"
             immediate
             delay={3.4}
             stagger={0.05}

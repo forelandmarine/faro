@@ -62,10 +62,10 @@ export default function About() {
       ref={sectionRef}
       className="panel relative flex items-center md:items-start px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[13vh]"
     >
-      <div className="max-w-6xl mx-auto relative z-10 w-full flex flex-col md:flex-row items-start gap-12 lg:gap-20">
+      <div className="max-w-6xl mx-auto relative z-10 w-full flex flex-col md:flex-row items-start gap-10 md:gap-12 lg:gap-20">
         {/* Text */}
         <div className="max-w-lg flex-1">
-          <div className="about-reveal flex items-center gap-3 mb-8">
+          <div className="about-reveal flex items-center gap-3 mb-6 md:mb-8">
             <Lighthouse size={20} color="#4A8C86" />
             <span className="text-foreground/70 text-xs tracking-widest uppercase">
               About Faro
@@ -73,12 +73,12 @@ export default function About() {
           </div>
 
           <div className="about-reveal">
-            <p className="text-base md:text-2xl leading-relaxed text-foreground/90 font-medium">
+            <p className="text-xl md:text-2xl leading-snug md:leading-relaxed text-foreground/90 font-medium">
               Faro is a creative studio for businesses that refuse to blend in.
             </p>
           </div>
 
-          <div className="about-reveal mt-6 space-y-4 text-foreground/80 text-base leading-relaxed">
+          <div className="about-reveal mt-5 md:mt-6 space-y-4 text-foreground/80 text-base leading-relaxed">
             <p>
               We got here by building our own projects first. Superyacht
               consultancies, wellness brands, hospitality ventures. We learned
@@ -92,7 +92,7 @@ export default function About() {
             </p>
           </div>
 
-          <div className="about-reveal mt-10 flex items-center gap-4">
+          <div className="about-reveal mt-8 md:mt-10 flex items-center gap-4">
             <div className="w-px h-8 bg-accent/30" />
             <div>
               <span className="text-foreground/80 text-sm font-medium">Jack</span>
@@ -101,8 +101,8 @@ export default function About() {
           </div>
         </div>
 
-        {/* Animated code block */}
-        <div className="about-lighthouse hidden md:block flex-shrink-0 w-[320px] lg:w-[380px] mt-2">
+        {/* Animated code block — section signature, shown on all sizes */}
+        <div className="about-lighthouse flex-shrink-0 w-full md:w-[320px] lg:w-[380px] mt-2 about-code-portrait">
           <AnimatedCode />
         </div>
       </div>

@@ -75,18 +75,18 @@ export default function Contact() {
       className="panel contact-panel relative flex items-center md:items-start justify-center px-5 md:px-16 lg:px-24 py-12 md:py-0 md:pt-[18vh]"
     >
       <div className="max-w-5xl mx-auto relative z-10 w-full">
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-24">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-24">
           {/* Left — heading and info */}
           <div className="flex-1 max-w-md">
             <div className="letter-line">
-              <Lighthouse size={22} color="#4A8C86" className="mb-8" />
+              <Lighthouse size={22} color="#A8CCCA" className="mb-6 md:mb-8" />
             </div>
 
-            <h2 className="letter-line type-display text-[clamp(1.8rem,5vw,4rem)] leading-[1.05] text-foreground mb-4">
+            <h2 className="letter-line type-display text-[clamp(2.8rem,11vw,4rem)] md:text-[clamp(1.8rem,5vw,4rem)] leading-[1.0] md:leading-[1.05] text-foreground mb-4">
               Write to us.
             </h2>
 
-            <p className="letter-line text-foreground/80 text-base md:text-lg leading-relaxed mb-10">
+            <p className="letter-line text-foreground/80 text-base md:text-lg leading-relaxed mb-6 md:mb-10">
               Full brief or napkin sketch. It doesn&apos;t matter where you are
               in the process. No commitment, no sales pitch.
             </p>
@@ -181,11 +181,11 @@ export default function Contact() {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="absolute bottom-6 left-0 right-0 px-6 md:px-16 lg:px-24 z-10">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-foreground/60 text-xs">
+      {/* Footer — static on portrait, absolute on desktop */}
+      <div className="contact-footer mt-12 md:mt-0 md:absolute md:bottom-6 md:left-0 md:right-0 md:px-16 lg:px-24 z-10">
+        <div className="max-w-7xl mx-auto flex items-center justify-between text-foreground/60 text-xs pt-6 border-t border-white/10 md:border-t-0 md:pt-0">
           <div className="flex items-center gap-2">
-            <Lighthouse size={12} color="#4A8C86" />
+            <Lighthouse size={12} color="#A8CCCA" />
             <span className="type-display text-xs">FARO</span>
           </div>
           <p>&copy; {new Date().getFullYear()} Faro Creative</p>

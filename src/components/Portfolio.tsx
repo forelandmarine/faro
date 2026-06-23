@@ -123,27 +123,34 @@ function ProjectPanel({
     return () => ctx.revert();
   }, [scrollTween, isHorizontal, index]);
 
+  const number = String(index + 1).padStart(2, "0");
+
   return (
     <section
       id={index === 0 ? "work" : undefined}
       ref={panelRef}
       className="panel relative flex flex-col items-center md:justify-center md:-translate-y-[17vh] px-4 md:px-20 lg:px-28"
     >
-      {/* iPad-style device container */}
-      <div className="w-full max-w-[70vw] sm:max-w-[55vw] md:max-w-[40vw]" style={{ perspective: "1200px" }}>
+      {/* Portrait: project number + name as eyebrow above mockup */}
+      <div className={`project-caption-${index} md:hidden w-full max-w-md flex items-baseline gap-3 mb-3 text-foreground/70`}>
+        <span className="type-display text-sm tracking-[0.18em]">{number}</span>
+        <span className="h-px flex-1 bg-foreground/15" />
+        <span className="text-xs tracking-[0.15em] uppercase">{project.category}</span>
+      </div>
+
+      {/* Device container. iPad chrome on desktop. Clean rounded panel on portrait. */}
+      <div className="w-full max-w-md md:max-w-[40vw] sm:max-w-[55vw]" style={{ perspective: "1200px" }}>
         <div
           ref={imageRef}
           data-cursor-project
-          className="relative rounded-xl md:rounded-2xl overflow-hidden"
+          className="relative rounded-xl md:rounded-2xl overflow-hidden border border-foreground/15 md:border-[4px] md:border-[#1A3640]"
           style={{
-            border: "4px solid #1A3640",
-            borderRadius: "12px",
-            boxShadow: "0 4px 20px rgba(26,54,64,0.12), 0 1px 6px rgba(26,54,64,0.08)",
+            boxShadow: "0 12px 32px -12px rgba(26,54,64,0.18), 0 2px 6px rgba(26,54,64,0.06)",
           }}
         >
-          {/* Top bezel with camera dot */}
-          <div className="relative bg-[#1A3640] h-3 md:h-5 flex items-center justify-center">
-            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-[#2A4A52]" />
+          {/* Top bezel with camera dot — desktop only */}
+          <div className="relative bg-[#1A3640] h-5 hidden md:flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-[#2A4A52]" />
           </div>
 
           {/* Screen */}
@@ -159,33 +166,38 @@ function ProjectPanel({
         </div>
       </div>
 
-      {/* Caption */}
-      <div className={`project-caption-${index} mt-3 md:mt-5 flex items-center gap-3 md:gap-6 flex-wrap justify-center`}>
+      {/* Caption: portrait gets a tight, single-line treatment */}
+      <div className={`project-caption-${index} mt-5 w-full max-w-md md:max-w-none flex items-center md:justify-center justify-between gap-4 md:gap-6 md:flex-wrap`}>
         <Link
           href={`/work/${project.slug}`}
-          className="text-foreground text-sm md:text-xl font-semibold hover:text-accent transition-colors"
+          className="text-foreground text-base md:text-xl font-semibold hover:text-accent transition-colors leading-tight"
         >
-          {project.anchor}
+          {project.name}
         </Link>
         <span className="text-foreground/60 text-xs md:text-sm font-medium hidden md:inline">
           {project.category}
         </span>
-        <Link
-          href={`/work/${project.slug}`}
-          className="text-accent text-xs font-semibold tracking-wider uppercase hover:text-accent-light transition-colors"
-        >
-          Case study
-        </Link>
-        <a
-          href={`https://${project.url}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-foreground/60 text-xs font-semibold tracking-wider uppercase hover:text-foreground transition-colors"
-        >
-          Visit
-          <span className="inline-block ml-1">&#8599;</span>
-        </a>
+        <div className="flex items-center gap-4 md:gap-6 shrink-0">
+          <Link
+            href={`/work/${project.slug}`}
+            className="text-accent text-[11px] md:text-xs font-semibold tracking-wider uppercase hover:text-accent-light transition-colors whitespace-nowrap"
+          >
+            Case study
+          </Link>
+          <a
+            href={`https://${project.url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground/60 text-[11px] md:text-xs font-semibold tracking-wider uppercase hover:text-foreground transition-colors whitespace-nowrap hidden md:inline-flex items-center"
+          >
+            Visit
+            <span className="inline-block ml-1">&#8599;</span>
+          </a>
+        </div>
       </div>
+
+      {/* Screen-reader anchor text preserved for SEO */}
+      <span className="sr-only">{project.anchor}</span>
 
     </section>
   );

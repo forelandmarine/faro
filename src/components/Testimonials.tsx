@@ -56,16 +56,16 @@ export default function Testimonials() {
         <SplitText
           as="h2"
           split="words"
-          className="type-display text-[clamp(1.6rem,5.5vw,5.5rem)] leading-[1.1] text-foreground"
+          className="type-display text-[clamp(2.4rem,9vw,5.5rem)] md:text-[clamp(1.6rem,5.5vw,5.5rem)] leading-[1.05] md:leading-[1.1] text-foreground"
           trigger={sectionRef}
           weightFrom={300}
           stagger={0.06}
           duration={0.8}
         >
-          Great brands aren't decorated. They're built with intention.
+          Great brands aren&apos;t decorated. They&apos;re built with intention.
         </SplitText>
 
-        <p className="conviction-sub text-foreground/70 text-lg md:text-xl mt-10 md:mt-14 max-w-lg mx-auto leading-relaxed">
+        <p className="conviction-sub text-foreground/70 text-base md:text-xl mt-8 md:mt-14 max-w-md md:max-w-lg mx-auto leading-relaxed">
           We design work that resonates. Great brands are made to be remembered.
         </p>
       </div>

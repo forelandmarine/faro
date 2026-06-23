@@ -79,7 +79,7 @@ export default function Process() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_30%,rgba(77,134,156,0.06),transparent_70%)] pointer-events-none" />
 
       <div className="w-full max-w-6xl mx-auto relative z-10">
-        <p className="text-foreground/80 text-xs md:text-sm tracking-widest uppercase mb-6 md:mb-20">
+        <p className="text-foreground/80 text-xs md:text-sm tracking-widest uppercase mb-8 md:mb-20">
           The voyage
         </p>
 
@@ -99,17 +99,25 @@ export default function Process() {
           ))}
         </div>
 
-        {/* Mobile: simple vertical list */}
-        <div className="process-list md:hidden space-y-6">
+        {/* Mobile: vertical timeline */}
+        <div className="process-list md:hidden">
           {steps.map((step, i) => (
-            <div key={step.name} className="port-label flex items-start gap-4">
-              <div className="flex flex-col items-center mt-1.5">
-                <div className="port-stop w-2.5 h-2.5 rounded-full bg-accent" />
-                {i < steps.length - 1 && <div className="w-px h-10 bg-accent/20 mt-1" />}
+            <div key={step.name} className="port-label relative flex items-start gap-5 pb-7 last:pb-0">
+              <div className="flex flex-col items-center shrink-0">
+                <span className="port-stop relative grid place-items-center w-9 h-9 rounded-full bg-accent/10 text-accent type-display text-xs">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {i < steps.length - 1 && (
+                  <span className="w-px flex-1 min-h-[2.25rem] bg-gradient-to-b from-accent/40 to-accent/0 mt-2" />
+                )}
               </div>
-              <div>
-                <span className="type-display text-sm block text-foreground">{step.name}</span>
-                <span className="text-foreground/60 text-xs block mt-1 leading-relaxed">{step.brief}</span>
+              <div className="pt-1.5">
+                <span className="type-display text-xl block text-foreground leading-none">
+                  {step.name}
+                </span>
+                <span className="text-foreground/70 text-sm block mt-2 leading-relaxed max-w-sm">
+                  {step.brief}
+                </span>
               </div>
             </div>
           ))}

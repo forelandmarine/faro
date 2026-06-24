@@ -309,9 +309,11 @@ html.lenis, html.lenis body {
   /* No GSAP, no Lenis — browser handles swiping + snap natively.
      Eliminates scroll-position bugs and unnatural vertical-to-horizontal. */
   body { background: #D6E9E4 !important; overflow: hidden !important; }
+  /* Use 100svh so panels fit even when iOS Safari's address bar is shown.
+     100vh would make panels taller than the visible area and cause overlap. */
   .horizontal-scroll-container {
     width: 100vw;
-    height: 100vh;
+    height: 100svh;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
@@ -327,7 +329,7 @@ html.lenis, html.lenis body {
   .panel {
     scroll-snap-align: start;
     width: 100vw !important;
-    height: 100vh !important;
+    height: 100svh !important;
     flex-shrink: 0;
   }
 
@@ -337,7 +339,7 @@ html.lenis, html.lenis body {
   .horizontal-scroll-container > .coastline-scene { display: none !important; }
   .coastline-scene {
     display: block !important;
-    height: clamp(50px, 14vh, 120px) !important;
+    height: clamp(50px, 14svh, 120px) !important;
     overflow: hidden !important;
     z-index: 50 !important;
     background: linear-gradient(to bottom,
@@ -368,9 +370,9 @@ html.lenis, html.lenis body {
 
   /* ---- 3. POSITIONING ---- */
   .panel {
-    padding-top: max(1rem, 6vh) !important;
-    /* Bottom padding keeps content above the fixed coastline (14vh) */
-    padding-bottom: max(1rem, calc(14vh + 0.5rem)) !important;
+    padding-top: max(1rem, 6svh) !important;
+    /* Bottom padding keeps content above the fixed coastline (14svh) */
+    padding-bottom: max(1rem, calc(14svh + 0.5rem)) !important;
     align-items: flex-start !important;
     /* Safe area insets for notched phones */
     padding-left: max(2rem, env(safe-area-inset-left, 2rem)) !important;

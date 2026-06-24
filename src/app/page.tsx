@@ -15,6 +15,7 @@ import About from "@/components/About";
 import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
 import OrientationPrompt from "@/components/OrientationPrompt";
+import FullscreenPrompt from "@/components/FullscreenPrompt";
 import MobileCoastline from "@/components/MobileCoastline";
 
 const CustomCursor = dynamic(() => import("@/components/CustomCursor"), {
@@ -40,6 +41,7 @@ export default function Home() {
       <CustomCursor />
       <FlyingBirds />
       <OrientationPrompt />
+      <FullscreenPrompt />
 
       <SmoothScroll>
         <Navbar />
@@ -53,6 +55,12 @@ export default function Home() {
           <Contact />
         </HorizontalScroll>
         <MobileCoastline />
+        {/* Landscape mobile: CoastlineScene outside the scroll container
+            because iOS Safari breaks position:fixed inside overflow:auto.
+            CSS hides the one inside HorizontalScroll on landscape mobile. */}
+        <div className="landscape-coastline-outer">
+          <CoastlineScene />
+        </div>
       </SmoothScroll>
     </SoundProvider>
   );

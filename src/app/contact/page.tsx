@@ -4,11 +4,11 @@ import { ContactForm } from "@/components/ContactForm";
 import { FOUNDER, SITE_URL } from "@/content/entity";
 
 export const metadata: Metadata = {
-  title: "Contact — Faro Creative",
+  title: "Contact · Faro Creative",
   description:
     "Talk to Faro Creative. Brief, sketch, or rough idea, all welcome. Email hello@faro.is.",
   openGraph: {
-    title: "Contact — Faro Creative",
+    title: "Contact · Faro Creative",
     description:
       "Talk to Faro Creative. Brief, sketch, or rough idea, all welcome.",
     url: "/contact",

@@ -18,7 +18,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const cs = getCaseStudy(slug);
   if (!cs) return {};
-  const title = `${cs.name} — Faro Creative`;
+  const title = `${cs.name} · Faro Creative`;
   return {
     title,
     description: cs.tagline,
@@ -65,11 +65,25 @@ export default async function CaseStudyPage({
     about: cs.vertical,
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Work", item: `${SITE_URL}/work` },
+      { "@type": "ListItem", position: 3, name: cs.name, item: `${SITE_URL}/work/${cs.slug}` },
+    ],
+  };
+
   return (
     <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <article className="max-w-4xl mx-auto px-6 md:px-10 py-20 md:py-28">
         <Link

@@ -18,7 +18,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const s = getService(slug);
   if (!s) return {};
-  const title = `${s.name} — Faro Creative`;
+  const title = `${s.name} · Faro Creative`;
   return {
     title,
     description: s.tagline,
@@ -75,6 +75,16 @@ export default async function ServicePage({
     })),
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Services", item: `${SITE_URL}/services` },
+      { "@type": "ListItem", position: 3, name: s.name, item: `${SITE_URL}/services/${s.slug}` },
+    ],
+  };
+
   return (
     <PageShell>
       <script
@@ -84,6 +94,10 @@ export default async function ServicePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <article className="max-w-4xl mx-auto px-6 md:px-10 py-20 md:py-28">

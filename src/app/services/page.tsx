@@ -4,15 +4,16 @@ import { PageShell } from "@/components/PageShell";
 import { SERVICES } from "@/content/services";
 
 export const metadata: Metadata = {
-  title: "Services — Faro Creative",
+  title: "Services · Faro Creative",
   description:
     "Faro Creative builds websites and brand systems for three verticals: marine and superyacht, wellness and studio, editorial publication.",
   openGraph: {
-    title: "Services — Faro Creative",
+    title: "Services · Faro Creative",
     description:
       "Faro Creative builds websites and brand systems for three verticals: marine and superyacht, wellness and studio, editorial publication.",
     url: "/services",
   },
+  alternates: { canonical: "/services" },
 };
 
 export default function ServicesIndexPage() {

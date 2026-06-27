@@ -4,11 +4,11 @@ import { PageShell } from "@/components/PageShell";
 import { ENTITY_PARAGRAPH, FOUNDER, RELATED_SITES, SITE_URL } from "@/content/entity";
 
 export const metadata: Metadata = {
-  title: "About — Faro Creative",
+  title: "About · Faro Creative",
   description:
     "Faro Creative is a founder-led design and development studio. Run by Jack from the United Kingdom and Mallorca.",
   openGraph: {
-    title: "About — Faro Creative",
+    title: "About · Faro Creative",
     description:
       "Faro Creative is a founder-led design and development studio. Run by Jack from the United Kingdom and Mallorca.",
     url: "/about",
@@ -21,6 +21,8 @@ const personJsonLd = {
   "@type": "Person",
   name: "Jack",
   jobTitle: "Founder, designer and developer at Faro Creative",
+  description:
+    "Founder of Faro Creative. Also runs the superyacht consultancy Foreland Marine and edits The First Owner's Reference.",
   worksFor: {
     "@type": "Organization",
     name: "Faro Creative",
@@ -28,7 +30,16 @@ const personJsonLd = {
   },
   url: SITE_URL + "/about",
   email: "mailto:hello@faro.is",
-  sameAs: RELATED_SITES.map((s) => s.url),
+};
+
+const aboutPageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  url: SITE_URL + "/about",
+  name: "About Faro Creative",
+  description: ENTITY_PARAGRAPH,
+  mainEntity: { "@type": "Organization", name: "Faro Creative", url: SITE_URL },
+  isPartOf: { "@type": "WebSite", name: "Faro Creative", url: SITE_URL },
 };
 
 export default function AboutPage() {
@@ -37,6 +48,10 @@ export default function AboutPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageJsonLd) }}
       />
       <article className="max-w-3xl mx-auto px-6 md:px-10 py-20 md:py-28">
         <p className="type-eyebrow mb-6">About</p>

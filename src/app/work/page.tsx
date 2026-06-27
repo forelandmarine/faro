@@ -5,15 +5,16 @@ import { PageShell } from "@/components/PageShell";
 import { CASE_STUDIES } from "@/content/work";
 
 export const metadata: Metadata = {
-  title: "Work — Faro Creative",
+  title: "Work · Faro Creative",
   description:
     "Selected work from Faro Creative: superyacht consultancy, wellness studio, editorial publication.",
   openGraph: {
-    title: "Work — Faro Creative",
+    title: "Work · Faro Creative",
     description:
       "Selected work from Faro Creative: superyacht consultancy, wellness studio, editorial publication.",
     url: "/work",
   },
+  alternates: { canonical: "/work" },
 };
 
 export default function WorkIndexPage() {

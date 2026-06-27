@@ -3,11 +3,11 @@ import Link from "next/link";
 import { PageShell } from "@/components/PageShell";
 
 export const metadata: Metadata = {
-  title: "Process — Faro Creative",
+  title: "Process · Faro Creative",
   description:
     "How Faro Creative runs a project, from kickoff to launch. Five steps: Listen, Design, Build, Launch, Grow.",
   openGraph: {
-    title: "Process — Faro Creative",
+    title: "Process · Faro Creative",
     description:
       "How Faro Creative runs a project, from kickoff to launch. Five steps: Listen, Design, Build, Launch, Grow.",
     url: "/process",

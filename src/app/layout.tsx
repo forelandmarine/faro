@@ -24,14 +24,14 @@ export const viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Faro Creative — Founder-led design and development studio",
+    default: "Faro Creative · Founder-led design and development studio",
     template: "%s",
   },
   description: ENTITY_SHORT,
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Faro Creative — Founder-led design and development studio",
+    title: "Faro Creative · Founder-led design and development studio",
     description: ENTITY_SHORT,
     url: SITE_URL,
     siteName: "Faro Creative",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Faro Creative — Founder-led design and development studio",
+    title: "Faro Creative · Founder-led design and development studio",
     description: ENTITY_SHORT,
   },
   icons: {
@@ -60,12 +60,25 @@ const organizationJsonLd = {
   alternateName: "Faro",
   url: SITE_URL,
   logo: `${SITE_URL}/favicon-512x512.png`,
+  image: `${SITE_URL}/opengraph-image`,
   description: ENTITY_PARAGRAPH,
   email: "hello@faro.is",
+  foundingDate: "2026",
   founder: {
     "@type": "Person",
     name: "Jack",
     jobTitle: "Founder, designer and developer",
+  },
+  address: [
+    { "@type": "PostalAddress", addressCountry: "GB" },
+    { "@type": "PostalAddress", addressCountry: "ES", addressRegion: "Mallorca" },
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "New enquiries",
+    email: "hello@faro.is",
+    areaServed: ["GB", "ES", "Worldwide"],
+    availableLanguage: ["en"],
   },
   areaServed: ["United Kingdom", "Spain", "Worldwide"],
   knowsAbout: [

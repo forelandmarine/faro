@@ -1,44 +1,13 @@
-# SEO and AEO rollout — manual punch list
+# SEO and AEO rollout, manual punch list
 
 Code changes to faro.is are complete. Items below need either action in another
 repo, an external account, or a human pitching to a person.
 
 ## Cross-property changes (other repos)
 
-### forelandmarine.com
-
-Add to the site footer:
-
-```html
-<p>
-  Designed and built by
-  <a href="https://faro.is" rel="noopener">Faro Creative</a>,
-  the founder-led design studio also run by Jack.
-</p>
-```
-
-### nimarapilates.com
-
-Same footer line as Foreland:
-
-```html
-<p>
-  Designed and built by
-  <a href="https://faro.is" rel="noopener">Faro Creative</a>.
-</p>
-```
-
-### firstownersreference.com
-
-Add a `/colophon` route. Suggested copy:
-
-> The First Owner's Reference is published by Foreland Marine, an independent
-> superyacht consultancy. It is designed and developed by
-> [Faro Creative](https://faro.is), the design studio run by Jack, the editor
-> of this Reference. The site uses Next.js, TypeScript, and MDX, hosted on
-> Vercel. Typography is Figtree. Translations are managed with next-intl.
-
-Also add the same one-line credit to the existing site footer.
+All three footers now carry a Faro Creative credit (done 2026-06-27). The
+colophon on firstownersreference.com also credits Faro in its Web section.
+Nothing else to ship here unless a new related property goes live.
 
 ## External accounts to create
 

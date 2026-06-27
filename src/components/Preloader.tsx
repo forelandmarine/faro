@@ -61,7 +61,13 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
       "-=0.1"
     );
 
-    tl.call(onComplete);
+    tl.call(() => {
+      // Allow interactions through the now-invisible preloader
+      if (containerRef.current) {
+        containerRef.current.style.pointerEvents = "none";
+      }
+      onComplete();
+    });
 
     return () => {
       tl.kill();
@@ -69,7 +75,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
   }, [onComplete]);
 
   return (
-    <div ref={containerRef} className="fixed inset-0 z-[100] pointer-events-none">
+    <div ref={containerRef} className="fixed inset-0 z-[100]">
       <div ref={leftRef} className="curtain-left flex items-center justify-end pr-8">
         <div className="preloader-content flex flex-col items-end gap-4">
           <div className="preloader-lighthouse opacity-0 scale-75">

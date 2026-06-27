@@ -35,9 +35,17 @@ export function useHorizontalScroll() {
   return useContext(HorizontalScrollContext);
 }
 
-function isHorizontalMode() {
+function isLandscapeMobile() {
   return typeof window !== "undefined" &&
-    (window.innerWidth >= 768 || window.innerWidth > window.innerHeight);
+    window.innerWidth > window.innerHeight &&
+    window.innerHeight < 600;
+}
+
+function isHorizontalMode() {
+  if (typeof window === "undefined") return false;
+  // Landscape phones use native CSS scroll — not GSAP horizontal mode
+  if (isLandscapeMobile()) return false;
+  return window.innerWidth >= 768;
 }
 
 export default function HorizontalScroll({ children, footer }: { children: ReactNode; footer?: ReactNode }) {
@@ -50,30 +58,60 @@ export default function HorizontalScroll({ children, footer }: { children: React
     isHorizontal: false,
   });
 
+  /* ── Update scrollState.progress from native scroll on landscape mobile ── */
+  useEffect(() => {
+    if (!isLandscapeMobile()) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      scrollState.progress = maxScroll > 0 ? container.scrollLeft / maxScroll : 0;
+    };
+
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => container.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* ── GSAP horizontal scroll — desktop & tablets only ─────────── */
   useEffect(() => {
     const container = containerRef.current;
     const track = trackRef.current;
     const progressBar = progressRef.current;
     if (!container || !track) return;
 
+    // Landscape phones use native CSS scroll-snap — skip GSAP entirely
+    if (isLandscapeMobile()) return;
+
     const ctx = gsap.context(() => {
       ScrollTrigger.matchMedia({
-        "(min-width: 768px), (orientation: landscape)": function () {
+        "(min-width: 768px) and (min-height: 601px)": function () {
+          // 5% dead zone at the start — hero stays pinned while user
+          // scrolls the first 5%, then panels begin moving.
+          const totalScroll = () => track.scrollWidth - window.innerWidth;
+          const deadZone = () => totalScroll() * 0.05;
+
           const tween = gsap.to(track, {
-            x: () => -(track.scrollWidth - window.innerWidth),
+            x: () => -totalScroll(),
             ease: "none",
             scrollTrigger: {
               trigger: container,
               pin: true,
               scrub: 0.5,
-              end: () => "+=" + (track.scrollWidth - window.innerWidth),
+              end: () => "+=" + (totalScroll() + deadZone()),
               invalidateOnRefresh: true,
               anticipatePin: 1,
               onUpdate: (self) => {
                 velocityRef.current = self.getVelocity();
-                scrollState.progress = self.progress;
+                // Remap progress: first 5% of scroll = 0 progress
+                const raw = self.progress;
+                const deadFraction = deadZone() / (totalScroll() + deadZone());
+                const adjusted = raw <= deadFraction
+                  ? 0
+                  : (raw - deadFraction) / (1 - deadFraction);
+                scrollState.progress = adjusted;
                 if (progressBar) {
-                  gsap.set(progressBar, { scaleX: self.progress, transformOrigin: "left center" });
+                  gsap.set(progressBar, { scaleX: adjusted, transformOrigin: "left center" });
                 }
               },
             },
@@ -108,6 +146,8 @@ export default function HorizontalScroll({ children, footer }: { children: React
 
   // Grab tween reference for child components
   useEffect(() => {
+    if (isLandscapeMobile()) return;
+
     const timer = setTimeout(() => {
       const triggers = ScrollTrigger.getAll();
       const mainTrigger = triggers.find(
@@ -137,22 +177,20 @@ export default function HorizontalScroll({ children, footer }: { children: React
 
   return (
     <HorizontalScrollContext.Provider value={contextValue}>
-      {/* Progress bar */}
+      {/* Progress bar — hidden on landscape mobile (native scroll has its own) */}
       <div
         ref={progressRef}
-        className="fixed bottom-0 left-0 w-full h-[3px] bg-accent/50 z-50 hidden landscape:block md:block origin-left"
+        className="fixed bottom-0 left-0 w-full h-[3px] bg-accent/50 z-50 hidden md:block origin-left"
         style={{ transform: "scaleX(0)" }}
       />
 
       <div ref={containerRef} className="horizontal-scroll-container">
         <div
           ref={trackRef}
-          className="panel-track flex flex-col landscape:flex-row landscape:flex-nowrap md:flex-row md:flex-nowrap will-change-transform"
+          className="panel-track flex flex-col md:flex-row md:flex-nowrap will-change-transform"
         >
           {children}
         </div>
-        {/* Footer scene: inside container (shares stacking context with panels)
-            but outside track (not affected by will-change-transform) */}
         {footer}
       </div>
     </HorizontalScrollContext.Provider>

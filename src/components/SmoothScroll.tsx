@@ -7,6 +7,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** Module-level ref so other components can drive Lenis programmatically */
+export const lenisInstance: { current: Lenis | null } = { current: null };
+
 export default function SmoothScroll({
   children,
 }: {
@@ -15,13 +18,19 @@ export default function SmoothScroll({
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    // Landscape phones use native CSS scroll — Lenis would fight it
+    const isLandscapeMobile =
+      window.innerWidth > window.innerHeight && window.innerHeight < 600;
+    if (isLandscapeMobile) return;
+
     const lenis = new Lenis({
       lerp: 0.08,
       smoothWheel: true,
       wheelMultiplier: 1.2,
-      touchMultiplier: 1.5,
+      touchMultiplier: 1.0,
     });
     lenisRef.current = lenis;
+    lenisInstance.current = lenis;
 
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -32,6 +41,8 @@ export default function SmoothScroll({
 
     return () => {
       lenis.destroy();
+      lenisRef.current = null;
+      lenisInstance.current = null;
       gsap.ticker.remove(lenis.raf);
     };
   }, []);

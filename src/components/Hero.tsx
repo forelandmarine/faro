@@ -17,6 +17,11 @@ export default function Hero() {
   const contentRef = useRef<HTMLDivElement>(null);
   const { scrollTween, isHorizontal } = useHorizontalScroll();
 
+  // Phones run a shorter preloader (see Preloader.tsx) — reveal 1.2s earlier.
+  const smallViewport =
+    typeof window !== "undefined" && window.innerWidth < 768;
+  const revealDelay = (d: number) => (smallViewport ? d - 1.2 : d);
+
   const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const target = document.querySelector(href);
@@ -75,7 +80,7 @@ export default function Hero() {
           y: 24,
           opacity: 0,
           duration: 1.2,
-          delay: 3.0,
+          delay: window.innerWidth < 768 ? 1.8 : 3.0,
           ease: "power3.out",
         });
       }
@@ -98,7 +103,7 @@ export default function Hero() {
             split="chars"
             className="type-display text-[clamp(4.2rem,18vw,11rem)] md:text-[clamp(2.2rem,10vw,11rem)] leading-[0.9] text-white -ml-[calc(0.07em-3px)]"
             immediate
-            delay={3.2}
+            delay={revealDelay(3.2)}
             stagger={0.06}
             duration={1.0}
             weightFrom={100}
@@ -116,7 +121,7 @@ export default function Hero() {
             split="words"
             className="text-lg md:text-xl font-medium text-white/80 max-w-md"
             immediate
-            delay={3.4}
+            delay={revealDelay(3.4)}
             stagger={0.05}
             duration={0.6}
           >

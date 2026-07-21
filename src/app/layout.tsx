@@ -8,11 +8,13 @@ import {
   SITE_URL,
 } from "@/content/entity";
 
+// Figtree is a variable font — omitting weight serves one variable file
+// per style instead of seven static instances each.
 const figtree = Figtree({
   variable: "--font-figtree",
   subsets: ["latin"],
   style: ["normal", "italic"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
 });
 
 

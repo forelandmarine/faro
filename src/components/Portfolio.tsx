@@ -159,8 +159,8 @@ function ProjectPanel({
               src={project.image}
               alt={`${project.name} website`}
               fill
+              sizes="(min-width: 768px) 40vw, 100vw"
               className="object-cover object-top"
-              priority={index === 0}
             />
           </div>
         </div>

@@ -11,13 +11,16 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
   const rightRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Phones get a shorter curtain — the counter is theatre, and on a slow
+    // connection it delays real content. Hero reveal delays match this.
+    const fast = window.innerWidth < 768;
     const tl = gsap.timeline();
 
     tl.to(
       { val: 0 },
       {
         val: 100,
-        duration: 2,
+        duration: fast ? 0.8 : 2,
         ease: "power2.inOut",
         onUpdate: function () {
           setProgress(Math.round(this.targets()[0].val));

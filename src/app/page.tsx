@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import SmoothScroll from "@/components/SmoothScroll";
 import HorizontalScroll from "@/components/HorizontalScroll";
@@ -30,7 +30,35 @@ const FlyingBirds = dynamic(
   { ssr: false }
 );
 
+type SceneMode = "portrait" | "landscape-mobile" | "desktop";
+
+/* Mount only the coastline variant the viewport actually shows. The CSS
+   display rules still act as a backstop, but an unmounted scene also skips
+   its SVG DOM and per-frame GSAP ticker — that matters on phones. */
+function useSceneMode(): SceneMode | null {
+  const [mode, setMode] = useState<SceneMode | null>(null);
+
+  useEffect(() => {
+    const update = () => {
+      const landscapeMobile =
+        window.innerWidth > window.innerHeight && window.innerHeight < 600;
+      if (landscapeMobile) setMode("landscape-mobile");
+      else setMode(window.innerWidth < 768 ? "portrait" : "desktop");
+    };
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+
+  return mode;
+}
+
 export default function Home() {
+  const sceneMode = useSceneMode();
   const handlePreloaderComplete = useCallback(() => {
     // Preloader finished — could trigger entrance animations here
   }, []);
@@ -45,7 +73,9 @@ export default function Home() {
 
       <SmoothScroll>
         <Navbar />
-        <HorizontalScroll footer={<CoastlineScene />}>
+        <HorizontalScroll
+          footer={sceneMode === "desktop" ? <CoastlineScene /> : undefined}
+        >
           <Hero />
           <Services />
           <Portfolio />
@@ -54,13 +84,14 @@ export default function Home() {
           <Testimonials />
           <Contact />
         </HorizontalScroll>
-        <MobileCoastline />
+        {sceneMode === "portrait" && <MobileCoastline />}
         {/* Landscape mobile: CoastlineScene outside the scroll container
-            because iOS Safari breaks position:fixed inside overflow:auto.
-            CSS hides the one inside HorizontalScroll on landscape mobile. */}
-        <div className="landscape-coastline-outer">
-          <CoastlineScene />
-        </div>
+            because iOS Safari breaks position:fixed inside overflow:auto. */}
+        {sceneMode === "landscape-mobile" && (
+          <div className="landscape-coastline-outer">
+            <CoastlineScene />
+          </div>
+        )}
       </SmoothScroll>
     </SoundProvider>
   );

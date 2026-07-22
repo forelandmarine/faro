@@ -164,32 +164,8 @@ export default async function CaseStudyPage({
           </ul>
         </Section>
 
-        <Section title="The numbers">
-          <dl className="grid sm:grid-cols-3 gap-6 not-prose">
-            {cs.metrics.map((m) => (
-              <div key={m.label} className="border-l-2 border-accent/40 pl-4">
-                <dt className="text-foreground/60 text-xs tracking-wider uppercase mb-2">
-                  {m.label}
-                </dt>
-                <dd className="text-foreground type-display text-2xl">
-                  {m.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </Section>
-
-        <Section title="Stack">
-          <ul className="flex flex-wrap gap-2">
-            {cs.stack.map((s) => (
-              <li
-                key={s}
-                className="text-xs tracking-wider uppercase border border-foreground/20 rounded-full px-3 py-1.5 text-foreground/80"
-              >
-                {s}
-              </li>
-            ))}
-          </ul>
+        <Section title="Stack" wide>
+          <StackFlow stack={cs.stack} />
         </Section>
 
         <div className="mt-24 pt-12 border-t border-foreground/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
@@ -231,6 +207,56 @@ function Section({
   );
 }
 
+/* ── Stack flow ────────────────────────────────────────────────────── */
+
+const STACK_ROLES: Record<string, string> = {
+  "Next.js": "Framework",
+  TypeScript: "Language",
+  Tailwind: "Styling",
+  GSAP: "Motion",
+  Lenis: "Scroll",
+  Supabase: "Data",
+  Stripe: "Payments",
+  "Paged.js": "Print layout",
+  Puppeteer: "PDF render",
+  Vercel: "Hosting",
+};
+
+function StackFlow({ stack }: { stack: string[] }) {
+  return (
+    <div className="flex flex-wrap items-stretch gap-y-4">
+      {stack.map((s, i) => (
+        <div key={s} className="flex items-center">
+          {i > 0 && (
+            <svg
+              width="28"
+              height="10"
+              viewBox="0 0 28 10"
+              fill="none"
+              aria-hidden
+              className="mx-2 text-accent shrink-0"
+            >
+              <path
+                d="M0 5h24M21 1.5L24.5 5 21 8.5"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+          <div className="border border-foreground/15 rounded-md px-4 py-2.5 bg-white/40">
+            <p className="text-[10px] tracking-[0.12em] uppercase text-foreground/50 leading-none">
+              {STACK_ROLES[s] ?? "Tooling"}
+            </p>
+            <p className="text-sm font-semibold mt-1 leading-none">{s}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* ── Brand and site exposé ─────────────────────────────────────────── */
 
 function ExposeSections({ cs }: { cs: CaseStudy }) {
@@ -246,6 +272,73 @@ function ExposeSections({ cs }: { cs: CaseStudy }) {
         <div className="max-w-2xl space-y-4">
           {e.identity.map((p, i) => (
             <p key={i}>{p}</p>
+          ))}
+        </div>
+
+        {/* The mark, shown on its own grounds */}
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {e.marks.map((m) => (
+            <figure key={m.label} className={m.wide ? "sm:col-span-3" : ""}>
+              <div
+                className={`rounded-xl border border-foreground/10 flex items-center justify-center px-8 gap-6 ${
+                  m.wide ? "py-14 flex-col sm:flex-row" : "aspect-[4/3] flex-col"
+                }`}
+                style={{ backgroundColor: m.bg }}
+              >
+                {m.src && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={m.src}
+                    alt={`${cs.name} ${m.label}`}
+                    style={{ height: m.height ?? 64 }}
+                    className="w-auto max-w-full"
+                  />
+                )}
+                {m.wordmark && (
+                  <div className={m.src ? "text-center sm:text-left" : "text-center"}>
+                    <p
+                      className={
+                        m.src
+                          ? "text-xl md:text-3xl leading-tight"
+                          : "text-2xl md:text-4xl leading-tight"
+                      }
+                      style={{
+                        fontFamily: m.wordmark.css,
+                        fontWeight: m.wordmark.weight ?? 400,
+                        color: m.wordmark.color,
+                        letterSpacing: m.wordmark.tracking,
+                      }}
+                    >
+                      {m.wordmark.text}
+                    </p>
+                    {m.wordmark.sub && (
+                      <p
+                        className={`mt-1.5 ${
+                          m.wordmark.subItalic
+                            ? "italic text-base md:text-lg"
+                            : "text-[10px] md:text-xs"
+                        }`}
+                        style={{
+                          fontFamily: m.wordmark.subCss ?? m.wordmark.css,
+                          color: m.wordmark.subColor ?? m.wordmark.color,
+                          letterSpacing: m.wordmark.subTracking,
+                        }}
+                      >
+                        {m.wordmark.sub}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+              <figcaption className="mt-3">
+                <span className="text-sm font-semibold">{m.label}</span>
+                {m.note && (
+                  <span className="block text-xs text-foreground/60 mt-0.5">
+                    {m.note}
+                  </span>
+                )}
+              </figcaption>
+            </figure>
           ))}
         </div>
 

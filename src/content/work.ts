@@ -13,11 +13,41 @@ export type TypeSpecimen = {
   weight?: number;
 };
 
+/** One tile on the logo sheet: the mark shown on a brand ground. */
+export type MarkTile = {
+  label: string;
+  /** Tile background, a real brand colour */
+  bg: string;
+  note?: string;
+  /** Spans the full sheet width (lockups) */
+  wide?: boolean;
+  /** SVG asset under /portfolio/expose/marks/ */
+  src?: string;
+  /** Display height of the mark in pixels */
+  height?: number;
+  /** Typeset wordmark, optionally beside the mark image, using page-loaded
+      brand fonts. SVG lockups with live <text> lose their fonts inside an
+      <img>, so lockups are recomposed here instead. */
+  wordmark?: {
+    text: string;
+    sub?: string;
+    css: string;
+    subCss?: string;
+    color: string;
+    subColor?: string;
+    weight?: number;
+    tracking?: string;
+    subTracking?: string;
+    subItalic?: boolean;
+  };
+};
+
 /** Full brand-and-site exposé, rendered as the deep sections of a case study. */
 export type Expose = {
   /** Google Fonts stylesheet for live type specimens on this page only */
   fontsHref?: string;
   identity: string[];
+  marks: MarkTile[];
   palette: PaletteSwatch[];
   type: TypeSpecimen[];
   site: string[];
@@ -39,7 +69,6 @@ export type CaseStudy = {
   problem: string;
   approach: string[];
   outcomes: string[];
-  metrics: { label: string; value: string }[];
   stack: string[];
   year: number;
   role: string;
@@ -71,11 +100,6 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Average enquiry quality rose: longer briefs, named vessels, named yards.",
       "Site became a credibility asset cited by other professionals in pitches.",
     ],
-    metrics: [
-      { label: "Time to first paint", value: "TBD" },
-      { label: "Lighthouse performance", value: "TBD" },
-      { label: "Time from kickoff to launch", value: "TBD" },
-    ],
     stack: ["Next.js", "TypeScript", "Tailwind", "Stripe", "Supabase", "Vercel"],
     year: 2026,
     role: "Design, development, copy direction",
@@ -85,6 +109,35 @@ export const CASE_STUDIES: CaseStudy[] = [
       identity: [
         "The company takes its name from the South Foreland Lighthouse in Kent, and the identity takes its cue from the same place: a white lighthouse mark and wordmark that only ever appear on deep navy. There is no light version of this brand. The darkness is the point; it reads as chart, night watch and instrument panel rather than brochure.",
         "One typeface does everything. Nunito Sans at a light 300 carries every heading, which is the signature move of the identity: large, quiet, and unbolded where the rest of the industry shouts. Semibold is reserved for buttons and eyebrow labels, and body copy sits in a muted chart-blue rather than grey, so even paragraphs feel like they belong at sea.",
+        "The mark is governed by hard rules written into the brand kit: white only, clear space equal to the height of the lighthouse on every side, a minimum width of 204 pixels on screen and 50 millimetres in print, and no effects, outlines or rotation under any circumstances. The standalone lighthouse carries favicons, avatars and small formats where the full lockup would not survive.",
+      ],
+      marks: [
+        {
+          label: "Primary lockup",
+          note: "White on navy. The only colourway that exists.",
+          src: "/portfolio/expose/marks/foreland-lockup-white.svg",
+          bg: "#081630",
+          wide: true,
+          height: 52,
+        },
+        {
+          label: "The icon mark",
+          note: "Favicons, avatars, small formats",
+          src: "/portfolio/expose/marks/foreland-icon-white.svg",
+          bg: "#040D1A",
+        },
+        {
+          label: "On chart blue",
+          note: "Holds on every surface blue in the palette",
+          src: "/portfolio/expose/marks/foreland-icon-white.svg",
+          bg: "#0C1E42",
+        },
+        {
+          label: "On ocean",
+          note: "The accent as ground",
+          src: "/portfolio/expose/marks/foreland-icon-white.svg",
+          bg: "#5386B6",
+        },
       ],
       palette: [
         { name: "Deep navy", hex: "#040D1A", note: "Deepest ground, footer" },
@@ -151,11 +204,6 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Founders use the site as the primary asset in landlord and investor conversations.",
       "Architecture ready for the multi-location rollout without redesign.",
     ],
-    metrics: [
-      { label: "Time to first paint", value: "TBD" },
-      { label: "Lighthouse performance", value: "TBD" },
-      { label: "Time from kickoff to launch", value: "TBD" },
-    ],
     stack: ["Next.js", "TypeScript", "Tailwind", "GSAP", "Lenis", "Vercel"],
     year: 2026,
     role: "Brand identity, design, development",
@@ -166,6 +214,45 @@ export const CASE_STUDIES: CaseStudy[] = [
         "The mark is a Mallorquin leopardess mid-stretch, drawn as a single unbroken line with no fill and no ornament. It holds from a sixteen pixel favicon to storefront signage, and ships in three line weights: light for screen, heavy for large format, fine for embroidery and foil. The wordmark is NIMĀRA in Cinzel, capitals only, with a macron on the second A that is not optional.",
         "The palette is warm surfaces and one accent. Sand and cream grounds, ink text, and a single sage green that does every accent job on the site; hover states dim through opacity rather than reaching for a second colour. Oak appears only on rules and borders, never as text. The discipline is monastic on purpose: one typeface per role, one accent, one mark.",
         "Every heading on the site is sentence case. Title case was banned in the brand system because it reads as advertising, and this brand is built to read as a publication.",
+        "The full asset library runs to more than four hundred files: marks, wordmarks, horizontal and vertical lockups, favicons, social crops and print variants, each cut in every permitted colourway. Below one hundred pixels the wordmark comes off and the leopardess stands alone.",
+      ],
+      marks: [
+        {
+          label: "The mark, ink on sand",
+          note: "Default colourway, light line weight",
+          src: "/portfolio/expose/marks/nimara-leopardess-ink.svg",
+          bg: "#EFE6D8",
+        },
+        {
+          label: "Reversed",
+          note: "Cream line for dark and immersive sections",
+          src: "/portfolio/expose/marks/nimara-leopardess-cream.svg",
+          bg: "#0F0E0C",
+        },
+        {
+          label: "Sage",
+          note: "The accent colourway on cream",
+          src: "/portfolio/expose/marks/nimara-leopardess-sage.svg",
+          bg: "#F7F3ED",
+        },
+        {
+          label: "Horizontal lockup",
+          note: "Leopardess, NIMĀRA in Cinzel with the macron, sub-line in tracked DM Sans",
+          src: "/portfolio/expose/marks/nimara-leopardess-ink.svg",
+          bg: "#EFE6D8",
+          wide: true,
+          height: 72,
+          wordmark: {
+            text: "NIMĀRA",
+            sub: "REFORMER PILATES",
+            css: '"Cinzel", serif',
+            subCss: '"DM Sans", sans-serif',
+            color: "#1A1A1A",
+            subColor: "rgba(26,26,26,0.62)",
+            tracking: "0.25em",
+            subTracking: "0.3em",
+          },
+        },
       ],
       palette: [
         { name: "Sand", hex: "#EFE6D8", note: "Primary surface" },
@@ -245,11 +332,6 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Pre-launch interest from owners and brokers as a reference document.",
       "Architecture supports both a print-ready PDF and a public web edition without dual maintenance.",
     ],
-    metrics: [
-      { label: "Time to first paint", value: "TBD" },
-      { label: "Chapters at first edition", value: "TBD" },
-      { label: "Time from kickoff to launch", value: "TBD" },
-    ],
     stack: [
       "Next.js",
       "TypeScript",
@@ -267,6 +349,42 @@ export const CASE_STUDIES: CaseStudy[] = [
         "The masthead is the wordmark: The First Owner's Reference set in Newsreader at a light 300, with the strap A yachting field manual beneath it in the same face, italic. The publisher's lighthouse mark sits alongside in charcoal or paper depending on the ground. Nothing else identifies the publication, which is the level of restraint the register demands.",
         "The palette is a paper object translated to the screen: warm paper grounds, near-black text, a single marine blue for headings, links and drop caps, stone for metadata and a warm hairline rule colour for the lines that do the layout work. The print edition carries its own slightly warmer overrides of the same tokens.",
         "Three families divide the labour. Newsreader carries every word of editorial prose, DM Sans signposts in tracked caps, and DM Mono sets the numerals, tabular where money is involved.",
+        "The masthead is never an image. It is typeset live in Newsreader wherever it appears, which keeps it searchable, accessible and honest about what this thing is: a publication, not a logo with articles attached. On the print edition the same wordmark is foil-blocked on cloth boards.",
+      ],
+      marks: [
+        {
+          label: "The masthead",
+          note: "Typeset Newsreader light with the italic strap, never an image",
+          bg: "#F5F2EC",
+          wide: true,
+          wordmark: {
+            text: "The First Owner’s Reference",
+            sub: "A yachting field manual",
+            css: '"Newsreader", serif',
+            color: "#1A1A1A",
+            subColor: "#7A756D",
+            weight: 300,
+            subItalic: true,
+          },
+        },
+        {
+          label: "Publisher's mark",
+          note: "The Foreland lighthouse, charcoal on paper",
+          src: "/portfolio/expose/marks/for-lighthouse-charcoal.svg",
+          bg: "#F5F2EC",
+        },
+        {
+          label: "Reversed",
+          note: "Paper on charcoal for dark grounds",
+          src: "/portfolio/expose/marks/for-lighthouse-paper.svg",
+          bg: "#1A1A1A",
+        },
+        {
+          label: "On marine",
+          note: "The accent as ground",
+          src: "/portfolio/expose/marks/for-lighthouse-paper.svg",
+          bg: "#0F3B5C",
+        },
       ],
       palette: [
         { name: "Paper", hex: "#F5F2EC", note: "The page" },
@@ -345,11 +463,6 @@ export const CASE_STUDIES: CaseStudy[] = [
       "The whole firm runs from one admin, with card deposits and payments live from day one.",
       "A one-person trade brand that stands next to established heritage firms rather than other start-ups.",
     ],
-    metrics: [
-      { label: "Time to first paint", value: "TBD" },
-      { label: "Lighthouse performance", value: "TBD" },
-      { label: "Time from kickoff to launch", value: "TBD" },
-    ],
     stack: ["Next.js", "TypeScript", "Tailwind", "Supabase", "Stripe", "Vercel"],
     year: 2026,
     role: "Naming, brand identity, design, development",
@@ -360,6 +473,46 @@ export const CASE_STUDIES: CaseStudy[] = [
         "Birdham is a Chichester Harbour village whose name means settlement of the birds, and the mark is a gull in flight: one solid filled silhouette, vectorised from the founder's own hand drawing and then refined until the wings balanced. One path, one fill, no stroke. The constraint was embroidery, because a trade mark lives on work jackets before it lives anywhere else, and a single shape stitches as a single thread.",
         "The lockup sets BIRDHAM in Spectral capitals, letter-spaced like an engraving, with Carpentry & building beneath in tracked Hanken Grotesk. A seal version, the gull in a double roundel, covers stationery and avatars.",
         "The palette is taken from heritage paint colours rather than the kelly green and gold that builders default to: a deep studio-green ink, Bancha green as the working accent, warm paper instead of white, and an oak tan used sparingly. It is a palette that sits comfortably next to lime render and old brick.",
+        "One drawing serves every medium. The same path renders the website header, the favicon, the seal roundel on stationery, and the header of every quote and invoice PDF, and because it is a single shape it stitches onto a work jacket as one thread. The mark is sized by height, never width, and reverses to paper on ink or Bancha without redrawing.",
+      ],
+      marks: [
+        {
+          label: "The mark",
+          note: "Ink on paper, the default",
+          src: "/portfolio/expose/marks/birdham-gull-ink.svg",
+          bg: "#F3EDDF",
+        },
+        {
+          label: "Reversed",
+          note: "Paper on ink for dark grounds",
+          src: "/portfolio/expose/marks/birdham-gull-paper.svg",
+          bg: "#363C3C",
+        },
+        {
+          label: "On Bancha",
+          note: "Workwear and site boards",
+          src: "/portfolio/expose/marks/birdham-gull-paper.svg",
+          bg: "#676A49",
+        },
+        {
+          label: "Horizontal lockup",
+          note: "The gull with BIRDHAM in letter-spaced Spectral and the sub-line",
+          src: "/portfolio/expose/marks/birdham-gull-ink.svg",
+          bg: "#F3EDDF",
+          wide: true,
+          height: 44,
+          wordmark: {
+            text: "BIRDHAM",
+            sub: "CARPENTRY & BUILDING",
+            css: '"Spectral", serif',
+            subCss: '"Hanken Grotesk", sans-serif',
+            color: "#363C3C",
+            subColor: "rgba(54,60,60,0.7)",
+            weight: 500,
+            tracking: "0.2em",
+            subTracking: "0.33em",
+          },
+        },
       ],
       palette: [
         { name: "Ink", hex: "#363C3C", note: "Studio Green, text and mark" },

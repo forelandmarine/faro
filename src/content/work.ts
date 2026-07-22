@@ -1,3 +1,32 @@
+export type PaletteSwatch = {
+  name: string;
+  hex: string;
+  note?: string;
+};
+
+export type TypeSpecimen = {
+  family: string;
+  role: string;
+  note?: string;
+  /** CSS font-family stack used to render the live specimen */
+  css: string;
+  weight?: number;
+};
+
+/** Full brand-and-site exposé, rendered as the deep sections of a case study. */
+export type Expose = {
+  /** Google Fonts stylesheet for live type specimens on this page only */
+  fontsHref?: string;
+  identity: string[];
+  palette: PaletteSwatch[];
+  type: TypeSpecimen[];
+  site: string[];
+  pages: { label: string; note?: string }[];
+  build: string[];
+  buildPoints: string[];
+  mobileImage?: string;
+};
+
 export type CaseStudy = {
   slug: string;
   name: string;
@@ -14,6 +43,7 @@ export type CaseStudy = {
   stack: string[];
   year: number;
   role: string;
+  expose?: Expose;
 };
 
 export const CASE_STUDIES: CaseStudy[] = [
@@ -33,7 +63,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     approach: [
       "Stripped the homepage to one paragraph and a single contact line. No carousel, no buzzwords.",
       "Wrote service pages in the cadence of a private memo, not a sales deck. Plain language, real numbers, named clients where permitted.",
-      "Custom Next.js build with edge-rendered pages, no marketing pixels, hand-tuned typography in Figtree.",
+      "Custom Next.js build, no marketing pixels, typography set in Nunito Sans with a light display weight.",
       "Built the editorial system that later became the foundation for The First Owner's Reference.",
     ],
     outcomes: [
@@ -46,9 +76,56 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: "Lighthouse performance", value: "TBD" },
       { label: "Time from kickoff to launch", value: "TBD" },
     ],
-    stack: ["Next.js", "TypeScript", "Tailwind", "Vercel"],
+    stack: ["Next.js", "TypeScript", "Tailwind", "Stripe", "Supabase", "Vercel"],
     year: 2026,
     role: "Design, development, copy direction",
+    expose: {
+      fontsHref:
+        "https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600&display=swap",
+      identity: [
+        "The company takes its name from the South Foreland Lighthouse in Kent, and the identity takes its cue from the same place: a white lighthouse mark and wordmark that only ever appear on deep navy. There is no light version of this brand. The darkness is the point; it reads as chart, night watch and instrument panel rather than brochure.",
+        "One typeface does everything. Nunito Sans at a light 300 carries every heading, which is the signature move of the identity: large, quiet, and unbolded where the rest of the industry shouts. Semibold is reserved for buttons and eyebrow labels, and body copy sits in a muted chart-blue rather than grey, so even paragraphs feel like they belong at sea.",
+      ],
+      palette: [
+        { name: "Deep navy", hex: "#040D1A", note: "Deepest ground, footer" },
+        { name: "Navy", hex: "#081630", note: "Primary page background" },
+        { name: "Chart blue", hex: "#0C1E42", note: "Cards and raised surfaces" },
+        { name: "Ocean", hex: "#5386B6", note: "The single accent" },
+        { name: "Muted blue", hex: "#7BA8C8", note: "Body copy, never grey" },
+      ],
+      type: [
+        {
+          family: "Nunito Sans",
+          role: "The whole site, one family",
+          css: '"Nunito Sans", system-ui, sans-serif',
+          weight: 300,
+          note: "Light 300 for every heading, regular for body, semibold for labels and buttons. No second typeface anywhere.",
+        },
+      ],
+      site: [
+        "This is not a brochure site. Around the four consultancy services sits a working platform: a paid technical support product with three subscription tiers, six self-serve tools, an insights journal, a quarterly newsletter archive, and a code-gated private membership. Each service page carries FAQ schema and reads like a memo rather than a pitch.",
+        "The scroll language is restrained on purpose: dual-layer parallax on heroes, intersection-observer reveals, and 150 millisecond colour transitions. Nothing bounces. The photography is real racing and yard imagery, held at half opacity under navy gradients so the interface stays legible on top of it.",
+      ],
+      pages: [
+        { label: "Four service pages", note: "Refit, new build, management, technical consultancy" },
+        { label: "Technical Support", note: "Three paid tiers with Stripe checkout and invoicing" },
+        { label: "Six tools", note: "Sea time tracker, ISM platform, running cost calculator and more" },
+        { label: "Insights journal", note: "Articles with per-page generated OG images" },
+        { label: "Newsletter archive", note: "The Foreland Quarter, issue by issue" },
+        { label: "Foreland Group", note: "Code-gated membership with logged downloads" },
+      ],
+      build: [
+        "Under the surface this is a small product company, not a static site. Stripe runs subscriptions through a custom checkout and webhook flow, Resend handles transactional email in brand templates, and Supabase sits behind the membership gating and download logging.",
+      ],
+      buildPoints: [
+        "Dynamic OpenGraph images generated per article at request time, no pre-build step.",
+        "A dual llms.txt corpus, index plus full text, so AI answer engines can cite the consultancy accurately.",
+        "Parallax and scroll reveals written against the raw browser APIs. No animation library shipped.",
+        "Structured data throughout: ProfessionalService, Service, Person and FAQ schema on the relevant pages.",
+        "Images served as AVIF and WebP with responsive sizes, heroes preloaded, the rest lazy.",
+      ],
+      mobileImage: "/portfolio/expose/foreland-mobile.png",
+    },
   },
   {
     slug: "nimara-pilates",
@@ -67,7 +144,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Defined a typographic system before any layout work. The brand reads first as letterforms, second as imagery.",
       "Photography direction toward editorial stillness rather than fitness energy.",
       "Site architecture that scales from one studio to three without rebuilding.",
-      "Booking flow built directly on Mindbody without iframe ugliness.",
+      "Four languages at full parity from day one: English, Spanish, French and German, switched in place.",
     ],
     outcomes: [
       "Brand cleared visual differentiation from every studio in the local market.",
@@ -79,9 +156,70 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: "Lighthouse performance", value: "TBD" },
       { label: "Time from kickoff to launch", value: "TBD" },
     ],
-    stack: ["Next.js", "TypeScript", "Tailwind", "Sanity CMS", "Vercel"],
+    stack: ["Next.js", "TypeScript", "Tailwind", "GSAP", "Lenis", "Vercel"],
     year: 2026,
     role: "Brand identity, design, development",
+    expose: {
+      fontsHref:
+        "https://fonts.googleapis.com/css2?family=Cinzel:wght@400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=DM+Sans:wght@400;500&display=swap",
+      identity: [
+        "The mark is a Mallorquin leopardess mid-stretch, drawn as a single unbroken line with no fill and no ornament. It holds from a sixteen pixel favicon to storefront signage, and ships in three line weights: light for screen, heavy for large format, fine for embroidery and foil. The wordmark is NIMĀRA in Cinzel, capitals only, with a macron on the second A that is not optional.",
+        "The palette is warm surfaces and one accent. Sand and cream grounds, ink text, and a single sage green that does every accent job on the site; hover states dim through opacity rather than reaching for a second colour. Oak appears only on rules and borders, never as text. The discipline is monastic on purpose: one typeface per role, one accent, one mark.",
+        "Every heading on the site is sentence case. Title case was banned in the brand system because it reads as advertising, and this brand is built to read as a publication.",
+      ],
+      palette: [
+        { name: "Sand", hex: "#EFE6D8", note: "Primary surface" },
+        { name: "Cream", hex: "#F7F3ED", note: "Cards, light sections" },
+        { name: "Ink", hex: "#1A1A1A", note: "Text and wordmark" },
+        { name: "Stone", hex: "#6B6B60", note: "Secondary text" },
+        { name: "Sage", hex: "#7E9A7A", note: "The single accent" },
+        { name: "Oak", hex: "#C2A87A", note: "Rules and borders only" },
+      ],
+      type: [
+        {
+          family: "Cinzel",
+          role: "Wordmark only",
+          css: '"Cinzel", serif',
+          note: "Trajan-lineage capitals, reserved for NIMĀRA and nothing else.",
+        },
+        {
+          family: "Cormorant Garamond",
+          role: "Display and headings",
+          css: '"Cormorant Garamond", serif',
+          weight: 300,
+          note: "Light editorial serif on a harmonic 1.25 scale, from caption to 96 pixel display.",
+        },
+        {
+          family: "DM Sans",
+          role: "Body and interface",
+          css: '"DM Sans", sans-serif',
+          note: "Quiet sans for body, navigation and labels, tracked caps for eyebrows.",
+        },
+      ],
+      site: [
+        "The site reads as a small publication about a studio rather than a gym website: classes, pricing, studio, instructors, a journal, and a policy set written in the same register as the editorial pages. Every string on the site exists in English, Spanish, French and German at full parity, roughly sixteen hundred lines of translated copy, switched in place without a reload.",
+        "Motion is where the brand breathes: film grain over the full viewport, blur-to-sharp image loading, a slow testimonial marquee, and a breathing pulse animation timed like an exhale. Lenis smooths the scroll and GSAP drives the reveals, all behind a reduced-motion fallback.",
+      ],
+      pages: [
+        { label: "Classes", note: "Four programmes, eight Reformers, never more" },
+        { label: "Pricing", note: "Packs, memberships and a discovery offer, no hidden conditions" },
+        { label: "Studio", note: "Santa Catalina location, hours, the room itself" },
+        { label: "Instructors", note: "The teaching team, written as people not bios" },
+        { label: "Journal", note: "Editorial posts in all four languages" },
+        { label: "Careers and partnerships", note: "Hiring and B2B, same voice throughout" },
+      ],
+      build: [
+        "Content is source-controlled TypeScript rather than a CMS, which is what makes four-language parity enforceable: a missing translation is a build error, not a silent gap. Structured data describes the studio as a local business with geo coordinates, hours and the full class catalogue, aimed at map results and AI answers for pilates in Palma.",
+      ],
+      buildPoints: [
+        "Four languages at full parity in a 1,600 line translation layer, persisted per visitor.",
+        "ExerciseGym and LocalBusiness schema with geo, hours and the class catalogue.",
+        "Film grain, vignettes and parallax as layered components, not baked into imagery.",
+        "Booking widget slot structured for the studio's scheduling platform, so going live is an embed, not a rebuild.",
+        "WhatsApp as a first-class contact channel alongside the form.",
+      ],
+      mobileImage: "/portfolio/expose/nimara-mobile.png",
+    },
   },
   {
     slug: "first-owners-reference",
@@ -116,12 +254,72 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Next.js",
       "TypeScript",
       "Tailwind",
-      "MDX",
-      "next-intl",
+      "Paged.js",
+      "Puppeteer",
       "Vercel",
     ],
     year: 2026,
     role: "Design, development, editorial systems",
+    expose: {
+      fontsHref:
+        "https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,500;1,300&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap",
+      identity: [
+        "The masthead is the wordmark: The First Owner's Reference set in Newsreader at a light 300, with the strap A yachting field manual beneath it in the same face, italic. The publisher's lighthouse mark sits alongside in charcoal or paper depending on the ground. Nothing else identifies the publication, which is the level of restraint the register demands.",
+        "The palette is a paper object translated to the screen: warm paper grounds, near-black text, a single marine blue for headings, links and drop caps, stone for metadata and a warm hairline rule colour for the lines that do the layout work. The print edition carries its own slightly warmer overrides of the same tokens.",
+        "Three families divide the labour. Newsreader carries every word of editorial prose, DM Sans signposts in tracked caps, and DM Mono sets the numerals, tabular where money is involved.",
+      ],
+      palette: [
+        { name: "Paper", hex: "#F5F2EC", note: "The page" },
+        { name: "Charcoal", hex: "#1A1A1A", note: "Editorial text" },
+        { name: "Marine", hex: "#0F3B5C", note: "Headings, links, drop caps" },
+        { name: "Stone", hex: "#7A756D", note: "Metadata and captions" },
+        { name: "Rule", hex: "#D8D2C4", note: "Hairlines that do the layout" },
+      ],
+      type: [
+        {
+          family: "Newsreader",
+          role: "Masthead and all editorial prose",
+          css: '"Newsreader", serif',
+          weight: 300,
+          note: "Light for the masthead, up to 500 in chapter headings, italic for the strap and pull quotes.",
+        },
+        {
+          family: "DM Sans",
+          role: "Signposting",
+          css: '"DM Sans", sans-serif',
+          note: "Chapter numerals, navigation and metadata in letter-spaced caps.",
+        },
+        {
+          family: "DM Mono",
+          role: "Numbers",
+          css: '"DM Mono", monospace',
+          note: "Tabular numerals for cost tables and the running-cost calculator.",
+        },
+      ],
+      site: [
+        "Nine chapters form the spine, each one a complete piece of editorial: a lead essay, a data spread, a guest opinion, an anonymised case and a printable checklist. Around them sit a glossary of over a hundred defined terms, a client-side search across everything, and working tools including a running-cost calculator built on published industry data.",
+        "Reading is the interface. A 38rem prose measure, drop caps in marine, real pull quotes, a scroll progress bar, and per-chapter navigation strips. There is no advertising and there never will be, which the colophon states as policy.",
+      ],
+      pages: [
+        { label: "Nine chapters", note: "Essay, data spread, guest opinion, case and checklist in each" },
+        { label: "Glossary", note: "Over a hundred terms, each with its own page and schema" },
+        { label: "Running-cost calculator", note: "Nine inputs, nine cost categories, sourced data" },
+        { label: "Search", note: "Client-side, tokenised, no third party sees a query" },
+        { label: "Colophon and press kit", note: "The publication documents its own making" },
+        { label: "Print edition", note: "The full magazine as a route, rendered to PDF" },
+      ],
+      build: [
+        "The whole publication is typed data: chapters, essays, glossary entries and checklists live as version-controlled TypeScript, no CMS. That same content renders twice, once as the website and once through a 2,000 line print stylesheet into a 230 by 300 millimetre book via Paged.js and headless Chrome: Munken Pure text stock, cloth boards, foil-blocked wordmark, five hundred hand-numbered copies.",
+      ],
+      buildPoints: [
+        "One content source, two editions: web pages and a print-ready PDF with running heads, drop caps and a generated index.",
+        "Ten JSON-LD schema types, from Article per chapter to DefinedTerm per glossary entry, built for citation by AI answer engines.",
+        "Search index compiled at build time and shipped to the browser, so queries never leave the page.",
+        "Checklists ship as single-page print layouts, made to be taken to a shipyard meeting.",
+        "Every numerical claim in the text carries a source, and the schema carries the suggested citation format.",
+      ],
+      mobileImage: "/portfolio/expose/for-mobile.png",
+    },
   },
   {
     slug: "birdham-carpentry",
@@ -155,6 +353,60 @@ export const CASE_STUDIES: CaseStudy[] = [
     stack: ["Next.js", "TypeScript", "Tailwind", "Supabase", "Stripe", "Vercel"],
     year: 2026,
     role: "Naming, brand identity, design, development",
+    expose: {
+      fontsHref:
+        "https://fonts.googleapis.com/css2?family=Spectral:wght@400;500&family=Hanken+Grotesk:wght@400;600&display=swap",
+      identity: [
+        "Birdham is a Chichester Harbour village whose name means settlement of the birds, and the mark is a gull in flight: one solid filled silhouette, vectorised from the founder's own hand drawing and then refined until the wings balanced. One path, one fill, no stroke. The constraint was embroidery, because a trade mark lives on work jackets before it lives anywhere else, and a single shape stitches as a single thread.",
+        "The lockup sets BIRDHAM in Spectral capitals, letter-spaced like an engraving, with Carpentry & building beneath in tracked Hanken Grotesk. A seal version, the gull in a double roundel, covers stationery and avatars.",
+        "The palette is taken from heritage paint colours rather than the kelly green and gold that builders default to: a deep studio-green ink, Bancha green as the working accent, warm paper instead of white, and an oak tan used sparingly. It is a palette that sits comfortably next to lime render and old brick.",
+      ],
+      palette: [
+        { name: "Ink", hex: "#363C3C", note: "Studio Green, text and mark" },
+        { name: "Bancha", hex: "#676A49", note: "The working accent" },
+        { name: "Card Room", hex: "#73806E", note: "Softer secondary green" },
+        { name: "Paper", hex: "#F3EDDF", note: "Warm ground, never pure white" },
+        { name: "Oak", hex: "#B98A50", note: "Sparing warm accent" },
+      ],
+      type: [
+        {
+          family: "Spectral",
+          role: "Wordmark, headings and body",
+          css: '"Spectral", serif',
+          weight: 500,
+          note: "Chosen after a full pass of eleven serifs. Letter-spaced capitals in the lockup, roman for headings and copy.",
+        },
+        {
+          family: "Hanken Grotesk",
+          role: "Interface and labels",
+          css: '"Hanken Grotesk", sans-serif',
+          note: "Navigation, tracked-caps eyebrows and the working parts of the quote flow.",
+        },
+      ],
+      site: [
+        "Four services lead the offer, with listed and period building restoration in front, and eight individually written area pages cover the catchment from the harbour villages to the Downs. The centrepiece is the quote flow: a multi-step form that sizes the job, applies a standard, premium or heritage specification, and returns an indicative range on the spot, computed from a maintained materials price list plus labour rates, always presented as a guide with a firm quote to follow a visit.",
+        "Behind the same domain sits the operations side of the firm: a role-gated admin where enquiries convert to clients, quotes convert to jobs, jobs carry stages and calendar bookings, and invoices track payments as they land.",
+      ],
+      pages: [
+        { label: "Four service pages", note: "Restoration in front, joinery, kitchens, building" },
+        { label: "Eight area pages", note: "Chichester to Petworth, each written individually" },
+        { label: "Quote flow", note: "Sized, specified and priced to an indicative range in a moment" },
+        { label: "Shareable quotes", note: "Clients open a tokenised link, no login, with a branded PDF" },
+        { label: "Operations admin", note: "Enquiries, clients, quotes, jobs, calendar, invoices, payments" },
+        { label: "Work, about, reviews", note: "The public face, in the firm's own patient voice" },
+      ],
+      build: [
+        "This is a business system wearing a brochure. Supabase holds the schema, with row-level security dividing owner, staff and bookkeeper roles, and the public site never reads the database at all. Stripe takes deposits through tokenised quote links and keeps invoice status honest through an idempotent webhook. The quote and invoice PDFs are rendered server-side from the same React components as the screen versions, gull mark and all, so the brand cannot drift between mediums.",
+      ],
+      buildPoints: [
+        "Estimate engine with per-service bills of materials, labour rates and specification multipliers, quoting a range, never a false fixed price.",
+        "Public quote links minted as unguessable tokens, served through a security-definer function.",
+        "Stripe deposits at 10 to 15 percent with webhook-driven status rollup and refund handling.",
+        "Branded A4 quote and invoice PDFs generated from React components on demand.",
+        "LocalBusiness, Service, FAQ and breadcrumb schema built only from confirmed facts, nothing invented.",
+      ],
+      mobileImage: "/portfolio/expose/birdham-mobile.png",
+    },
   },
 ];
 

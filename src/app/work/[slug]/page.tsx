@@ -3,7 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/PageShell";
-import { CASE_STUDIES, getCaseStudy } from "@/content/work";
+import {
+  CASE_STUDIES,
+  getCaseStudy,
+  type CaseStudy,
+} from "@/content/work";
 import { SITE_URL } from "@/content/entity";
 
 export function generateStaticParams() {
@@ -147,6 +151,8 @@ export default async function CaseStudyPage({
           </ul>
         </Section>
 
+        {cs.expose && <ExposeSections cs={cs} />}
+
         <Section title="Outcomes">
           <ul className="space-y-3">
             {cs.outcomes.map((o, i) => (
@@ -205,16 +211,160 @@ export default async function CaseStudyPage({
 function Section({
   title,
   children,
+  wide = false,
 }: {
   title: string;
   children: React.ReactNode;
+  wide?: boolean;
 }) {
   return (
     <section className="mb-16">
       <h2 className="type-eyebrow mb-6">{title}</h2>
-      <div className="text-foreground/85 text-base md:text-lg leading-relaxed max-w-2xl">
+      <div
+        className={`text-foreground/85 text-base md:text-lg leading-relaxed ${
+          wide ? "" : "max-w-2xl"
+        }`}
+      >
         {children}
       </div>
     </section>
+  );
+}
+
+/* ── Brand and site exposé ─────────────────────────────────────────── */
+
+function ExposeSections({ cs }: { cs: CaseStudy }) {
+  const e = cs.expose!;
+  return (
+    <>
+      {/* Brand typefaces, loaded on this page only for the live specimens */}
+      {e.fontsHref && (
+        <link rel="stylesheet" href={e.fontsHref} precedence="default" />
+      )}
+
+      <Section title="The identity" wide>
+        <div className="max-w-2xl space-y-4">
+          {e.identity.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </div>
+
+        {/* Palette */}
+        <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-4 gap-y-8">
+          {e.palette.map((sw) => (
+            <div key={sw.hex}>
+              <div
+                className="h-20 rounded-lg border border-foreground/10"
+                style={{ backgroundColor: sw.hex }}
+              />
+              <p className="mt-3 text-sm font-semibold leading-tight">
+                {sw.name}
+              </p>
+              <p className="text-xs text-foreground/60 font-mono uppercase mt-0.5">
+                {sw.hex}
+              </p>
+              {sw.note && (
+                <p className="text-xs text-foreground/60 mt-1 leading-snug">
+                  {sw.note}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Type specimens */}
+        <div className="mt-14 space-y-0">
+          {e.type.map((t) => (
+            <div
+              key={`${t.family}-${t.role}`}
+              className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8 border-t border-foreground/10 py-6"
+            >
+              <span
+                aria-hidden
+                className="text-6xl leading-none shrink-0 w-24"
+                style={{ fontFamily: t.css, fontWeight: t.weight ?? 400 }}
+              >
+                Aa
+              </span>
+              <div>
+                <p
+                  className="text-2xl leading-tight"
+                  style={{ fontFamily: t.css, fontWeight: t.weight ?? 400 }}
+                >
+                  {t.family}
+                </p>
+                <p className="type-eyebrow mt-1">{t.role}</p>
+                {t.note && (
+                  <p className="text-sm text-foreground/70 mt-2 max-w-xl">
+                    {t.note}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="The site" wide>
+        <div className="max-w-2xl space-y-4">
+          {e.site.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </div>
+
+        <div className="mt-12 flex flex-col md:flex-row gap-12">
+          {/* Page inventory */}
+          <div className="flex-1">
+            <p className="type-eyebrow mb-5">What we shipped</p>
+            <ul className="divide-y divide-foreground/10">
+              {e.pages.map((p) => (
+                <li key={p.label} className="py-3">
+                  <span className="text-base font-medium">{p.label}</span>
+                  {p.note && (
+                    <span className="block text-sm text-foreground/60 mt-0.5">
+                      {p.note}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Mobile plate */}
+          {e.mobileImage && (
+            <div className="shrink-0 self-start mx-auto md:mx-0">
+              <div className="w-[230px] rounded-[2rem] border-4 border-[#1A3640] overflow-hidden shadow-[0_16px_40px_-16px_rgba(26,54,64,0.35)]">
+                <Image
+                  src={e.mobileImage}
+                  alt={`${cs.name} on a phone`}
+                  width={390}
+                  height={844}
+                  className="w-full h-auto"
+                />
+              </div>
+              <p className="text-xs text-foreground/60 text-center mt-3">
+                The same site at 390 pixels
+              </p>
+            </div>
+          )}
+        </div>
+      </Section>
+
+      <Section title="The build">
+        <div className="space-y-4">
+          {e.build.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </div>
+        <ul className="mt-8 space-y-3">
+          {e.buildPoints.map((p, i) => (
+            <li key={i} className="flex gap-4">
+              <span className="text-accent flex-shrink-0">&bull;</span>
+              <span className="text-base">{p}</span>
+            </li>
+          ))}
+        </ul>
+      </Section>
+    </>
   );
 }

@@ -6,11 +6,11 @@ import { SERVICES } from "@/content/services";
 export const metadata: Metadata = {
   title: "Services · Faro Creative",
   description:
-    "Faro Creative builds websites and brand systems for three verticals: marine and superyacht, wellness and studio, editorial publication.",
+    "Faro Creative builds websites and brand systems. Strongest in marine and superyacht, wellness and studio, and editorial publication.",
   openGraph: {
     title: "Services · Faro Creative",
     description:
-      "Faro Creative builds websites and brand systems for three verticals: marine and superyacht, wellness and studio, editorial publication.",
+      "Faro Creative builds websites and brand systems. Strongest in marine and superyacht, wellness and studio, and editorial publication.",
     url: "/services",
   },
   alternates: { canonical: "/services" },
@@ -22,13 +22,14 @@ export default function ServicesIndexPage() {
       <article className="max-w-6xl mx-auto px-6 md:px-10 py-20 md:py-28">
         <p className="type-eyebrow mb-6">Services</p>
         <h1 className="type-display text-[clamp(2.4rem,6vw,5rem)] leading-[0.95] mb-8 max-w-3xl">
-          We work in three verticals. We say no to the rest.
+          Websites and brand systems, built by the person who designed them.
         </h1>
         <p className="type-body max-w-2xl mb-20">
-          Specialism is a service offer in itself. Faro takes work where the
-          studio already understands the buyer, the trade press, and the words
-          that mean something. The three verticals below are where we have
-          shipped, where we have references, and where we are best.
+          Faro is strongest where the studio already understands the buyer,
+          the trade press, and the words that mean something. The verticals
+          below are where we have shipped and where we have references. They
+          are a starting point, not a boundary. If the work is good, we are
+          interested.
         </p>
 
         <ul className="space-y-16">

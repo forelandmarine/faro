@@ -3,7 +3,7 @@ export type CaseStudy = {
   name: string;
   url: string;
   category: string;
-  vertical: "marine" | "wellness" | "editorial";
+  vertical: "marine" | "wellness" | "editorial" | "craft";
   image: string;
   tagline: string;
   brief: string;
@@ -122,6 +122,39 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     year: 2026,
     role: "Design, development, editorial systems",
+  },
+  {
+    slug: "birdham-carpentry",
+    name: "Birdham Carpentry & Building",
+    url: "https://birdhamcarpentry.co.uk",
+    category: "Naming, brand, web, product",
+    vertical: "craft",
+    image: "/portfolio/birdham.png",
+    tagline:
+      "Name, brand, website and a complete quoting and payments system for a new carpentry and building firm on Chichester Harbour.",
+    brief:
+      "Birdham Carpentry & Building is a new firm working across Chichester and the South Downs: listed and period building restoration, fine joinery, bespoke kitchens and general building. The commission covered everything a new trade business needs to open its doors. A name, a mark, a website, and the system that runs quotes, jobs and invoices behind it.",
+    problem:
+      "Trade websites are either a phone number on a template or a lead portal that sells the same enquiry to three other builders. In a catchment full of listed and period property, nobody presents craft properly and nobody quotes online. The brief was to look like the most careful firm in the county from the first day of trading.",
+    approach: [
+      "Named the firm for its harbour village and drew the gull mark from a hand sketch: one solid shape that holds at favicon size and embroiders on a work jacket as a single thread.",
+      "Identity set in Spectral with a palette drawn from heritage paint colours, refusing the green-and-gold defaults of the trade.",
+      "Multi-step quote request priced against a maintained materials price list, producing a branded PDF quote with a shareable client link and a card deposit.",
+      "Operations backend behind the same site: enquiries, clients, quotes, jobs, calendar, invoicing and payments in one place.",
+    ],
+    outcomes: [
+      "Launched with a working enquiry-to-payment pipeline: quote request, priced PDF, deposit link, invoice, all under one roof.",
+      "The whole firm runs from one admin, with card deposits and payments live from day one.",
+      "A one-person trade brand that stands next to established heritage firms rather than other start-ups.",
+    ],
+    metrics: [
+      { label: "Time to first paint", value: "TBD" },
+      { label: "Lighthouse performance", value: "TBD" },
+      { label: "Time from kickoff to launch", value: "TBD" },
+    ],
+    stack: ["Next.js", "TypeScript", "Tailwind", "Supabase", "Stripe", "Vercel"],
+    year: 2026,
+    role: "Naming, brand identity, design, development",
   },
 ];
 

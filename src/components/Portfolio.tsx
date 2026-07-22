@@ -34,6 +34,14 @@ const projects = [
     anchor: "The First Owner's Reference, editorial publication",
     image: "/portfolio/first-owners-reference.png",
   },
+  {
+    name: "Birdham Carpentry",
+    slug: "birdham-carpentry",
+    url: "birdhamcarpentry.co.uk",
+    category: "Carpentry firm, brand and web",
+    anchor: "Birdham Carpentry & Building, Chichester carpentry and building firm",
+    image: "/portfolio/birdham.png",
+  },
 ];
 
 function ProjectPanel({

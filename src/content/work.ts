@@ -54,6 +54,8 @@ export type Expose = {
   pages: { label: string; note?: string }[];
   build: string[];
   buildPoints: string[];
+  /** Full-width plate illustrating the build section */
+  buildImage?: { src: string; alt: string; caption?: string };
   mobileImage?: string;
 };
 
@@ -551,6 +553,12 @@ export const CASE_STUDIES: CaseStudy[] = [
       build: [
         "This is a business system wearing a brochure. Supabase holds the schema, with row-level security dividing owner, staff and bookkeeper roles, and the public site never reads the database at all. Stripe takes deposits through tokenised quote links and keeps invoice status honest through an idempotent webhook. The quote and invoice PDFs are rendered server-side from the same React components as the screen versions, gull mark and all, so the brand cannot drift between mediums.",
       ],
+      buildImage: {
+        src: "/portfolio/expose/birdham-admin.png",
+        alt: "The Birdham Operations admin showing an invoice with client link and card payment",
+        caption:
+          "Birdham Operations: an invoice with its shareable client link, PDF, and card or manual payment, all in the brand",
+      },
       buildPoints: [
         "Estimate engine with per-service bills of materials, labour rates and specification multipliers, quoting a range, never a false fixed price.",
         "Public quote links minted as unguessable tokens, served through a security-definer function.",

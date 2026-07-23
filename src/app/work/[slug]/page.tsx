@@ -443,13 +443,32 @@ function ExposeSections({ cs }: { cs: CaseStudy }) {
         </div>
       </Section>
 
-      <Section title="The build">
-        <div className="space-y-4">
+      <Section title="The build" wide>
+        <div className="max-w-2xl space-y-4">
           {e.build.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
         </div>
-        <ul className="mt-8 space-y-3">
+        {e.buildImage && (
+          <figure className="mt-10">
+            <div className="rounded-xl overflow-hidden border-4 border-[#1A3640] shadow-[0_16px_40px_-16px_rgba(26,54,64,0.3)]">
+              <Image
+                src={e.buildImage.src}
+                alt={e.buildImage.alt}
+                width={1580}
+                height={1114}
+                sizes="(min-width: 896px) 832px, 100vw"
+                className="w-full h-auto"
+              />
+            </div>
+            {e.buildImage.caption && (
+              <figcaption className="text-xs text-foreground/60 mt-3 text-center">
+                {e.buildImage.caption}
+              </figcaption>
+            )}
+          </figure>
+        )}
+        <ul className="mt-8 max-w-2xl space-y-3">
           {e.buildPoints.map((p, i) => (
             <li key={i} className="flex gap-4">
               <span className="text-accent flex-shrink-0">&bull;</span>

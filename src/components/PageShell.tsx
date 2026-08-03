@@ -101,9 +101,17 @@ function SiteFooter() {
           <p>
             &copy; {new Date().getFullYear()} Faro Creative. {FOUNDER.name}, {FOUNDER.role.toLowerCase()}.
           </p>
-          <a href={`mailto:${FOUNDER.email}`} className="hover:text-background transition-colors">
-            {FOUNDER.email}
-          </a>
+          <div className="flex items-center gap-5">
+            <Link href="/privacy" className="hover:text-background transition-colors">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-background transition-colors">
+              Terms
+            </Link>
+            <a href={`mailto:${FOUNDER.email}`} className="hover:text-background transition-colors">
+              {FOUNDER.email}
+            </a>
+          </div>
         </div>
       </div>
     </footer>

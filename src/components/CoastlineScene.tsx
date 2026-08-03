@@ -96,76 +96,39 @@ export default function CoastlineScene() {
 
   const vw = totalWidth / PANEL_COUNT;
 
-  // All nautical elements — more populous
+  // Nautical elements — a spare, evenly spread scattering across the panels
   const elements = useMemo(() => {
     if (!vw) return null;
     return {
       sailboats: [
-        { x: vw * 0.4, y: 75, scale: 1.0, delay: "1.2s" },
-        { x: vw * 1.5, y: 65, scale: 1.6, delay: "0s" },
-        { x: vw * 2.6, y: 80, scale: 0.9, delay: "2.1s" },
-        { x: vw * 3.2, y: 70, scale: 1.3, delay: "0.8s" },
-        { x: vw * 4.4, y: 78, scale: 1.0, delay: "1.5s" },
-        { x: vw * 5.5, y: 62, scale: 1.4, delay: "0.3s" },
-        { x: vw * 6.3, y: 76, scale: 0.8, delay: "1.8s" },
-        { x: vw * 7.2, y: 70, scale: 1.1, delay: "0.6s" },
+        { x: vw * 0.8, y: 72, scale: 1.4, delay: "0s" },
+        { x: vw * 2.7, y: 78, scale: 0.9, delay: "1.5s" },
+        { x: vw * 4.6, y: 66, scale: 1.3, delay: "0.6s" },
+        { x: vw * 6.5, y: 74, scale: 1.0, delay: "2.1s" },
       ],
       rowboats: [
-        { x: vw * 1.8, y: 100, scale: 1.0, delay: "0.5s" },
-        { x: vw * 4.8, y: 95, scale: 1.2, delay: "1.3s" },
-        { x: vw * 6.8, y: 102, scale: 0.8, delay: "0.9s" },
+        { x: vw * 1.9, y: 100, scale: 1.0, delay: "0.5s" },
+        { x: vw * 5.4, y: 98, scale: 1.1, delay: "1.3s" },
       ],
       lighthouses: [
         { x: vw * 1.5, y: 100, scale: 2.0 },
-        { x: vw * 4.5, y: 115, scale: 1.4 },
-        { x: vw * 7.4, y: 105, scale: 1.8 },
+        { x: vw * 6.0, y: 108, scale: 1.7 },
       ],
       buoys: [
-        { x: vw * 0.9, y: 105, delay: "0s" },
-        { x: vw * 2.3, y: 100, delay: "0.7s" },
-        { x: vw * 3.6, y: 108, delay: "1.2s" },
-        { x: vw * 4.1, y: 102, delay: "0.3s" },
-        { x: vw * 5.4, y: 106, delay: "1.8s" },
-        { x: vw * 6.3, y: 98, delay: "0.5s" },
-        { x: vw * 7.6, y: 104, delay: "1.0s" },
+        { x: vw * 1.1, y: 104, delay: "0s" },
+        { x: vw * 3.7, y: 100, delay: "1.2s" },
+        { x: vw * 6.7, y: 106, delay: "0.6s" },
       ],
-      seagulls: [
-        { x: vw * 0.3, y: 25, scale: 1.4, delay: "0s" },
-        { x: vw * 1.0, y: 15, scale: 1.8, delay: "2s" },
-        { x: vw * 1.7, y: 35, scale: 1.0, delay: "4s" },
-        { x: vw * 2.5, y: 12, scale: 1.6, delay: "1s" },
-        { x: vw * 3.3, y: 30, scale: 1.2, delay: "3s" },
-        { x: vw * 4.2, y: 20, scale: 1.4, delay: "5s" },
-        { x: vw * 5.0, y: 28, scale: 1.7, delay: "1.5s" },
-        { x: vw * 5.8, y: 10, scale: 1.1, delay: "3.5s" },
-        { x: vw * 6.5, y: 22, scale: 1.5, delay: "0.5s" },
-        { x: vw * 7.3, y: 16, scale: 1.3, delay: "2.5s" },
-        { x: vw * 7.8, y: 32, scale: 1.8, delay: "4.5s" },
-      ],
-      stars: Array.from({ length: 60 }, (_, i) => ({
-        x: (totalWidth / 60) * i + Math.sin(i * 7) * vw * 0.25,
-        y: 4 + Math.abs(Math.sin(i * 3.7)) * 55,
-        r: 0.8 + Math.abs(Math.sin(i * 2.3)) * 2.4,
-        delay: `${(i * 0.37) % 4}s`,
-      })),
       anchors: [
-        { x: vw * 1.2, y: 225, scale: 1.4 },
-        { x: vw * 3.5, y: 222, scale: 1.2 },
-        { x: vw * 5.2, y: 228, scale: 1.0 },
-        { x: vw * 7.0, y: 224, scale: 1.3 },
-      ],
-      compasses: [
-        { x: vw * 0.5, y: 40, scale: 4.0 },
-        { x: vw * 2.5, y: 35, scale: 6.0 },
-        { x: vw * 5.0, y: 25, scale: 5.0 },
-        { x: vw * 7.0, y: 32, scale: 5.6 },
+        { x: vw * 2.4, y: 224, scale: 1.3 },
+        { x: vw * 5.8, y: 226, scale: 1.1 },
       ],
       islands: [
         { x: vw * 2.5, y: 68, scale: 0.5, type: "single" as const },
         { x: vw * 5.5, y: 65, scale: 0.6, type: "double" as const },
       ],
     };
-  }, [vw, totalWidth]);
+  }, [vw]);
 
   if (!totalWidth || !paths || !elements) return null;
 

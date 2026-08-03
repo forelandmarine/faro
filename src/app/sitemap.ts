@@ -12,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/about", priority: 0.7, changeFrequency: "yearly" as const },
     { path: "/process", priority: 0.7, changeFrequency: "yearly" as const },
     { path: "/contact", priority: 0.6, changeFrequency: "yearly" as const },
+    { path: "/privacy", priority: 0.3, changeFrequency: "yearly" as const },
+    { path: "/terms", priority: 0.3, changeFrequency: "yearly" as const },
   ];
 
   const work = CASE_STUDIES.map((c) => ({

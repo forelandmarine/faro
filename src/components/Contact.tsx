@@ -1,12 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lighthouse from "./Lighthouse";
 import { useHorizontalScroll } from "./HorizontalScroll";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * Studio social profiles. Paste the real profile URL to switch a link on.
+ * Left blank, the link is hidden rather than left pointing at a dead "#".
+ */
+const SOCIALS: { label: string; url: string }[] = [
+  { label: "Instagram", url: "" },
+  { label: "LinkedIn", url: "" },
+];
 
 export default function Contact() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -95,9 +105,28 @@ export default function Contact() {
               <a href="mailto:hello@faro.is" className="hover:text-accent transition-colors">
                 hello@faro.is
               </a>
-              <div className="flex gap-5">
-                <a href="#" className="hover:text-accent transition-colors">Instagram</a>
-                <a href="#" className="hover:text-accent transition-colors">LinkedIn</a>
+              {SOCIALS.some((s) => s.url) && (
+                <div className="flex gap-5">
+                  {SOCIALS.filter((s) => s.url).map((s) => (
+                    <a
+                      key={s.label}
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-accent transition-colors"
+                    >
+                      {s.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+              <div className="flex gap-4 text-foreground/40 text-xs pt-1">
+                <Link href="/privacy" className="hover:text-accent transition-colors">
+                  Privacy
+                </Link>
+                <Link href="/terms" className="hover:text-accent transition-colors">
+                  Terms
+                </Link>
               </div>
             </div>
           </div>

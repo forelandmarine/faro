@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Lighthouse from "./Lighthouse";
 
 export default function Footer() {
@@ -12,12 +13,12 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center gap-6 text-muted text-xs">
-          <a href="#" className="hover:text-foreground transition-colors">
+          <Link href="/privacy" className="hover:text-foreground transition-colors">
             Privacy
-          </a>
-          <a href="#" className="hover:text-foreground transition-colors">
+          </Link>
+          <Link href="/terms" className="hover:text-foreground transition-colors">
             Terms
-          </a>
+          </Link>
         </div>
 
         <p className="text-muted text-xs">

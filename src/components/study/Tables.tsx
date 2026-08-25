@@ -52,6 +52,10 @@ export function ColourTable({
           <p className="type-eyebrow mb-4">Measured contrast</p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse min-w-[34rem]">
+              <Caption>
+                Measured contrast ratios for each text and surface pair in the
+                palette, with the WCAG 2.1 grade each one earns.
+              </Caption>
               <thead>
                 <tr className="border-b border-foreground/15 text-left">
                   <Th>Pair</Th>
@@ -179,6 +183,10 @@ export function TypeScaleTable({ rows }: { rows: TypeScaleRow[] }) {
   return (
     <div className="mt-8 overflow-x-auto">
       <table className="w-full text-sm border-collapse min-w-[46rem]">
+        <Caption>
+          The type scale: size, role, family, weight, line height and tracking for
+          each step, with a live setting of the face.
+        </Caption>
         <thead>
           <tr className="border-b border-foreground/15 text-left">
             {rows[0]?.step && <Th>Step</Th>}
@@ -235,6 +243,10 @@ export function MotionTable({ rows, note }: { rows: MotionRow[]; note?: string }
     <div className="mt-8">
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse min-w-[36rem]">
+          <Caption>
+            Animations used on the site, with the effect, duration and easing of
+            each.
+          </Caption>
           <thead>
             <tr className="border-b border-foreground/15 text-left">
               <Th>Name</Th>
@@ -301,6 +313,7 @@ function Th({
 }) {
   return (
     <th
+      scope="col"
       className={`py-2.5 pr-4 text-[10px] tracking-[0.14em] uppercase font-semibold text-foreground/50 ${
         align === "right" ? "text-right pr-0 pl-4" : ""
       }`}
@@ -308,6 +321,11 @@ function Th({
       {children}
     </th>
   );
+}
+
+/** A visually hidden caption, so a table announces its purpose. */
+function Caption({ children }: { children: React.ReactNode }) {
+  return <caption className="sr-only">{children}</caption>;
 }
 
 function Td({

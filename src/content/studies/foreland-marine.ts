@@ -1,4 +1,5 @@
 import type { MarkGeometry, StudyDoc } from "./types";
+import { measuredBlocks } from "./measured";
 
 /**
  * Sources: foreland-marine-v2/brand-identity-kit.md (version 1.0, April 2026),
@@ -94,6 +95,51 @@ export const forelandMarineStudy: StudyDoc = {
             { label: "A gated membership area", note: "Foreland Group, entered by invitation code" },
             { label: "The editorial system", note: "Later became the foundation for The First Owner's Reference" },
           ],
+        },
+        {
+          kind: "timeline",
+          entries: [
+            {
+              date: "30 March 2026",
+              label: "First commit",
+              note: "The site begins, with the membership marks in the footer from the first day",
+            },
+            {
+              date: "April 2026",
+              label: "Brand identity kit, version 1.0",
+              note: "Mark, colour, type, components, motion, photography and voice, written down",
+              pivot: true,
+            },
+            {
+              date: "18 June 2026",
+              label: "Performance and search pass",
+              note: "Canonical leak fixed, homepage and journal server-rendered, images compressed",
+            },
+            {
+              date: "24 July 2026",
+              label: "Operations backend added",
+              note: "CRM and finance at /admin, plus a general payment page",
+            },
+            {
+              date: "4 August 2026",
+              label: "Structured data and llms.txt",
+              note: "Real sitemap lastmod, entity sameAs, speakable markup, and the AI-typical interface chrome stripped out",
+              pivot: true,
+            },
+            {
+              date: "18 August 2026",
+              label: "Latest commit",
+              note: "A copy and grammar pass across the site",
+            },
+          ],
+          summary: [
+            { label: "Commits", value: "210" },
+            { label: "First to latest", value: "20 weeks" },
+            { label: "Pages", value: "65" },
+            { label: "Kit version", value: "1.0" },
+          ],
+          source:
+            "Dates taken from the project's commit history, with the kit version and date from the brand document itself.",
         },
       ],
     },
@@ -216,6 +262,15 @@ export const forelandMarineStudy: StudyDoc = {
         {
           kind: "note",
           text: "Four of the five documented restrictions are shown. The fifth, that the lockup is never used below 204 pixels or 50 millimetres, is covered by the size ladder above.",
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/foreland-marine/service-hero.webp",
+          alt: "The Foreland Marine refit page, with the lockup in the header over a hero image",
+          caption:
+            "The lockup in service, at the top of the refit page. The photography sits beneath a navy gradient at reduced opacity, which is what keeps the white mark and the heading legible over it",
+          width: 2880,
+          height: 2000,
         },
       ],
     },
@@ -398,6 +453,37 @@ export const forelandMarineStudy: StudyDoc = {
           ],
         },
         {
+          kind: "image",
+          src: "/portfolio/study/foreland-marine/service-cards.webp",
+          alt: "Service cards on the refit page, each with a left accent bar",
+          caption:
+            "The service card as specified: chart blue ground, white 8 percent border, the four pixel ocean accent bar down the left edge, and the heading held at the light 300 weight",
+          width: 2880,
+          height: 2000,
+        },
+        {
+          kind: "prose",
+          paragraphs: [
+            "The brand document specifies components in detail and says nothing about layout. In practice the site settled on a consistent set of widths and rhythms anyway, and they are worth recording, because an undocumented convention followed sixty-five times is a system whether or not anyone wrote it down. The figures below are counted from the code rather than quoted from the kit.",
+          ],
+        },
+        {
+          kind: "grid",
+          breakpoints: [
+            { label: "Desktop", columns: 12, note: "Page container at 1280px, reading column at 768px" },
+            { label: "Tablet", columns: 6 },
+            { label: "Mobile", columns: 4, note: "Single column, cards stack" },
+          ],
+          measures: [
+            { label: "Page container", value: "1280px", note: "The dominant outer width" },
+            { label: "Reading column", value: "768px", note: "The most used width on the site" },
+            { label: "Narrow column", value: "576px", note: "Intros and standfirsts" },
+            { label: "Section padding", value: "64 to 96px", note: "Three steps, used consistently" },
+            { label: "Header height", value: "80px" },
+            { label: "Corner radius", value: "4 or 8px" },
+          ],
+        },
+        {
           kind: "prose",
           paragraphs: [
             "The mobile menu is rendered outside the header element rather than inside it. That is not a stylistic choice: an element with a backdrop blur establishes a containing block, and a fixed overlay nested inside it is positioned against the header rather than the viewport. Moving the overlay out of the header is the fix.",
@@ -488,6 +574,24 @@ export const forelandMarineStudy: StudyDoc = {
         },
         {
           kind: "image",
+          src: "/portfolio/study/foreland-marine/technical-support.webp",
+          alt: "The Technical Support page, showing three subscription tiers",
+          caption:
+            "Technical Support, the paid product. Three tiers, priced on the page, with Stripe checkout behind them",
+          width: 2880,
+          height: 2200,
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/foreland-marine/tools.webp",
+          alt: "The tools index, listing six self-serve tools",
+          caption:
+            "Six tools, built into the site rather than bolted on. Each is a working instrument rather than a lead magnet",
+          width: 2880,
+          height: 2000,
+        },
+        {
+          kind: "image",
           src: "/portfolio/expose/foreland-mobile.png",
           alt: "Foreland Marine on a phone",
           caption: "The same site at 390 pixels",
@@ -554,6 +658,7 @@ export const forelandMarineStudy: StudyDoc = {
             "Images are served as AVIF and WebP at responsive sizes, with heroes preloaded and everything else loaded lazily.",
           ],
         },
+        ...measuredBlocks("foreland-marine", "the refit service page"),
       ],
     },
 

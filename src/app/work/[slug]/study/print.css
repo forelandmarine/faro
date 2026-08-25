@@ -1,0 +1,159 @@
+/*
+  Print styles for the study documents.
+
+  The briefing is meant to be forwarded and read on paper, so this is a real
+  print stylesheet rather than a hidden-the-navigation hack. Running heads and
+  folios are supplied by the PDF renderer, because Chrome does not fill @page
+  margin boxes; everything else is done here.
+
+  Applied both by the build script and by a visitor pressing print.
+*/
+
+@media print {
+  /* Brand plates are the point of the document, so backgrounds must survive. */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* No @page rule at all. Declaring one here competes with the page box the PDF
+     renderer sets up for running heads and folios, and the running heads end up
+     laid out against the wrong containing block. Paper size and margins are the
+     renderer's job; a visitor printing from the browser gets Chrome's defaults,
+     which are close enough. */
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #14232a !important;
+    font-size: 10.5pt;
+    line-height: 1.5;
+  }
+
+  /* The shell paints the site's ground colour behind everything. On paper the
+     page itself is the ground, and only the brand plates keep their fill. */
+  body > div,
+  main {
+    background: #ffffff !important;
+    min-height: 0 !important;
+  }
+
+  /* The site chrome has no business on paper. Scoped to the shell's own header
+     and footer, so the document's title block, which is also a <header>, stays. */
+  body > div > header,
+  body > div > footer,
+  .print-hide {
+    display: none !important;
+  }
+
+  /* The title block opens the document, then the contents take their own page. */
+  article > div > header {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  main {
+    display: block;
+  }
+
+  article {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Type comes down to a document scale rather than a screen one. */
+  h1 {
+    font-size: 26pt !important;
+    line-height: 1.1 !important;
+    margin: 0 0 6mm !important;
+  }
+
+  h2 {
+    font-size: 15pt !important;
+    line-height: 1.2 !important;
+  }
+
+  p,
+  li,
+  dd,
+  dt,
+  td,
+  th {
+    font-size: 10pt !important;
+    line-height: 1.5 !important;
+  }
+
+  .type-eyebrow {
+    font-size: 7.5pt !important;
+    letter-spacing: 0.14em !important;
+  }
+
+  /* A section starts on a fresh page; its heading never sits alone. */
+  section[id] {
+    break-before: page;
+    page-break-before: always;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+  }
+
+  section[id]:first-of-type {
+    break-before: auto;
+    page-break-before: auto;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* Nothing that carries a measurement may be split across a page turn. */
+  figure,
+  table,
+  dl,
+  .print-keep {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  figcaption {
+    font-size: 8.5pt !important;
+  }
+
+  img,
+  svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Screen plates are full-bleed wide; on A4 they need reining in. */
+  figure img {
+    max-height: 150mm !important;
+    object-fit: contain !important;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  /* Tables that scroll on screen have to fit the measure on paper. */
+  table {
+    width: 100% !important;
+    min-width: 0 !important;
+    font-size: 9pt !important;
+  }
+
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  /* Contents list reads as a contents page, two columns, on its own sheet. */
+  nav[aria-label="Contents"] {
+    break-after: page;
+    page-break-after: always;
+  }
+}

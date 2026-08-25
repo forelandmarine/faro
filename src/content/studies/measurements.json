@@ -1,0 +1,42 @@
+{
+  "foreland-marine": {
+    "url": "https://forelandmarine.com/refit",
+    "domContentLoaded": 161,
+    "load": 216,
+    "firstContentfulPaint": 228,
+    "largestContentfulPaint": 228,
+    "domNodes": 338,
+    "transferKB": 985,
+    "requests": 25
+  },
+  "nimara-pilates": {
+    "url": "https://nimarapilates.com/",
+    "domContentLoaded": 171,
+    "load": 219,
+    "firstContentfulPaint": 176,
+    "largestContentfulPaint": 176,
+    "domNodes": 333,
+    "transferKB": 1405,
+    "requests": 60
+  },
+  "first-owners-reference": {
+    "url": "https://firstownersreference.com/01-reality-of-ownership",
+    "domContentLoaded": 105,
+    "load": 200,
+    "firstContentfulPaint": 208,
+    "largestContentfulPaint": 208,
+    "domNodes": 781,
+    "transferKB": 1768,
+    "requests": 49
+  },
+  "birdham-carpentry": {
+    "url": "https://birdhamcarpentry.co.uk/",
+    "domContentLoaded": 106,
+    "load": 472,
+    "firstContentfulPaint": 156,
+    "largestContentfulPaint": 508,
+    "domNodes": 306,
+    "transferKB": 1232,
+    "requests": 33
+  }
+}

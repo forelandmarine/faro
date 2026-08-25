@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "capture:screens": "node scripts/capture-study-screens.mjs",
+    "capture:rejected": "node scripts/capture-rejected.mjs",
+    "measure": "node scripts/measure-sites.mjs",
+    "pdf": "node scripts/build-study-pdfs.mjs"
   },
   "dependencies": {
     "gsap": "^3.14.2",
@@ -20,6 +24,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "puppeteer": "^25.9.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

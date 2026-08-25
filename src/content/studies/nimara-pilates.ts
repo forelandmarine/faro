@@ -1,4 +1,5 @@
 import type { MarkGeometry, StudyDoc } from "./types";
+import { measuredBlocks } from "./measured";
 
 /**
  * Sources: nimara-pilates/brand-identity-kit (brand-system.md, brand.yaml,
@@ -109,8 +110,68 @@ export const nimaraPilatesStudy: StudyDoc = {
     },
 
     {
-      id: "exploration",
+      id: "name",
       number: "02",
+      title: "The name",
+      blocks: [
+        {
+          kind: "prose",
+          paragraphs: [
+            "The studio was not called Nimara first, and the record of that is unusually clear. The site was built and shipped in full under the name Re:Connect Pilates, renamed five days later to BE:LiVE, and renamed again two days after that to Nimara. Three names in eight days, with a complete website rebuilt around each one.",
+            "The first two share a fault that the audit had already flagged. Both are constructions rather than words, both use internal punctuation as a device, and both describe a benefit. A studio called Re:Connect is telling you what it will do for you, which is the register of a wellness advert. Nimara does not mean anything, which is the point: it can be given a meaning rather than arriving with one, and it holds a Roman capital setting where a colon cannot.",
+            "The macron came later still. NIMĀRA rather than NIMARA gives the eye a reason to slow down on a word it does not recognise, and it fixes the stress on the second syllable. It is the smallest decision in the identity and one of the few that is genuinely non-negotiable.",
+          ],
+        },
+        {
+          kind: "timeline",
+          entries: [
+            {
+              date: "2 April 2026",
+              label: "Built as Re:Connect Pilates",
+              note: "A complete site, shipped under the first name, with a brand identity kit alongside it",
+            },
+            {
+              date: "7 April 2026",
+              label: "Renamed to BE:LiVE",
+              note: "A second constructed name, carrying the same punctuation device",
+            },
+            {
+              date: "9 April 2026",
+              label: "Renamed to Nimara",
+              note: "The name that held. The wordmark work starts here",
+              pivot: true,
+            },
+            {
+              date: "10 April 2026",
+              label: "Domain and project renamed",
+              note: "nimarapilates.com, with the hosted assets and signatures following",
+            },
+            {
+              date: "22 August 2026",
+              label: "Copy pass across all four languages",
+              note: "Fluent British English as the source, with the three translations reworked to match",
+            },
+            {
+              date: "25 August 2026",
+              label: "Latest commit",
+              note: "Ahead of the studio opening on 10 September",
+            },
+          ],
+          summary: [
+            { label: "Commits", value: "353" },
+            { label: "First to latest", value: "21 weeks" },
+            { label: "Names", value: "3" },
+            { label: "Days to settle", value: "8" },
+          ],
+          source:
+            "Dates taken from the project's commit history. The two earlier names are still in it.",
+        },
+      ],
+    },
+
+    {
+      id: "exploration",
+      number: "03",
       title: "The exploration",
       blocks: [
         {
@@ -118,6 +179,83 @@ export const nimaraPilatesStudy: StudyDoc = {
           paragraphs: [
             "Thirty-six numbered studies were drawn before anything was locked. The first eight set the broad direction: an editorial serif, an architectural monogram, an organic handcrafted route, a modernist geometric route, and four typographic devices. The remaining studies narrowed the figurative mark, working through Mallorquin architectural motifs, the persiana shutter, ironwork, paired arches and stone reveals, before turning to the leopardess.",
             "The leopardess itself was drawn thirteen ways: profile silhouette, line, guardant, engraving, sigil, vignette, passant, eye, rosette, couchant, mask, ridge and cartouche. The engraved, rosette and cartouche versions carry internal detail that fills in the moment the mark is reduced, and they were set aside on that basis. The form that locked is the leopardess mid-stretch, drawn as an open line.",
+          ],
+        },
+        {
+          kind: "prose",
+          paragraphs: [
+            "The first eight are worth showing, because they are dated in a way that is easy to verify. Six of the eight set the wordmark in Cormorant Garamond, the face that was later replaced by Newsreader. Three use the mid-sage that the audit had already identified as the colour shared by eighteen of the forty studios, and which was struck out of the palette at the lock. None of them carry the macron: they all read NIMARA rather than NIMĀRA, because the macron was not yet part of the name.",
+            "In other words, the sketches still contain three of the decisions the finished brand exists to avoid. That is what an exploration set is for.",
+          ],
+        },
+        {
+          kind: "rejected",
+          bg: SAND,
+          plates: [
+            {
+              src: "/portfolio/study/nimara-pilates/rejected/01-editorial-serif.webp",
+              label: "Editorial serif",
+              note: "The direction that eventually won, in its earliest and least resolved form",
+              width: 744,
+              height: 250,
+              carries: ["Cormorant", "Withdrawn sage", "No macron"],
+            },
+            {
+              src: "/portfolio/study/nimara-pilates/rejected/02-architectural-monogram.webp",
+              label: "Architectural monogram",
+              note: "A built form rather than a drawn one",
+              width: 744,
+              height: 250,
+              carries: ["Withdrawn sage", "No macron"],
+            },
+            {
+              src: "/portfolio/study/nimara-pilates/rejected/03-organic-handcrafted.webp",
+              label: "Organic handcrafted",
+              note: "Set in upper and lower case, the softest of the eight",
+              width: 744,
+              height: 250,
+              carries: ["Cormorant", "Withdrawn sage", "No macron"],
+            },
+            {
+              src: "/portfolio/study/nimara-pilates/rejected/04-modernist-geometric.webp",
+              label: "Modernist geometric",
+              note: "The sans-serif route the audit found in twenty-eight of forty studios",
+              width: 744,
+              height: 250,
+              carries: ["No macron"],
+            },
+            {
+              src: "/portfolio/study/nimara-pilates/rejected/05-the-spine.webp",
+              label: "The spine",
+              note: "A vertical rule carrying the wordmark",
+              width: 744,
+              height: 312,
+              carries: ["Cormorant", "No macron"],
+            },
+            {
+              src: "/portfolio/study/nimara-pilates/rejected/06-the-bracket.webp",
+              label: "The bracket",
+              note: "Centred, enclosed, closer to a hotel identity",
+              width: 744,
+              height: 312,
+              carries: ["Cormorant", "No macron"],
+            },
+            {
+              src: "/portfolio/study/nimara-pilates/rejected/07-the-volume.webp",
+              label: "The volume",
+              note: "Reversed out of a solid ground",
+              width: 744,
+              height: 312,
+              carries: ["Cormorant", "No macron"],
+            },
+            {
+              src: "/portfolio/study/nimara-pilates/rejected/08-the-masthead.webp",
+              label: "The masthead",
+              note: "The publication route, which survives in how the site is organised",
+              width: 744,
+              height: 312,
+              carries: ["Cormorant", "No macron"],
+            },
           ],
         },
         {
@@ -129,7 +267,7 @@ export const nimaraPilatesStudy: StudyDoc = {
 
     {
       id: "mark",
-      number: "03",
+      number: "04",
       title: "The mark",
       blocks: [
         {
@@ -275,6 +413,28 @@ export const nimaraPilatesStudy: StudyDoc = {
           ],
         },
         {
+          kind: "note",
+          text: "The brand system sets a clear space rule for the wordmark, half its cap height on every side, and none for the mark. That gap is deliberate rather than an oversight: the leopardess is placed at a size and a position by whatever surface it sits on, from a nav bar to a one metre window sticker, and a fixed exclusion zone would be wrong at one end of that range or the other. The wordmark, which is always set at a known size relative to its own cap height, can carry a rule that holds everywhere.",
+        },
+        {
+          kind: "prose",
+          paragraphs: [
+            "What the mark does have is a short list of things that are not permitted, all of which follow from it being one drawing used at every size rather than a family of drawings.",
+          ],
+        },
+        {
+          kind: "misuse",
+          src: leopardess.src,
+          bg: SAND,
+          ink: INK,
+          items: [
+            { kind: "stretch", label: "Never scaled on one axis. The 1.392 to 1 ratio is fixed" },
+            { kind: "rotate", label: "No rotation. The pose is the mark" },
+            { kind: "recolour", label: "Ink, cream or sage. No other colourway exists" },
+            { kind: "shadow", label: "No shadows, gradients or outlines added to the line" },
+          ],
+        },
+        {
           kind: "prose",
           paragraphs: [
             "There are three approved wordmark lockups and one small mark. The primary horizontal sets NIMĀRA over the sub-line on a centred axis with the cap heights aligned. The stacked version opens the gap for square formats, avatars and embroidery. The wordmark alone, without the sub-line, is used for editorial contexts and large format signage. The small mark substitutes for the wordmark wherever the wordmark cannot be read, and it is never set alongside the wordmark on the same surface: it replaces, it does not decorate.",
@@ -285,7 +445,7 @@ export const nimaraPilatesStudy: StudyDoc = {
 
     {
       id: "colour",
-      number: "04",
+      number: "05",
       title: "Colour",
       blocks: [
         {
@@ -345,7 +505,7 @@ export const nimaraPilatesStudy: StudyDoc = {
 
     {
       id: "typography",
-      number: "05",
+      number: "06",
       title: "Typography",
       blocks: [
         {
@@ -403,6 +563,15 @@ export const nimaraPilatesStudy: StudyDoc = {
           ],
         },
         {
+          kind: "image",
+          src: "/portfolio/study/nimara-pilates/classes.webp",
+          alt: "The Nimara classes page, showing the programme",
+          caption:
+            "Headings in Newsreader, body and metadata in DM Sans, and sentence case everywhere. The only capitals on the page belong to the wordmark and the eyebrow labels",
+          width: 2880,
+          height: 2000,
+        },
+        {
           kind: "prose",
           paragraphs: [
             "One rule governs every piece of text on the site: sentence case throughout, for headings, section labels, navigation and body alike. Title case is ruled out on the grounds that it reads as advertising, and the studio is meant to read as a publication. Capitals are reserved for the wordmark, the sub-line and the smallest editorial labels. It is the rule most likely to drift and the one worth enforcing hardest.",
@@ -413,7 +582,7 @@ export const nimaraPilatesStudy: StudyDoc = {
 
     {
       id: "layout",
-      number: "06",
+      number: "07",
       title: "Layout",
       blocks: [
         {
@@ -462,7 +631,7 @@ export const nimaraPilatesStudy: StudyDoc = {
 
     {
       id: "motion",
-      number: "07",
+      number: "08",
       title: "Motion",
       blocks: [
         {
@@ -489,7 +658,7 @@ export const nimaraPilatesStudy: StudyDoc = {
 
     {
       id: "site",
-      number: "08",
+      number: "09",
       title: "The site",
       blocks: [
         {
@@ -515,6 +684,33 @@ export const nimaraPilatesStudy: StudyDoc = {
         },
         {
           kind: "image",
+          src: "/portfolio/study/nimara-pilates/home-hero.webp",
+          alt: "The Nimara homepage, with the lockup in the header over a hero image",
+          caption:
+            "The homepage. Sand ground, the wordmark in Cinzel with its sub-line, and a hero heading set in Newsreader in sentence case",
+          width: 2880,
+          height: 2000,
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/nimara-pilates/pricing.webp",
+          alt: "The Nimara pricing page, showing packs and memberships",
+          caption:
+            "Pricing. Figures are set in DM Sans tabular, and sage does the accent work with no second green anywhere on the page",
+          width: 2880,
+          height: 2000,
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/nimara-pilates/studio.webp",
+          alt: "The Nimara studio page, describing the Santa Catalina room",
+          caption:
+            "The studio page. One room, six reformers, and the spacing scale doing most of the work",
+          width: 2880,
+          height: 2000,
+        },
+        {
+          kind: "image",
           src: "/portfolio/expose/nimara-mobile.png",
           alt: "Nimara on a phone",
           caption: "The same site at 390 pixels",
@@ -527,7 +723,7 @@ export const nimaraPilatesStudy: StudyDoc = {
 
     {
       id: "build",
-      number: "09",
+      number: "10",
       title: "The build",
       blocks: [
         {
@@ -574,12 +770,13 @@ export const nimaraPilatesStudy: StudyDoc = {
             "WhatsApp sits alongside the contact form, because in this market it is the channel people actually use.",
           ],
         },
+        ...measuredBlocks("nimara-pilates", "the homepage"),
       ],
     },
 
     {
       id: "delivery",
-      number: "10",
+      number: "11",
       title: "Delivery",
       blocks: [
         {

@@ -140,6 +140,26 @@ export type MotionRow = {
   easing?: string;
 };
 
+/** A dated milestone, taken from the project's own commit history. */
+export type TimelineEntry = {
+  date: string;
+  label: string;
+  note?: string;
+  /** Marks a turning point, drawn heavier on the rail. */
+  pivot?: boolean;
+};
+
+/** One rejected study, shown as it was drawn at the time. */
+export type RejectedPlate = {
+  src: string;
+  label: string;
+  note?: string;
+  width: number;
+  height: number;
+  /** Tags naming what this study carries that was later ruled out. */
+  carries?: string[];
+};
+
 export type ArchLayer = {
   label: string;
   nodes: { name: string; note?: string }[];
@@ -189,6 +209,20 @@ export type Block =
       caption: string;
     }
   | { kind: "misuse"; src: string; bg: string; ink: string; items: Misuse[] }
+  | {
+      kind: "timeline";
+      entries: TimelineEntry[];
+      /** Summary figures, e.g. commits and elapsed span. */
+      summary?: Measure[];
+      source?: string;
+    }
+  | {
+      kind: "rejected";
+      bg: string;
+      plates: RejectedPlate[];
+      /** Wide plates sit one per row rather than in the grid. */
+      columns?: 2 | 3;
+    }
   | { kind: "colour"; swatches: Swatch[]; contrast?: ContrastPair[] }
   | { kind: "type"; families: TypeFamily[] }
   | { kind: "typescale"; rows: TypeScaleRow[] }

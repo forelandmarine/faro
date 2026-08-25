@@ -7,6 +7,45 @@ the client repository or measured from the shipped asset. Nothing was written
 from memory, and where a figure could not be sourced it was left out rather than
 estimated.
 
+## Regenerating the evidence
+
+Four scripts produce everything measured or captured on these pages. Re-run them
+rather than editing figures by hand.
+
+| Command | What it does |
+|---|---|
+| `npm run capture:screens` | Shoots the four live sites at 1440px, converts to WebP |
+| `npm run capture:rejected` | Rasterises the rejected identity sketches with their original webfonts |
+| `npm run measure` | Loads each live site cold and writes `src/content/studies/measurements.json` |
+| `npm run pdf` | Renders each study page to a downloadable A4 PDF |
+
+The PDF and measurement scripts need the site served locally first
+(`npm run build && npm start`). The capture scripts need `cwebp`, the PDF script
+needs Ghostscript.
+
+## Timelines
+
+Every date on the study pages comes from the client repository's own commit
+history, read with `git log`, not reconstructed afterwards. That is what makes
+the Birdham times accurate to the minute and the Nimara naming sequence
+checkable. Only commits that changed a decision are listed; the summary figures
+(commit counts, elapsed spans) are counted across the whole history.
+
+Two naming histories were recovered this way and were not previously recorded
+anywhere: Nimara shipped as Re:Connect Pilates on 2 April 2026, became BE:LiVE on
+7 April and Nimara on 9 April; Birdham opened as Halnaker Construction with a
+windmill mark and was renamed at 13:16 on 22 July 2026. The replaced Halnaker
+artwork was recovered from the pre-rename commit and is published on the page.
+
+## Performance
+
+`src/content/studies/measurements.json` is written by the measurement script and
+read by `src/content/studies/measured.ts`, so no performance figure is typed into
+a content file. Each site is loaded twice in headless Chrome at 1440px with the
+cache disabled and the better run kept. The pages state the method, including
+that this is a desktop connection and the paint figures are a floor rather than
+field data.
+
 ## Method
 
 **Ink boxes.** The bounding boxes quoted in the construction sheets are the
@@ -142,12 +181,18 @@ Gull: viewBox `0 0 376.9 172.3`, ink `x 0.59 to 376.89`, `y 0 to 170.51`, so
 376.30 by 170.51 at 2.2069 to 1. One subpath, filled, no stroke.
 
 Multipliers: standard 1.00, premium 1.25, heritage 1.45. Margin 0.18. Band 0.15.
-Deposit 12.5 percent by default, per-quote configurable.
 
-### Corrections applied
+Deposits: the quote page publishes 10 to 15 percent
+(`app/(site)/quote/page.tsx`). The admin default is 12.5 percent
+(`app/admin/settings/actions.ts`), adjustable per quote. Both figures are
+correct and describe different things, so the study document states both.
 
-The case study previously said deposits of 10 to 15 percent. The default is
-12.5 percent, set in the admin settings and adjustable on each quote.
+An earlier revision of this file recorded the 10 to 15 percent figure as an
+error in the case study copy. That was wrong: it is the client's own published
+band, and it was found by reading the captured screenshot of the live quote
+page. Corrected here and on the study page.
+
+### Note on the brand manual
 
 Birdham has no written brand manual. The constraints stated in the study
 document are the ones recorded in the source of the mark and enforced by the

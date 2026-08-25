@@ -33,30 +33,52 @@ export default function WorkIndexPage() {
 
         <ul className="space-y-20 md:space-y-28">
           {CASE_STUDIES.map((cs) => (
-            <li key={cs.slug}>
-              <Link href={`/work/${cs.slug}`} className="group block">
-                <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-start">
-                  <div className="md:col-span-7 relative aspect-[4/3] overflow-hidden rounded-xl border-4 border-[#1A3640]">
-                    <Image
-                      src={cs.image}
-                      alt={`${cs.name} website`}
-                      fill
-                      className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
-                    />
-                  </div>
-                  <div className="md:col-span-5">
-                    <p className="type-eyebrow mb-3">{cs.category}</p>
-                    <h2 className="type-heading-lg text-2xl md:text-3xl mb-4 group-hover:text-accent transition-colors">
+            <li key={cs.slug} className="group">
+              <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-start">
+                <Link
+                  href={`/work/${cs.slug}`}
+                  className="md:col-span-7 relative aspect-[4/3] overflow-hidden rounded-xl border-4 border-[#1A3640]"
+                  tabIndex={-1}
+                  aria-hidden
+                >
+                  <Image
+                    src={cs.image}
+                    alt=""
+                    fill
+                    className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
+                  />
+                </Link>
+                <div className="md:col-span-5">
+                  <p className="type-eyebrow mb-3">{cs.category}</p>
+                  <h2 className="type-heading-lg text-2xl md:text-3xl mb-4">
+                    <Link
+                      href={`/work/${cs.slug}`}
+                      className="hover:text-accent transition-colors"
+                    >
                       {cs.name}
-                    </h2>
-                    <p className="type-body text-base">{cs.tagline}</p>
-                    <span className="inline-block mt-6 text-accent text-xs font-semibold tracking-wider uppercase border-b border-accent/40 pb-0.5">
+                    </Link>
+                  </h2>
+                  <p className="type-body text-base">{cs.tagline}</p>
+
+                  {/* Two ways in: the narrative, or the measured briefing. */}
+                  <div className="mt-6 flex flex-col gap-3">
+                    <Link
+                      href={`/work/${cs.slug}`}
+                      className="self-start text-accent text-xs font-semibold tracking-wider uppercase border-b border-accent/40 pb-0.5 hover:border-accent transition-colors"
+                    >
                       Read the case study
                       <span className="inline-block ml-1">&#8599;</span>
-                    </span>
+                    </Link>
+                    <Link
+                      href={`/work/${cs.slug}/study`}
+                      className="self-start text-foreground/60 text-xs font-semibold tracking-wider uppercase border-b border-foreground/20 pb-0.5 hover:text-accent hover:border-accent transition-colors"
+                    >
+                      Design and build notes
+                      <span className="inline-block ml-1">&#8599;</span>
+                    </Link>
                   </div>
                 </div>
-              </Link>
+              </div>
             </li>
           ))}
         </ul>

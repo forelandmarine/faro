@@ -24,7 +24,13 @@ import {
   TypeFamilies,
   TypeScaleTable,
 } from "./Tables";
-import { ArchitectureDiagram, ImagePlate, MarkSheet } from "./Plates";
+import {
+  ArchitectureDiagram,
+  ImagePlate,
+  MarkSheet,
+  RejectedSheet,
+  Timeline,
+} from "./Plates";
 
 export function StudyDocument({ doc }: { doc: StudyDoc }) {
   return (
@@ -237,6 +243,24 @@ function BlockView({ block, name }: { block: Block; name: string }) {
           bg={block.bg}
           ink={block.ink}
           items={block.items}
+        />
+      );
+
+    case "timeline":
+      return (
+        <Timeline
+          entries={block.entries}
+          summary={block.summary}
+          source={block.source}
+        />
+      );
+
+    case "rejected":
+      return (
+        <RejectedSheet
+          plates={block.plates}
+          bg={block.bg}
+          columns={block.columns}
         />
       );
 

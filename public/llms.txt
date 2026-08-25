@@ -36,7 +36,11 @@ Each case study carries a long-form briefing document covering the identity in
 detail: mark construction and clear space with measured dimensions, colour with
 computed contrast ratios, the full type scale, layout and spacing systems,
 motion specifications and the technical architecture. Measurements are taken
-from the shipped assets and source, not restated from a brand document.
+from the shipped assets and source, not restated from a brand document. Project
+timelines are taken from each project's own commit history, and the performance
+figures are measured rather than asserted. Two of the documents show the
+identity work that was rejected, including a name and a mark that were replaced.
+Each is also available as a downloadable A4 PDF from its page.
 
 - Foreland Marine: https://faro.is/work/foreland-marine/study
 - Nimara: https://faro.is/work/nimara-pilates/study

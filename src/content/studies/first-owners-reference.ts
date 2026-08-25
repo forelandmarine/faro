@@ -1,4 +1,5 @@
 import type { MarkGeometry, StudyDoc } from "./types";
+import { measuredBlocks } from "./measured";
 
 /**
  * Sources: firstownersreference/app/globals.css, app/print/print.css,
@@ -91,6 +92,51 @@ export const firstOwnersReferenceStudy: StudyDoc = {
             "A publication that takes no advertising, recorded as a position in the colophon.",
           ],
         },
+        {
+          kind: "timeline",
+          entries: [
+            {
+              date: "3 May 2026",
+              label: "First commit, and the wireframe",
+              note: "The structure of Edition One set out before any design work",
+            },
+            {
+              date: "3 May 2026",
+              label: "Lead essays drafted for every section",
+              note: "Editorial first. The publication was written before it was designed",
+              pivot: true,
+            },
+            {
+              date: "8 August 2026",
+              label: "Print galley discipline",
+              note: "The imagery pass and the rule against mid-flow column spanners, both print typography problems",
+            },
+            {
+              date: "8 August 2026",
+              label: "Proof corrections, round two",
+              note: "Verifications, case arithmetic and the sources hazard checked again",
+            },
+            {
+              date: "8 August 2026",
+              label: "120 page proof built",
+              note: "230 by 300mm trim, the reading proof, the CMYK master and the press block from one command",
+              pivot: true,
+            },
+            {
+              date: "10 to 11 August 2026",
+              label: "Studio editor",
+              note: "Content migrated to JSON with typed loaders, so the publication can be edited without a developer",
+            },
+          ],
+          summary: [
+            { label: "Commits", value: "297" },
+            { label: "First to latest", value: "15 weeks" },
+            { label: "Chapters", value: "9" },
+            { label: "Proof extent", value: "120pp" },
+          ],
+          source:
+            "Dates taken from the project's commit history. The proof date and extent are recorded in the print folder.",
+        },
       ],
     },
 
@@ -159,6 +205,15 @@ export const firstOwnersReferenceStudy: StudyDoc = {
           ],
         },
         {
+          kind: "image",
+          src: "/portfolio/study/first-owners-reference/chapter-opening.webp",
+          alt: "A chapter opening on The First Owner's Reference, with the masthead set live in Newsreader",
+          caption:
+            "The masthead as live text at the top of a chapter opener, with the chapter numeral in marine and the metadata set in DM Mono",
+          width: 2880,
+          height: 2200,
+        },
+        {
           kind: "clearspace",
           geometry: lighthouse,
           unitValue: 40,
@@ -166,6 +221,36 @@ export const firstOwnersReferenceStudy: StudyDoc = {
           multiplier: 1,
           caption:
             "The mark carries its clear space on the artboard rather than in a written rule. Forty units of air sit above and below the drawing on a 200 unit square, so placing the file at any size and butting other elements to its edge still leaves a third of the mark height as breathing room. Clear space that is drawn into the file is clear space nobody has to remember.",
+        },
+        {
+          kind: "sizes",
+          src: lighthouse.src,
+          widths: [14, 20, 28, 40, 72, 140],
+          bg: PAPER,
+          caption:
+            "The publisher's mark down to favicon size. It is a narrow, vertical drawing at 0.600 to 1, so it is the height that runs out first rather than the width. The beam is the first detail to close up, which is why it is drawn as a small number of heavy strokes rather than fine rays.",
+        },
+        {
+          kind: "prose",
+          paragraphs: [
+            "Because the masthead is typeset rather than drawn, most of what would normally be logo misuse cannot happen here: there is no file to stretch and no artwork to recolour by accident. The restrictions that remain are about the two things that can still go wrong, which are the face and the ownership of the mark.",
+          ],
+        },
+        {
+          kind: "misuse",
+          src: lighthouse.src,
+          bg: PAPER,
+          ink: CHARCOAL,
+          items: [
+            { kind: "stretch", label: "The mark is never scaled on one axis" },
+            { kind: "rotate", label: "Never rotated. It is a lighthouse" },
+            { kind: "recolour", label: "Charcoal, paper or marine only" },
+            { kind: "shadow", label: "No effects. It is printed, blind debossed or not used" },
+          ],
+        },
+        {
+          kind: "note",
+          text: "One further rule is editorial rather than visual. The masthead is set in Newsreader Light and nothing else, and it is never substituted with a display face for a campaign or a cover. Because it is live text in the body typeface, a substitution would be visible immediately against the prose beneath it, which is a useful property for a publication that will outlive whoever is setting it.",
         },
       ],
     },
@@ -267,6 +352,15 @@ export const firstOwnersReferenceStudy: StudyDoc = {
             "Body type is set at 18 pixels rather than the 16 that most sites use, on a 1.65 line height, because the reader is expected to stay with a chapter for twenty minutes rather than scan it. Paragraphs are hyphenated with limits set so that no word breaks with fewer than four characters on a line, which is a print convention rarely carried across to the web.",
           ],
         },
+        {
+          kind: "image",
+          src: "/portfolio/study/first-owners-reference/chapter-measure.webp",
+          alt: "Chapter body copy showing the drop cap, the prose measure and hyphenated line breaks",
+          caption:
+            "Everything the typography section describes, in one screen: the marine drop cap, the measure, hyphenation across line ends, the chapter rail in DM Mono and a figure sitting in the outer margin",
+          width: 2880,
+          height: 2000,
+        },
       ],
     },
 
@@ -334,6 +428,24 @@ export const firstOwnersReferenceStudy: StudyDoc = {
             { label: "Search", note: "Compiled at build, runs in the browser, queries never sent anywhere" },
             { label: "Colophon and press kit", note: "How the publication is made, and how to cite it" },
           ],
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/first-owners-reference/glossary.webp",
+          alt: "The glossary index, showing defined terms with their short definitions",
+          caption:
+            "The glossary. Every term carries its own page and its own structured data, and is auto-linked on first use in the chapters",
+          width: 2880,
+          height: 2000,
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/first-owners-reference/calculator.webp",
+          alt: "The running cost calculator, with inputs on the left and cost categories on the right",
+          caption:
+            "The running cost calculator. Figures are set in DM Mono tabular, so a column of money aligns without anyone thinking about it",
+          width: 2880,
+          height: 2200,
         },
         {
           kind: "image",
@@ -460,6 +572,7 @@ export const firstOwnersReferenceStudy: StudyDoc = {
             "A press kit provides the masthead, the mark and the correct citation format, so third parties reproduce it accurately.",
           ],
         },
+        ...measuredBlocks("first-owners-reference", "a full chapter"),
       ],
     },
   ],

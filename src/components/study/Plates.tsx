@@ -7,7 +7,150 @@
  */
 
 import Image from "next/image";
-import type { ArchLayer, MarkTile } from "@/content/studies/types";
+import type {
+  ArchLayer,
+  MarkTile,
+  Measure,
+  RejectedPlate,
+  TimelineEntry,
+} from "@/content/studies/types";
+
+/* ── Timeline ───────────────────────────────────────────────────────── */
+
+/**
+ * The project's own chronology, taken from its commit history rather than
+ * reconstructed afterwards. Pivots are the moments the work changed direction.
+ */
+export function Timeline({
+  entries,
+  summary,
+  source,
+}: {
+  entries: TimelineEntry[];
+  summary?: Measure[];
+  source?: string;
+}) {
+  return (
+    <div className="mt-8">
+      <ol className="relative border-l border-foreground/15 ml-2">
+        {entries.map((e) => (
+          <li key={e.date + e.label} className="relative pl-7 pb-7 last:pb-0">
+            <span
+              className={`absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full border ${
+                e.pivot
+                  ? "bg-accent border-accent"
+                  : "bg-background border-foreground/35"
+              }`}
+              aria-hidden
+            />
+            <span className="block font-mono text-xs text-foreground/55">
+              {e.date}
+            </span>
+            <span
+              className={`block mt-1 ${
+                e.pivot ? "text-base font-semibold" : "text-base"
+              }`}
+            >
+              {e.label}
+            </span>
+            {e.note && (
+              <span className="block text-sm text-foreground/65 mt-1 leading-snug max-w-xl">
+                {e.note}
+              </span>
+            )}
+          </li>
+        ))}
+      </ol>
+
+      {summary && summary.length > 0 && (
+        <dl className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 border-t border-foreground/10 pt-6">
+          {summary.map((m) => (
+            <div key={m.label}>
+              <dt className="text-[10px] tracking-[0.14em] uppercase text-foreground/50">
+                {m.label}
+              </dt>
+              <dd className="text-sm font-semibold mt-1 font-mono">{m.value}</dd>
+              {m.note && (
+                <dd className="text-xs text-foreground/60 mt-0.5 leading-snug">
+                  {m.note}
+                </dd>
+              )}
+            </div>
+          ))}
+        </dl>
+      )}
+
+      {source && (
+        <p className="text-xs text-foreground/55 mt-4 max-w-2xl">{source}</p>
+      )}
+    </div>
+  );
+}
+
+/* ── Rejected work ──────────────────────────────────────────────────── */
+
+/**
+ * Studies that did not survive, shown as they were drawn at the time. The tags
+ * name what each one carries that was later ruled out, which is the whole
+ * reason for showing them.
+ */
+export function RejectedSheet({
+  plates,
+  bg,
+  columns = 2,
+}: {
+  plates: RejectedPlate[];
+  bg: string;
+  columns?: 2 | 3;
+}) {
+  return (
+    <div
+      className={`mt-8 grid grid-cols-1 gap-5 ${
+        columns === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"
+      }`}
+    >
+      {plates.map((p) => (
+        <figure key={p.src}>
+          {/* A uniform plate box, so studies drawn at different sizes still
+              sit in a tidy grid. The artwork is contained, never cropped. */}
+          <div
+            className="rounded-lg border border-foreground/10 overflow-hidden flex items-center justify-center aspect-[5/2] p-5"
+            style={{ backgroundColor: bg }}
+          >
+            <Image
+              src={p.src}
+              alt={p.label}
+              width={p.width}
+              height={p.height}
+              sizes="(min-width: 640px) 480px, 100vw"
+              className="max-w-full max-h-full w-auto h-auto object-contain"
+            />
+          </div>
+          <figcaption className="mt-3">
+            <span className="text-sm font-semibold">{p.label}</span>
+            {p.note && (
+              <span className="block text-xs text-foreground/60 mt-0.5 leading-snug">
+                {p.note}
+              </span>
+            )}
+            {p.carries && p.carries.length > 0 && (
+              <span className="mt-2 flex flex-wrap gap-1.5">
+                {p.carries.map((c) => (
+                  <span
+                    key={c}
+                    className="text-[10px] tracking-wide uppercase border border-foreground/20 text-foreground/55 rounded-full px-2 py-0.5"
+                  >
+                    {c}
+                  </span>
+                ))}
+              </span>
+            )}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  );
+}
 
 export function MarkSheet({ tiles, name }: { tiles: MarkTile[]; name: string }) {
   return (

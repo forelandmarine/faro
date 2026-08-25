@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="240" height="240">
+  <!-- Halnaker Windmill — primary Mill Mark (latticed common-sails). Single colour, ink. -->
+  <mask id="mm" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <rect width="120" height="120" fill="black"/>
+    <path d="M51 56 C48 74 45 90 40 106 L80 106 C75 90 72 74 69 56 Z" fill="white"/>
+    <path d="M51 56 C51 50 54.5 46 60 46 C65.5 46 69 50 69 56 Z" fill="white"/>
+    <g transform="translate(60 49)" fill="white">
+      <g transform="rotate(45)"><rect x="-4.6" y="-46" width="9.2" height="40" rx="1"/></g>
+      <g transform="rotate(135)"><rect x="-4.6" y="-46" width="9.2" height="40" rx="1"/></g>
+      <g transform="rotate(225)"><rect x="-4.6" y="-46" width="9.2" height="40" rx="1"/></g>
+      <g transform="rotate(315)"><rect x="-4.6" y="-46" width="9.2" height="40" rx="1"/></g>
+    </g>
+    <circle cx="60" cy="49" r="7.5" fill="white"/>
+    <rect x="45" y="86" width="30" height="3.6" fill="black"/>
+    <g transform="translate(60 49)" fill="black">
+      <g transform="rotate(45)"><rect x="-5.6" y="-17.7" width="11.2" height="3.4"/><rect x="-5.6" y="-27.7" width="11.2" height="3.4"/><rect x="-5.6" y="-37.7" width="11.2" height="3.4"/></g>
+      <g transform="rotate(135)"><rect x="-5.6" y="-17.7" width="11.2" height="3.4"/><rect x="-5.6" y="-27.7" width="11.2" height="3.4"/><rect x="-5.6" y="-37.7" width="11.2" height="3.4"/></g>
+      <g transform="rotate(225)"><rect x="-5.6" y="-17.7" width="11.2" height="3.4"/><rect x="-5.6" y="-27.7" width="11.2" height="3.4"/><rect x="-5.6" y="-37.7" width="11.2" height="3.4"/></g>
+      <g transform="rotate(315)"><rect x="-5.6" y="-17.7" width="11.2" height="3.4"/><rect x="-5.6" y="-27.7" width="11.2" height="3.4"/><rect x="-5.6" y="-37.7" width="11.2" height="3.4"/></g>
+    </g>
+  </mask>
+  <rect width="120" height="120" fill="#363C3C" mask="url(#mm)"/>
+</svg>

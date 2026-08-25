@@ -1,4 +1,5 @@
 import type { MarkGeometry, StudyDoc } from "./types";
+import { measuredBlocks } from "./measured";
 
 /**
  * Sources: birdham-carpentry/lib/brand.ts, tailwind.config.ts, lib/pricing.ts,
@@ -76,6 +77,72 @@ export const birdhamCarpentryStudy: StudyDoc = {
             "Trade websites divide into two kinds. There is the phone number on a template, and there is the lead portal that sells the same enquiry to three other builders. In a catchment full of listed and period property, nobody was presenting craft properly and nobody was quoting online. The brief was to look like the most careful firm in the county from the first day of trading, and to have the operational machinery to back that up.",
           ],
         },
+        {
+          kind: "prose",
+          paragraphs: [
+            "The whole thing was built in a single day. The commit history runs from 11:25 to 22:53 on 22 July 2026, fifty-seven commits, and it covers the naming, the mark, the website, the estimating engine, the quote and invoice PDFs, the payments and the operations backend. That is not a claim about heroics. It is a claim about what a small studio can do when the decisions are made in the right order and there is nobody to hand work between.",
+          ],
+        },
+        {
+          kind: "timeline",
+          entries: [
+            {
+              date: "11:25",
+              label: "Initial build, as Halnaker Construction",
+              note: "Brand, site and quote system, under the first name",
+            },
+            {
+              date: "11:43",
+              label: "The Mill Mark refined",
+              note: "Sails-forward windmill, plus a seal variant and favicon",
+            },
+            {
+              date: "12:11",
+              label: "Operations connected to Supabase",
+              note: "The same commit moved the reading face from Libre Caslon Text to Spectral",
+            },
+            {
+              date: "13:04",
+              label: "Repositioned to lead with restoration",
+              note: "Oak receded from the front of the offer, which is what made the name a problem",
+              pivot: true,
+            },
+            {
+              date: "13:16",
+              label: "Renamed to Birdham Carpentry & Building",
+              note: "The windmill went with the name. The seabird replaced it",
+              pivot: true,
+            },
+            {
+              date: "14:17",
+              label: "Quote and invoice PDFs branded",
+              note: "The new mark carried into the documents",
+            },
+            {
+              date: "17:11",
+              label: "The gull identity wired through",
+              note: "Site and PDF generators on one mark",
+            },
+            {
+              date: "17:52",
+              label: "Lockup balanced",
+              note: "The mark sized against the nav and the wordmark lines aligned on both edges",
+            },
+            {
+              date: "22:53",
+              label: "Invoices rendered from the real page",
+              note: "The last commit of the day, matching the quote pipeline",
+            },
+          ],
+          summary: [
+            { label: "Commits", value: "57" },
+            { label: "Elapsed", value: "11h 28m" },
+            { label: "Names", value: "2" },
+            { label: "Marks", value: "2" },
+          ],
+          source:
+            "Taken from the project's commit history, which is why the times are to the minute. Only the commits that changed a decision are listed.",
+        },
       ],
     },
 
@@ -87,8 +154,38 @@ export const birdhamCarpentryStudy: StudyDoc = {
         {
           kind: "prose",
           paragraphs: [
-            "Birdham is a village on Chichester Harbour, and its name derives from the Old English for settlement of the birds. That gave the firm both a name rooted in the place it works and, directly, its mark. A name that produces its own symbol without a second creative step is worth more than a cleverer one that does not.",
-            "It also does useful commercial work. A firm named after a harbour village signals a catchment rather than a franchise, which is what a client with a Grade II listed cottage is looking for.",
+            "The firm was not called Birdham first. It opened as Halnaker Construction, named after the village and its windmill on the Downs north of Chichester, and it traded under a complete identity: a latticed windmill mark, a Spectral wordmark, and the sub-line Oak Carpentry & Building. The site, the quote flow and the operations backend were all built under that name.",
+            "Two things were wrong with it, and they were connected. The sub-line led with oak, which narrowed the firm to one material at exactly the moment the offer was being widened to restoration and general building. And Halnaker sits inland, on the wrong side of the catchment from the harbour villages where much of the work is.",
+            "The rename fixed both. Birdham is a village on Chichester Harbour whose name derives from the Old English for settlement of the birds, so it gave the firm a name rooted in the right part of the catchment and, directly, its mark. A name that produces its own symbol without a second creative step is worth more than a cleverer one that does not.",
+          ],
+        },
+        {
+          kind: "rejected",
+          bg: PAPER,
+          columns: 2,
+          plates: [
+            {
+              src: "/portfolio/study/birdham-carpentry/rejected/halnaker-lockup.webp",
+              label: "Halnaker Construction, the replaced lockup",
+              note: "The windmill mark with the wordmark in Spectral and Oak Carpentry & Building beneath",
+              width: 1184,
+              height: 392,
+              carries: ["Superseded name", "Oak-led", "Windmill mark"],
+            },
+            {
+              src: "/portfolio/study/birdham-carpentry/rejected/halnaker-mill-mark.webp",
+              label: "The Mill Mark",
+              note: "Halnaker Windmill with latticed common sails, drawn as a single-colour silhouette",
+              width: 624,
+              height: 592,
+              carries: ["Superseded"],
+            },
+          ],
+        },
+        {
+          kind: "prose",
+          paragraphs: [
+            "The windmill was a good mark and it went anyway. It is worth being clear why, because it is the kind of decision that gets described as taste and is usually not. The gull that replaced it holds the same qualities, a single flat silhouette that embroiders and reduces cleanly, while belonging to the harbour rather than to a hill eight miles inland. When the name stopped being defensible the mark went with it, because a mark that illustrates the wrong name is a mark with a job it cannot do.",
           ],
         },
       ],
@@ -240,6 +337,15 @@ export const birdhamCarpentryStudy: StudyDoc = {
           ],
         },
         {
+          kind: "image",
+          src: "/portfolio/study/birdham-carpentry/home-hero.webp",
+          alt: "The Birdham Carpentry homepage, with the gull lockup in the header",
+          caption:
+            "The lockup in service. The sub-line is tracked so that Carpentry & building spans exactly the width of BIRDHAM, which is why both lines align on each edge",
+          width: 2880,
+          height: 2000,
+        },
+        {
           kind: "note",
           text: "Birdham has no written brand manual. These constraints are the ones recorded in the source of the mark itself and enforced by the components that place it, which is why they are stated here as they are implemented rather than dressed up as a rules page that does not exist.",
         },
@@ -296,7 +402,7 @@ export const birdhamCarpentryStudy: StudyDoc = {
         {
           kind: "prose",
           paragraphs: [
-            "Spectral was chosen after a full pass of eleven serifs. It sets the wordmark, the headings and the body, which is unusual for a trade site, where the convention is a workhorse sans throughout. A serif reads as considered and slightly old, which is the correct register for a firm whose lead service is listed and period restoration.",
+            "The reading face changed during the build. The site opened on Libre Caslon Text and moved to Spectral, and the project README still records the older choice in one line while naming Spectral in another. Spectral sets the wordmark, the headings and the body, which is unusual for a trade site, where the convention is a workhorse sans throughout. A serif reads as considered and slightly old, which is the correct register for a firm whose lead service is listed and period restoration.",
             "Hanken Grotesk handles the working parts: navigation, tracked-caps eyebrows, form labels and the quote flow. The division is functional. If a visitor is reading, it is Spectral. If a visitor is operating something, it is Hanken.",
           ],
         },
@@ -309,7 +415,7 @@ export const birdhamCarpentryStudy: StudyDoc = {
               css: SPECTRAL,
               weight: 500,
               weights: "400, 500, 600",
-              note: "Letter-spaced capitals at 0.2em in the lockup, roman for headings and copy. Selected from a shortlist of eleven serifs.",
+              note: "Letter-spaced capitals at 0.2em in the lockup, roman for headings and copy. It replaced Libre Caslon Text partway through the build.",
             },
             {
               family: "Hanken Grotesk",
@@ -370,6 +476,33 @@ export const birdhamCarpentryStudy: StudyDoc = {
             { label: "Work, about, reviews", note: "The public pages, written in the firm's own voice" },
             { label: "Operations admin", note: "Enquiries, clients, quotes, jobs, calendar, invoices, payments" },
           ],
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/birdham-carpentry/quote-flow.webp",
+          alt: "The first step of the Birdham quote flow, choosing a job type",
+          caption:
+            "Step one of three. The flow states plainly that the figure is a guide worked out from current material prices, with a firm quote to follow a site visit",
+          width: 2880,
+          height: 2200,
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/birdham-carpentry/service.webp",
+          alt: "The listed and period building restoration service page",
+          caption:
+            "The lead service page. Spectral for reading, Hanken for the working parts, and a palette that sits against lime render and old brick",
+          width: 2880,
+          height: 2000,
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/birdham-carpentry/areas.webp",
+          alt: "The Chichester area page",
+          caption:
+            "One of eight area pages, each written individually rather than generated from a template with the place name swapped",
+          width: 2880,
+          height: 2000,
         },
         {
           kind: "image",
@@ -468,7 +601,7 @@ export const birdhamCarpentryStudy: StudyDoc = {
               nodes: [
                 { name: "Stripe", note: "Deposits and payments" },
                 { name: "Idempotent webhook", note: "Status accurate through payment, expiry and refund" },
-                { name: "Deposit", note: "12.5% by default, set per quote" },
+                { name: "Deposit", note: "Published as 10 to 15%, defaulting to 12.5%" },
               ],
             },
           ],
@@ -479,11 +612,12 @@ export const birdhamCarpentryStudy: StudyDoc = {
           kind: "bullets",
           items: [
             "Quote links are minted as unguessable tokens, so a client opens a quote without an account and cannot reach anyone else's.",
-            "The deposit is 12.5 percent by default and adjustable on each quote, rather than fixed in code.",
+            "Deposits are published to clients as 10 to 15 percent of the job. The admin defaults to 12.5, the middle of that band, and it is adjustable on each quote rather than fixed in code, so the firm can hold to what the site promises without a developer.",
             "The webhook is idempotent, so a Stripe retry cannot double-count a payment or overwrite a refund.",
             "LocalBusiness, Service, FAQ and breadcrumb structured data are built from confirmed details only, with nothing invented to fill a required field.",
           ],
         },
+        ...measuredBlocks("birdham-carpentry", "the homepage"),
         {
           kind: "note",
           text: "One inconsistency is worth recording. The stone tone appears at two values in the source: the darkened, accessible value used by the site, and an older, lighter value still sitting in the mark's own file. The site ships the darkened one. Anyone picking up the older file for print work should take the value from the site tokens instead.",

@@ -6,6 +6,7 @@ import { StudyDocument } from "@/components/study/StudyDocument";
 import { STUDIES, getStudy } from "@/content/studies";
 import { getCaseStudy } from "@/content/work";
 import { SITE_URL } from "@/content/entity";
+import "./print.css";
 
 export function generateStaticParams() {
   return STUDIES.map((s) => ({ slug: s.slug }));
@@ -104,18 +105,27 @@ export default async function StudyPage({
       />
 
       <article className="max-w-5xl mx-auto px-6 md:px-10 py-20 md:py-28">
-        <Link
-          href={`/work/${cs.slug}`}
-          className="text-foreground/60 hover:text-foreground text-xs tracking-wider uppercase"
-        >
-          &larr; {cs.name}
-        </Link>
+        <div className="flex items-center justify-between gap-6 print-hide">
+          <Link
+            href={`/work/${cs.slug}`}
+            className="text-foreground/60 hover:text-foreground text-xs tracking-wider uppercase"
+          >
+            &larr; {cs.name}
+          </Link>
+          <a
+            href={`/portfolio/study/${cs.slug}/faro-${cs.slug}-notes.pdf`}
+            download
+            className="text-accent hover:text-accent-light text-xs tracking-wider uppercase border border-accent/30 hover:border-accent rounded-full px-4 py-2 transition-colors shrink-0"
+          >
+            Download as PDF
+          </a>
+        </div>
 
         <div className="mt-10">
           <StudyDocument doc={doc} />
         </div>
 
-        <div className="mt-24 pt-12 border-t border-foreground/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div className="mt-24 pt-12 border-t border-foreground/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 print-hide">
           <p className="text-foreground/70 max-w-md">
             This is how we work on every project. If it suits what you are
             building, we should talk.

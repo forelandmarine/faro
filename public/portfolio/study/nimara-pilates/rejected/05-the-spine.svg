@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" fill="none">
+  <style>
+    .word { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; }
+    .sub  { font-family: 'DM Sans', system-ui, sans-serif; font-weight: 500; }
+  </style>
+
+  <!-- Sage spine block, like a book spine to the left of the title -->
+  <rect x="60" y="58" width="14" height="84" fill="#7E9A7A" />
+
+  <!-- Wordmark -->
+  <text x="100" y="118" class="word" font-size="64" letter-spacing="10" fill="#1A1A1A">NIMARA</text>
+
+  <!-- Sub-line -->
+  <text x="102" y="146" class="sub" font-size="10" letter-spacing="3.6" fill="#7E9A7A">REFORMER PILATES</text>
+</svg>

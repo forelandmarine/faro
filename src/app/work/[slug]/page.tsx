@@ -3,11 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { PageShell } from "@/components/PageShell";
-import {
-  CASE_STUDIES,
-  getCaseStudy,
-  type CaseStudy,
-} from "@/content/work";
+import { CASE_STUDIES, getCaseStudy } from "@/content/work";
+import { getStudy } from "@/content/studies";
+import type { StudyDoc } from "@/content/studies/types";
 import { SITE_URL } from "@/content/entity";
 
 export function generateStaticParams() {
@@ -51,6 +49,7 @@ export default async function CaseStudyPage({
   const { slug } = await params;
   const cs = getCaseStudy(slug);
   if (!cs) notFound();
+  const study = getStudy(slug);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -67,6 +66,15 @@ export default async function CaseStudyPage({
     datePublished: `${cs.year}-01-01`,
     inLanguage: "en-GB",
     about: cs.vertical,
+    ...(study
+      ? {
+          subjectOf: {
+            "@type": "TechArticle",
+            name: `${cs.name}, design and build notes`,
+            url: `${SITE_URL}/work/${cs.slug}/study`,
+          },
+        }
+      : {}),
   };
 
   const breadcrumbJsonLd = {
@@ -143,7 +151,7 @@ export default async function CaseStudyPage({
             {cs.approach.map((a, i) => (
               <li key={i} className="flex gap-4">
                 <span className="text-accent font-mono text-sm pt-1 w-6 flex-shrink-0">
-                  0{i + 1}
+                  {String(i + 1).padStart(2, "0")}
                 </span>
                 <span>{a}</span>
               </li>
@@ -151,7 +159,7 @@ export default async function CaseStudyPage({
           </ul>
         </Section>
 
-        {cs.expose && <ExposeSections cs={cs} />}
+        {study && <IdentityStrip study={study} slug={cs.slug} name={cs.name} />}
 
         <Section title="Outcomes">
           <ul className="space-y-3">
@@ -207,6 +215,127 @@ function Section({
   );
 }
 
+/* ── Identity strip ────────────────────────────────────────────────────
+   A glance at the identity, then straight through to the full document.
+   Everything measured lives on the study page, not here.                */
+
+function IdentityStrip({
+  study,
+  slug,
+  name,
+}: {
+  study: StudyDoc;
+  slug: string;
+  name: string;
+}) {
+  const mark = study.glance.mark;
+  return (
+    <section className="mb-16">
+      <h2 className="type-eyebrow mb-6">The identity</h2>
+
+      {study.fontsHref && (
+        <link rel="stylesheet" href={study.fontsHref} precedence="default" />
+      )}
+
+      <div
+        className="rounded-xl border border-foreground/10 flex items-center justify-center gap-6 px-8 py-14 flex-col sm:flex-row"
+        style={{ backgroundColor: mark.bg }}
+      >
+        {mark.src && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={mark.src}
+            alt={`${name} ${mark.label}`}
+            style={{ height: mark.height ?? 64 }}
+            className="w-auto max-w-full"
+          />
+        )}
+        {mark.wordmark && (
+          <div className={mark.src ? "text-center sm:text-left" : "text-center"}>
+            <p
+              className={
+                mark.src
+                  ? "text-xl md:text-3xl leading-tight"
+                  : "text-2xl md:text-4xl leading-tight"
+              }
+              style={{
+                fontFamily: mark.wordmark.css,
+                fontWeight: mark.wordmark.weight ?? 400,
+                color: mark.wordmark.color,
+                letterSpacing: mark.wordmark.tracking,
+              }}
+            >
+              {mark.wordmark.text}
+            </p>
+            {mark.wordmark.sub && (
+              <p
+                className={`mt-1.5 ${
+                  mark.wordmark.subItalic
+                    ? "italic text-base md:text-lg"
+                    : "text-[10px] md:text-xs"
+                }`}
+                style={{
+                  fontFamily: mark.wordmark.subCss ?? mark.wordmark.css,
+                  color: mark.wordmark.subColor ?? mark.wordmark.color,
+                  letterSpacing: mark.wordmark.subTracking,
+                }}
+              >
+                {mark.wordmark.sub}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {study.glance.palette.map((sw) => (
+          <div key={sw.hex} className="flex items-center gap-2">
+            <span
+              className="h-7 w-7 rounded border border-foreground/15 shrink-0"
+              style={{ backgroundColor: sw.hex }}
+              aria-hidden
+            />
+            <span className="text-xs font-mono uppercase text-foreground/60 mr-3">
+              {sw.hex}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <Link
+        href={`/work/${slug}/study`}
+        className="mt-10 group flex items-center justify-between gap-6 border border-foreground/15 rounded-xl px-6 py-5 hover:border-accent/50 transition-colors"
+      >
+        <span className="min-w-0">
+          <span className="block text-base font-semibold group-hover:text-accent transition-colors">
+            Design and build notes
+          </span>
+          <span className="block text-sm text-foreground/65 mt-1 leading-snug">
+            The full briefing: mark construction and clear space, measured
+            colour and type, layout, motion and architecture.
+          </span>
+        </span>
+        <svg
+          width="28"
+          height="10"
+          viewBox="0 0 28 10"
+          fill="none"
+          aria-hidden
+          className="text-accent shrink-0 group-hover:translate-x-1 transition-transform"
+        >
+          <path
+            d="M0 5h24M21 1.5L24.5 5 21 8.5"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </Link>
+    </section>
+  );
+}
+
 /* ── Stack flow ────────────────────────────────────────────────────── */
 
 const STACK_ROLES: Record<string, string> = {
@@ -217,8 +346,8 @@ const STACK_ROLES: Record<string, string> = {
   Lenis: "Scroll",
   Supabase: "Data",
   Stripe: "Payments",
-  "Paged.js": "Print layout",
-  Puppeteer: "PDF render",
+  Puppeteer: "Print render",
+  Ghostscript: "Prepress",
   Vercel: "Hosting",
 };
 
@@ -254,229 +383,5 @@ function StackFlow({ stack }: { stack: string[] }) {
         </div>
       ))}
     </div>
-  );
-}
-
-/* ── Brand and site exposé ─────────────────────────────────────────── */
-
-function ExposeSections({ cs }: { cs: CaseStudy }) {
-  const e = cs.expose!;
-  return (
-    <>
-      {/* Brand typefaces, loaded on this page only for the live specimens */}
-      {e.fontsHref && (
-        <link rel="stylesheet" href={e.fontsHref} precedence="default" />
-      )}
-
-      <Section title="The identity" wide>
-        <div className="max-w-2xl space-y-4">
-          {e.identity.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
-        </div>
-
-        {/* The mark, shown on its own grounds */}
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {e.marks.map((m) => (
-            <figure key={m.label} className={m.wide ? "sm:col-span-3" : ""}>
-              <div
-                className={`rounded-xl border border-foreground/10 flex items-center justify-center px-8 gap-6 ${
-                  m.wide ? "py-14 flex-col sm:flex-row" : "aspect-[4/3] flex-col"
-                }`}
-                style={{ backgroundColor: m.bg }}
-              >
-                {m.src && (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={m.src}
-                    alt={`${cs.name} ${m.label}`}
-                    style={{ height: m.height ?? 64 }}
-                    className="w-auto max-w-full"
-                  />
-                )}
-                {m.wordmark && (
-                  <div className={m.src ? "text-center sm:text-left" : "text-center"}>
-                    <p
-                      className={
-                        m.src
-                          ? "text-xl md:text-3xl leading-tight"
-                          : "text-2xl md:text-4xl leading-tight"
-                      }
-                      style={{
-                        fontFamily: m.wordmark.css,
-                        fontWeight: m.wordmark.weight ?? 400,
-                        color: m.wordmark.color,
-                        letterSpacing: m.wordmark.tracking,
-                      }}
-                    >
-                      {m.wordmark.text}
-                    </p>
-                    {m.wordmark.sub && (
-                      <p
-                        className={`mt-1.5 ${
-                          m.wordmark.subItalic
-                            ? "italic text-base md:text-lg"
-                            : "text-[10px] md:text-xs"
-                        }`}
-                        style={{
-                          fontFamily: m.wordmark.subCss ?? m.wordmark.css,
-                          color: m.wordmark.subColor ?? m.wordmark.color,
-                          letterSpacing: m.wordmark.subTracking,
-                        }}
-                      >
-                        {m.wordmark.sub}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-              <figcaption className="mt-3">
-                <span className="text-sm font-semibold">{m.label}</span>
-                {m.note && (
-                  <span className="block text-xs text-foreground/60 mt-0.5">
-                    {m.note}
-                  </span>
-                )}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-
-        {/* Palette */}
-        <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-4 gap-y-8">
-          {e.palette.map((sw) => (
-            <div key={sw.hex}>
-              <div
-                className="h-20 rounded-lg border border-foreground/10"
-                style={{ backgroundColor: sw.hex }}
-              />
-              <p className="mt-3 text-sm font-semibold leading-tight">
-                {sw.name}
-              </p>
-              <p className="text-xs text-foreground/60 font-mono uppercase mt-0.5">
-                {sw.hex}
-              </p>
-              {sw.note && (
-                <p className="text-xs text-foreground/60 mt-1 leading-snug">
-                  {sw.note}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Type specimens */}
-        <div className="mt-14 space-y-0">
-          {e.type.map((t) => (
-            <div
-              key={`${t.family}-${t.role}`}
-              className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8 border-t border-foreground/10 py-6"
-            >
-              <span
-                aria-hidden
-                className="text-6xl leading-none shrink-0 w-24"
-                style={{ fontFamily: t.css, fontWeight: t.weight ?? 400 }}
-              >
-                Aa
-              </span>
-              <div>
-                <p
-                  className="text-2xl leading-tight"
-                  style={{ fontFamily: t.css, fontWeight: t.weight ?? 400 }}
-                >
-                  {t.family}
-                </p>
-                <p className="type-eyebrow mt-1">{t.role}</p>
-                {t.note && (
-                  <p className="text-sm text-foreground/70 mt-2 max-w-xl">
-                    {t.note}
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section title="The site" wide>
-        <div className="max-w-2xl space-y-4">
-          {e.site.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
-        </div>
-
-        <div className="mt-12 flex flex-col md:flex-row gap-12">
-          {/* Page inventory */}
-          <div className="flex-1">
-            <p className="type-eyebrow mb-5">What we shipped</p>
-            <ul className="divide-y divide-foreground/10">
-              {e.pages.map((p) => (
-                <li key={p.label} className="py-3">
-                  <span className="text-base font-medium">{p.label}</span>
-                  {p.note && (
-                    <span className="block text-sm text-foreground/60 mt-0.5">
-                      {p.note}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Mobile plate */}
-          {e.mobileImage && (
-            <div className="shrink-0 self-start mx-auto md:mx-0">
-              <div className="w-[230px] rounded-[2rem] border-4 border-[#1A3640] overflow-hidden shadow-[0_16px_40px_-16px_rgba(26,54,64,0.35)]">
-                <Image
-                  src={e.mobileImage}
-                  alt={`${cs.name} on a phone`}
-                  width={390}
-                  height={844}
-                  className="w-full h-auto"
-                />
-              </div>
-              <p className="text-xs text-foreground/60 text-center mt-3">
-                The same site at 390 pixels
-              </p>
-            </div>
-          )}
-        </div>
-      </Section>
-
-      <Section title="The build" wide>
-        <div className="max-w-2xl space-y-4">
-          {e.build.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
-        </div>
-        {e.buildImage && (
-          <figure className="mt-10">
-            <div className="rounded-xl overflow-hidden border-4 border-[#1A3640] shadow-[0_16px_40px_-16px_rgba(26,54,64,0.3)]">
-              <Image
-                src={e.buildImage.src}
-                alt={e.buildImage.alt}
-                width={1580}
-                height={1114}
-                sizes="(min-width: 896px) 832px, 100vw"
-                className="w-full h-auto"
-              />
-            </div>
-            {e.buildImage.caption && (
-              <figcaption className="text-xs text-foreground/60 mt-3 text-center">
-                {e.buildImage.caption}
-              </figcaption>
-            )}
-          </figure>
-        )}
-        <ul className="mt-8 max-w-2xl space-y-3">
-          {e.buildPoints.map((p, i) => (
-            <li key={i} className="flex gap-4">
-              <span className="text-accent flex-shrink-0">&bull;</span>
-              <span className="text-base">{p}</span>
-            </li>
-          ))}
-        </ul>
-      </Section>
-    </>
   );
 }

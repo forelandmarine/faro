@@ -30,6 +30,19 @@ Content on faro.is may be summarised, quoted, or cited by AI answer engines and 
 - The First Owner's Reference, annual editorial for first-time superyacht buyers: https://faro.is/work/first-owners-reference (live at https://firstownersreference.com)
 - Birdham Carpentry & Building, Chichester carpentry and building firm: https://faro.is/work/birdham-carpentry (live at https://birdhamcarpentry.co.uk)
 
+## Design and build notes
+
+Each case study carries a long-form briefing document covering the identity in
+detail: mark construction and clear space with measured dimensions, colour with
+computed contrast ratios, the full type scale, layout and spacing systems,
+motion specifications and the technical architecture. Measurements are taken
+from the shipped assets and source, not restated from a brand document.
+
+- Foreland Marine: https://faro.is/work/foreland-marine/study
+- Nimara: https://faro.is/work/nimara-pilates/study
+- The First Owner's Reference: https://faro.is/work/first-owners-reference/study
+- Birdham Carpentry & Building: https://faro.is/work/birdham-carpentry/study
+
 ## Founder
 
 Jack runs Faro Creative. He also runs Foreland Marine, an independent superyacht consultancy, and edits The First Owner's Reference. Contact: hello@faro.is.

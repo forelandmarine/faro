@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CASE_STUDIES } from "@/content/work";
+import { STUDIES } from "@/content/studies";
 import { SERVICES } from "@/content/services";
 import { SITE_URL } from "@/content/entity";
 
@@ -23,6 +24,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
+  const studies = STUDIES.map((s) => ({
+    url: `${SITE_URL}/work/${s.slug}/study`,
+    lastModified: now,
+    changeFrequency: "yearly" as const,
+    priority: 0.7,
+  }));
+
   const services = SERVICES.map((s) => ({
     url: `${SITE_URL}/services/${s.slug}`,
     lastModified: now,
@@ -38,6 +46,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: r.priority,
     })),
     ...work,
+    ...studies,
     ...services,
   ];
 }

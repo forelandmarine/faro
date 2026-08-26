@@ -606,3 +606,58 @@ html.lenis, html.lenis body {
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 0; }
+
+/* ── Reduced motion ──────────────────────────────────────────────────
+   A backstop for anything driven by CSS. The JavaScript animations opt
+   out separately in src/lib/motion.ts, because GSAP writes inline styles
+   that a media query cannot reach. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Reduced motion: the landing page becomes a conventional vertical page.
+   Without GSAP there is no pin and no horizontal tween, so the panel track
+   must not stay a flex row, or it would be a very wide strip with no way to
+   scroll it. Panels keep their full-height presence but stop clipping, since
+   nothing is animating in or out of frame any more. */
+@media (prefers-reduced-motion: reduce) {
+  .panel-track {
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  .panel {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100svh;
+    overflow: visible !important;
+  }
+
+  /* Divider lines read as vertical rules between side-by-side panels; stacked,
+     they belong across the top instead. */
+  .panel + .panel::before {
+    top: 0;
+    left: 10%;
+    width: 80%;
+    height: 1px;
+  }
+
+  /* The progress bar is driven by the scroll tween, which no longer runs. */
+  .horizontal-scroll-container ~ div[class*="fixed bottom-0"],
+  .panel-track ~ .coastline-scene {
+    display: none !important;
+  }
+}

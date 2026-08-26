@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -14,7 +15,9 @@ export default function CustomCursor() {
 
     const isTouchDevice =
       "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    if (isTouchDevice) {
+    // A trailing cursor is motion tied to every movement the reader makes, and
+    // hiding the real pointer to draw it is a risk not worth taking here.
+    if (isTouchDevice || prefersReducedMotion()) {
       cursor.style.display = "none";
       follower.style.display = "none";
       return;

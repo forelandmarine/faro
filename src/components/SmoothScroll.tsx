@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { prefersReducedMotion } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,6 +19,9 @@ export default function SmoothScroll({
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    // Smoothed scrolling decouples the page from the wheel, which is exactly
+    // what reduced motion asks us not to do. Native scrolling instead.
+    if (prefersReducedMotion()) return;
     // Landscape phones use native CSS scroll — Lenis would fight it
     const isLandscapeMobile =
       window.innerWidth > window.innerHeight && window.innerHeight < 600;

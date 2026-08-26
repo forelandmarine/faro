@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
 import SplitText from "./SplitText";
@@ -49,6 +50,7 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
     const ctx = gsap.context(() => {
       if (isHorizontal && scrollTween) {
         // Parallax: content drifts left as you scroll past

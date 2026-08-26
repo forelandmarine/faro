@@ -2,6 +2,7 @@
 
 import { useRef, type ReactNode } from "react";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 
 interface MagneticProps {
   children: ReactNode;
@@ -20,6 +21,9 @@ export default function Magnetic({
   const handleMove = (e: React.MouseEvent) => {
     const el = ref.current;
     if (!el) return;
+    // A button that moves away from the pointer is the sort of thing reduced
+    // motion exists to switch off.
+    if (prefersReducedMotion()) return;
     const rect = el.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Lighthouse from "./Lighthouse";
+import { SiteNav } from "./SiteNav";
 import { ENTITY_SHORT, FOUNDER, RELATED_SITES } from "@/content/entity";
 
 const NAV = [
@@ -13,34 +14,10 @@ const NAV = [
 export function PageShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <SiteHeader />
+      <SiteNav items={NAV} />
       <main className="flex-1">{children}</main>
       <SiteFooter />
     </div>
-  );
-}
-
-function SiteHeader() {
-  return (
-    <header className="border-b border-foreground/10 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Lighthouse size={20} color="#1A3640" />
-          <span className="type-display text-base tracking-tight">FARO</span>
-        </Link>
-        <nav className="flex items-center gap-5 md:gap-8 text-xs font-medium tracking-wider uppercase">
-          {NAV.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className="text-foreground/70 hover:text-foreground transition-colors"
-            >
-              {n.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </header>
   );
 }
 

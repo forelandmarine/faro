@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
 
@@ -56,6 +57,7 @@ function ProjectPanel({
   const { scrollTween, isHorizontal } = useHorizontalScroll();
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
     if (isHorizontal && !scrollTween) return;
 
     const ctx = gsap.context(() => {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { scrollState } from "./HorizontalScroll";
 
 /**
@@ -33,6 +34,7 @@ export default function FlyingBirds() {
   const birdRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
     // Each bird drifts right continuously + extra drift based on scroll
     const basePositions = birds.map(() => Math.random() * 100);
 

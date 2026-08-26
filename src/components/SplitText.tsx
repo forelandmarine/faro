@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type CSSProperties } from "react";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
 
@@ -45,6 +46,7 @@ export default function SplitText({
   const { scrollTween, isHorizontal } = useHorizontalScroll();
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
     const el = ref.current;
     if (!el) return;
     if (!immediate && isHorizontal && !scrollTween) return;

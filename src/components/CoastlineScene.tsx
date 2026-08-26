@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useMemo, useState } from "react";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import {
   generateCoastlinePath,
   generateWavePath,
@@ -47,6 +48,7 @@ export default function CoastlineScene() {
   const [totalWidth, setTotalWidth] = useState(0);
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
     const update = () => setTotalWidth(window.innerWidth * PANEL_COUNT);
     update();
     window.addEventListener("resize", update);

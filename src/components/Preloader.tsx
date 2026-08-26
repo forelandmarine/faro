@@ -1,16 +1,31 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import Lighthouse from "./Lighthouse";
+import { prefersReducedMotion } from "@/lib/motion";
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export default function Preloader({ onComplete }: { onComplete: () => void }) {
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
+  const [skipped, setSkipped] = useState(false);
+
+  /* A curtain is the one piece of theatre that cannot be waited out, so for
+     anyone who has asked for reduced motion it is not played at all. Run before
+     paint, so the curtain never appears in the first place. */
+  useIsomorphicLayoutEffect(() => {
+    if (!prefersReducedMotion()) return;
+    setSkipped(true);
+    onComplete();
+  }, [onComplete]);
 
   useEffect(() => {
+    if (skipped) return;
     // Phones get a shorter curtain — the counter is theatre, and on a slow
     // connection it delays real content. Hero reveal delays match this.
     const fast = window.innerWidth < 768;
@@ -75,7 +90,9 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
     return () => {
       tl.kill();
     };
-  }, [onComplete]);
+  }, [onComplete, skipped]);
+
+  if (skipped) return null;
 
   return (
     <div ref={containerRef} className="fixed inset-0 z-[100]">

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
 import SplitText from "./SplitText";
@@ -13,6 +14,7 @@ export default function Testimonials() {
   const { scrollTween, isHorizontal } = useHorizontalScroll();
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
     if (isHorizontal && !scrollTween) return;
 
     const ctx = gsap.context(() => {

@@ -11,6 +11,7 @@ import {
 } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { prefersReducedMotion } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -61,6 +62,9 @@ function isHorizontalMode() {
   if (typeof window === "undefined") return false;
   // Landscape phones use native CSS scroll — not GSAP horizontal mode
   if (isLandscapeMobile()) return false;
+  // Turning the page sideways under the reader is the largest motion on the
+  // site. Reduced motion takes the same native vertical path phones already use.
+  if (prefersReducedMotion()) return false;
   return window.innerWidth >= 768;
 }
 
@@ -98,6 +102,9 @@ export default function HorizontalScroll({ children, footer }: { children: React
 
     // Landscape phones use native CSS scroll-snap — skip GSAP entirely
     if (isLandscapeMobile()) return;
+    // Reduced motion: no pin, no tween. The stylesheet stacks the panels into a
+    // normal vertical page instead.
+    if (prefersReducedMotion()) return;
 
     const ctx = gsap.context(() => {
       ScrollTrigger.matchMedia({

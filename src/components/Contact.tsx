@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import gsap from "gsap";
+import { prefersReducedMotion } from "@/lib/motion";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lighthouse from "./Lighthouse";
 import { useHorizontalScroll } from "./HorizontalScroll";
@@ -27,6 +28,7 @@ export default function Contact() {
   );
 
   useEffect(() => {
+    if (prefersReducedMotion()) return;
     if (isHorizontal && !scrollTween) return;
 
     const ctx = gsap.context(() => {

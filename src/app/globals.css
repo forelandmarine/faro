@@ -661,3 +661,41 @@ html.lenis, html.lenis body {
     display: none !important;
   }
 }
+
+/* ── Focus ───────────────────────────────────────────────────────────
+   The site hides the pointer on the landing page to draw its own cursor,
+   so a keyboard visitor has nothing to go on unless focus is deliberate.
+   :focus-visible keeps it to keyboard use rather than ringing every
+   mouse click. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* On the deep navy and ink plates in the study documents an accent ring
+   disappears; those get a light one instead. */
+[data-plate="dark"] :focus-visible {
+  outline-color: var(--color-background);
+}
+
+/* Skip link: present for keyboard and screen reader use, out of the way
+   otherwise. */
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -3rem;
+  z-index: 200;
+  background: var(--color-foreground);
+  color: var(--color-background);
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 0 0 0.375rem 0.375rem;
+  transition: top 120ms ease-out;
+}
+
+.skip-link:focus {
+  top: 0;
+}

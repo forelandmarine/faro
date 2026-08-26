@@ -87,7 +87,22 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
       onComplete();
     });
 
+    /* Two seconds is a long time to hold someone away from the thing they came
+       for. Anyone who would rather not wait can say so, with a click, a key or
+       a scroll, and the curtain runs to its end quickly instead of cutting,
+       which keeps the arrival intact without making it a toll. */
+    const skip = () => {
+      if (tl.progress() > 0.98) return;
+      tl.timeScale(6);
+    };
+    window.addEventListener("pointerdown", skip);
+    window.addEventListener("keydown", skip);
+    window.addEventListener("wheel", skip, { passive: true });
+
     return () => {
+      window.removeEventListener("pointerdown", skip);
+      window.removeEventListener("keydown", skip);
+      window.removeEventListener("wheel", skip);
       tl.kill();
     };
   }, [onComplete, skipped]);

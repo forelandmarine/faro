@@ -23,9 +23,16 @@ export default function CustomCursor() {
       return;
     }
 
-    document.body.style.cursor = "none";
+    // The native pointer is only hidden once the replacement is provably
+    // tracking it. Hiding it up front means any failure between here and the
+    // first frame leaves the visitor with no pointer at all.
+    let adopted = false;
 
     const onMouseMove = (e: MouseEvent) => {
+      if (!adopted) {
+        adopted = true;
+        document.body.style.cursor = "none";
+      }
       gsap.to(cursor, {
         x: e.clientX,
         y: e.clientY,

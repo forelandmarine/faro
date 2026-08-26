@@ -289,10 +289,19 @@ export function SpecGroups({
         <div key={g.title}>
           <p className="type-eyebrow mb-4">{g.title}</p>
           <dl className="divide-y divide-foreground/10">
+            {/* A long monospaced value cannot be squeezed, so on a narrow
+                screen the pair stacks rather than forcing the page wider. */}
             {g.measures.map((m) => (
-              <div key={m.label} className="py-2.5 flex items-baseline gap-4">
-                <dt className="text-sm text-foreground/70 flex-1 min-w-0">{m.label}</dt>
-                <dd className="text-sm font-mono text-right shrink-0">{m.value}</dd>
+              <div
+                key={m.label}
+                className="py-2.5 flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-4"
+              >
+                <dt className="text-sm text-foreground/70 sm:flex-1 sm:min-w-0">
+                  {m.label}
+                </dt>
+                <dd className="text-sm font-mono break-words sm:text-right sm:shrink-0">
+                  {m.value}
+                </dd>
               </div>
             ))}
           </dl>

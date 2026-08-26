@@ -14,8 +14,16 @@ const NAV = [
 export function PageShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <SiteNav items={NAV} />
-      <main className="flex-1">{children}</main>
+      {/* tabIndex allows the skip link to move focus here, not just the
+          viewport. Without it the browser scrolls and focus stays on body, so
+          the next Tab returns to the header the visitor was skipping. */}
+      <main id="main" tabIndex={-1} className="flex-1 outline-none">
+        {children}
+      </main>
       <SiteFooter />
     </div>
   );

@@ -48,9 +48,11 @@ const projects = [
 function ProjectPanel({
   project,
   index,
+  isLast,
 }: {
   project: (typeof projects)[number];
   index: number;
+  isLast?: boolean;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
@@ -194,6 +196,16 @@ function ProjectPanel({
           >
             Case study
           </Link>
+          {/* The last project is the only place the panels reach the full work
+              index, so it carries the link on to it. */}
+          {isLast && (
+            <Link
+              href="/work"
+              className="text-foreground/60 text-[11px] md:text-xs font-semibold tracking-wider uppercase hover:text-foreground transition-colors whitespace-nowrap hidden md:inline"
+            >
+              All work
+            </Link>
+          )}
           <a
             href={`https://${project.url}`}
             target="_blank"
@@ -221,6 +233,7 @@ export default function Portfolio() {
           key={project.name}
           project={project}
           index={i}
+          isLast={i === projects.length - 1}
         />
       ))}
     </>

@@ -31,6 +31,7 @@ import {
   RejectedSheet,
   Timeline,
 } from "./Plates";
+import { StudyNav } from "./StudyNav";
 
 export function StudyDocument({ doc }: { doc: StudyDoc }) {
   return (
@@ -38,6 +39,14 @@ export function StudyDocument({ doc }: { doc: StudyDoc }) {
       {doc.fontsHref && (
         <link rel="stylesheet" href={doc.fontsHref} precedence="default" />
       )}
+
+      <StudyNav
+        sections={doc.sections.map(({ id, number, title }) => ({
+          id,
+          number,
+          title,
+        }))}
+      />
 
       <DocumentHeader doc={doc} />
       <Contents doc={doc} />

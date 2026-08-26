@@ -214,12 +214,38 @@ export default function Contact() {
 
       {/* Footer — static on portrait, absolute on desktop */}
       <div className="contact-footer mt-12 md:mt-0 md:absolute md:bottom-6 md:left-0 md:right-0 md:px-16 lg:px-24 z-10">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-foreground/60 text-xs pt-6 border-t border-white/10 md:border-t-0 md:pt-0">
-          <div className="flex items-center gap-2">
-            <Lighthouse size={12} color="#A8CCCA" />
-            <span className="type-display text-xs">FARO</span>
+        <div className="max-w-7xl mx-auto pt-6 border-t border-white/10 md:border-t-0 md:pt-0">
+          {/* The last panel is where a visitor who has read the whole pitch
+              ends up, so it carries the real site navigation. Without this the
+              homepage has no route to any of these pages at all. */}
+          <nav
+            aria-label="Site"
+            className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs mb-4 md:mb-3"
+          >
+            {[
+              { href: "/work", label: "Work" },
+              { href: "/services", label: "Services" },
+              { href: "/process", label: "Process" },
+              { href: "/about", label: "About" },
+              { href: "/contact", label: "Contact" },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="text-foreground/70 hover:text-accent tracking-wider uppercase font-medium transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center justify-between text-foreground/60 text-xs">
+            <div className="flex items-center gap-2">
+              <Lighthouse size={12} color="#A8CCCA" />
+              <span className="type-display text-xs">FARO</span>
+            </div>
+            <p>&copy; {new Date().getFullYear()} Faro Creative</p>
           </div>
-          <p>&copy; {new Date().getFullYear()} Faro Creative</p>
         </div>
       </div>
 

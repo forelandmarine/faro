@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
 import Lighthouse from "./Lighthouse";
 import dynamic from "next/dynamic";
+import { PanelLink } from "./PanelLink";
 
 const AnimatedCode = dynamic(() => import("./AnimatedCode"), { ssr: false });
 
@@ -101,6 +102,8 @@ export default function About() {
               <span className="text-foreground/70 text-sm">, Founder</span>
             </div>
           </div>
+
+          <PanelLink href="/about">More about the studio</PanelLink>
         </div>
 
         {/* Animated code block — section signature, shown on all sizes */}

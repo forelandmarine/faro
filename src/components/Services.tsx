@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
+import { PanelLink } from "./PanelLink";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -92,6 +93,8 @@ export default function Services() {
             <span className="text-foreground/40 type-display text-[clamp(1.1rem,5vw,2rem)] md:text-[clamp(0.9rem,2.5vw,2rem)]">/</span>
             <span className="type-display text-[clamp(1.1rem,5vw,2rem)] md:text-[clamp(0.9rem,2.5vw,2rem)] text-accent/70">Editorial</span>
           </div>
+
+          <PanelLink href="/services">All services</PanelLink>
         </div>
       </div>
 

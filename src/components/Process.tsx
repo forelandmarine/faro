@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useHorizontalScroll } from "./HorizontalScroll";
+import { PanelLink } from "./PanelLink";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -124,6 +125,8 @@ export default function Process() {
             </div>
           ))}
         </div>
+
+        <PanelLink href="/process">How we run a project</PanelLink>
       </div>
     </section>
   );

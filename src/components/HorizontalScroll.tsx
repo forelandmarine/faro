@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ReactNode,
@@ -12,6 +13,21 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * A pinned ScrollTrigger wraps its trigger element in a pin-spacer, which is a
+ * DOM node React knows nothing about. On a route change React unmounts this
+ * tree, and if the pin is torn down in a passive effect the two race: GSAP has
+ * already moved the element out of the spacer by the time React tries to remove
+ * it from what it believes is the parent, and the navigation dies with
+ * "Failed to execute 'removeChild' on 'Node'". Once that throws, the router
+ * falls back to full page loads for the rest of the session.
+ *
+ * A layout effect cleanup runs synchronously before React detaches anything, so
+ * the spacer is unwrapped first and React finds the tree it expects.
+ */
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 interface HorizontalScrollContextValue {
   scrollTween: gsap.core.Tween | null;
@@ -74,7 +90,7 @@ export default function HorizontalScroll({ children, footer }: { children: React
   }, []);
 
   /* ── GSAP horizontal scroll — desktop & tablets only ─────────── */
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const container = containerRef.current;
     const track = trackRef.current;
     const progressBar = progressRef.current;
@@ -140,6 +156,11 @@ export default function HorizontalScroll({ children, footer }: { children: React
 
     return () => {
       clearTimeout(timer);
+      // Kill the pin first so the spacer is unwrapped while the tree is still
+      // intact, then revert everything else this context created.
+      ScrollTrigger.getAll()
+        .filter((t) => t.vars.pin)
+        .forEach((t) => t.kill(true));
       ctx.revert();
     };
   }, []);

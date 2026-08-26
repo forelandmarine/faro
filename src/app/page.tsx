@@ -57,15 +57,31 @@ function useSceneMode(): SceneMode | null {
   return mode;
 }
 
+/* The curtain is an arrival, not a page transition. It should play when someone
+   opens the site and never again while they are moving around inside it, so a
+   visitor coming back from a case study lands straight on the panel they left.
+   Module scope is exactly the right lifetime: it survives client-side
+   navigation and resets on a real page load. */
+let introPlayed = false;
+
 export default function Home() {
   const sceneMode = useSceneMode();
-  const handlePreloaderComplete = useCallback(() => {
-    // Preloader finished — could trigger entrance animations here
+  // Read once on mount. On the first visit this is false on both the server and
+  // the client, so hydration matches; later visits are client renders only.
+  const [showIntro] = useState(() => !introPlayed);
+
+  // Marked on mount rather than on completion, so leaving part way through the
+  // curtain still counts as having seen it. Otherwise a quick click into a case
+  // study means the intro plays again on the way back.
+  useEffect(() => {
+    introPlayed = true;
   }, []);
+
+  const handlePreloaderComplete = useCallback(() => {}, []);
 
   return (
     <SoundProvider>
-      <Preloader onComplete={handlePreloaderComplete} />
+      {showIntro && <Preloader onComplete={handlePreloaderComplete} />}
       <CustomCursor />
       <FlyingBirds />
       <OrientationPrompt />

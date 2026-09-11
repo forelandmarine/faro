@@ -20,11 +20,11 @@ const projects = [
     image: "/portfolio/foreland.png",
   },
   {
-    name: "Nimara Pilates",
+    name: "Nimāra Pilates",
     slug: "nimara-pilates",
     url: "nimarapilates.com",
-    category: "Pilates studio, brand and web",
-    anchor: "Nimara Pilates, Mallorca pilates studio",
+    category: "Reformer pilates studio, brand and web",
+    anchor: "Nimāra Pilates, reformer pilates studio in Palma de Mallorca",
     image: "/portfolio/nimara.png",
   },
   {

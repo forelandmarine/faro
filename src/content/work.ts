@@ -8,6 +8,12 @@
 export type CaseStudy = {
   slug: string;
   name: string;
+  /**
+   * A second spelling to declare in structured data. Set it where the brand
+   * name carries a diacritic, so a search for the plain form still resolves
+   * to the same entity.
+   */
+  alternateName?: string;
   url: string;
   category: string;
   vertical: "marine" | "wellness" | "editorial" | "craft";
@@ -53,7 +59,8 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     slug: "nimara-pilates",
-    name: "Nimara Pilates",
+    name: "Nimāra Pilates",
+    alternateName: "Nimara Pilates",
     url: "https://nimarapilates.com",
     category: "Web, brand, print",
     vertical: "wellness",
@@ -61,9 +68,9 @@ export const CASE_STUDIES: CaseStudy[] = [
     tagline:
       "Brand identity, site and print for a reformer pilates studio in Santa Catalina, Palma de Mallorca.",
     brief:
-      "Nimara is a reformer pilates studio in Santa Catalina, which opened on 11 September 2026. The work ran from the name and the identity through to the site, the print artwork and the launch assets. It needed to feel calm and considered, and to hold a premium register without slipping into wellness cliché.",
+      "Nimāra is a reformer pilates studio in Santa Catalina, which opened on 11 September 2026. The work ran from the name and the identity through to the site, the print artwork and the launch assets. It needed to feel calm and considered, and to hold a premium register without slipping into wellness cliché.",
     problem:
-      "Most pilates studios look the same online: terracotta palettes and stock photography of women in athleisure on hardwood floors. Nimara needed to read as a brand that could credibly stand alongside hospitality and beauty houses rather than only other studios.",
+      "Most pilates studios look the same online: terracotta palettes and stock photography of women in athleisure on hardwood floors. Nimāra needed to read as a brand that could credibly stand alongside hospitality and beauty houses rather than only other studios.",
     approach: [
       "Audited more than forty studios across three cities before drawing anything, to establish which decisions would make the brand invisible.",
       "Defined the typographic system before any layout work, so the brand reads first as letterforms and second as imagery.",

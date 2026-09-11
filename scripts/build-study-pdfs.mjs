@@ -10,7 +10,8 @@
 
   Run with the site served locally:
     npm run build && npm start
-    node scripts/build-study-pdfs.mjs
+    node scripts/build-study-pdfs.mjs           # everything
+    node scripts/build-study-pdfs.mjs nimara    # one project
 
   Set BASE to point somewhere else, e.g. BASE=https://faro.is
 */
@@ -49,7 +50,12 @@ const STUDIES = [
 const browser = await puppeteer.launch({ headless: true });
 let total = 0;
 
+const filter = process.argv[2];
+let built = 0;
+
 for (const { slug } of STUDIES) {
+  if (filter && !slug.includes(filter)) continue;
+  built += 1;
   const page = await browser.newPage();
   const url = `${BASE}/work/${slug}/study`;
 
@@ -140,4 +146,4 @@ for (const { slug } of STUDIES) {
 }
 
 await browser.close();
-console.log(`\n4 documents, ${(total / 1024).toFixed(1)}MB total`);
+console.log(`\n${built} documents, ${(total / 1024).toFixed(1)}MB total`);

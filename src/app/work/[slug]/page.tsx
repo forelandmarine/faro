@@ -55,6 +55,7 @@ export default async function CaseStudyPage({
     "@context": "https://schema.org",
     "@type": "CreativeWork",
     name: cs.name,
+    ...(cs.alternateName ? { alternateName: cs.alternateName } : {}),
     url: `${SITE_URL}/work/${cs.slug}`,
     description: cs.tagline,
     creator: {

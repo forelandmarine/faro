@@ -14,7 +14,7 @@ export const RELATED_SITES = [
       "Independent superyacht consultancy and refit project management.",
   },
   {
-    name: "Nimara Pilates",
+    name: "Nimāra Pilates",
     url: "https://nimarapilates.com",
     description:
       "Reformer pilates studio in Santa Catalina, Palma de Mallorca.",

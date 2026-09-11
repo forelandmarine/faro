@@ -68,6 +68,7 @@ export default async function StudyPage({
     isPartOf: {
       "@type": "CreativeWork",
       name: cs.name,
+      ...(cs.alternateName ? { alternateName: cs.alternateName } : {}),
       url: `${SITE_URL}/work/${cs.slug}`,
     },
   };

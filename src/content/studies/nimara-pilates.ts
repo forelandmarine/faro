@@ -30,10 +30,10 @@ const leopardess: MarkGeometry = {
 
 export const nimaraPilatesStudy: StudyDoc = {
   slug: "nimara-pilates",
-  title: "Nimara",
+  title: "Nimāra",
   subtitle:
     "A reformer pilates brand built to be the one studio in its category that does not look like the others, drawn from a forty brand audit and a thirty-six study exploration.",
-  client: "Nimara",
+  client: "Nimāra",
   sector: "Pilates and wellness",
   year: "2026",
   scope: [
@@ -77,7 +77,7 @@ export const nimaraPilatesStudy: StudyDoc = {
         {
           kind: "prose",
           paragraphs: [
-            "The work started with a review of more than forty studios across Mallorca, London, Paris, the global aspirational tier and adjacent wellness brands, each recorded by logo, typeface, palette, motif and positioning line. The point was not inspiration. It was to establish, before anything was drawn, exactly which decisions would make Nimara indistinguishable from its competitors.",
+            "The work started with a review of more than forty studios across Mallorca, London, Paris, the global aspirational tier and adjacent wellness brands, each recorded by logo, typeface, palette, motif and positioning line. The point was not inspiration. It was to establish, before anything was drawn, exactly which decisions would make Nimāra indistinguishable from its competitors.",
             "The audit found a category converging hard. Cream or bone backgrounds with sage or forest green appeared in eighteen of forty studios. Lowercase sans-serif wordmarks appeared in twenty-eight of forty, and at thumbnail size they are not separable from one another. Hand-drawn brushstroke marks appeared in seven, and lotus, leaf or wave motifs in five, both reading as yoga rather than pilates.",
             "One gap was consistent across all three cities. Nobody at the top of the category was using an editorial serif, and nobody was using a figurative mark with any heraldic weight to it. That gap became the brief.",
           ],
@@ -96,7 +96,7 @@ export const nimaraPilatesStudy: StudyDoc = {
               ],
             },
             {
-              title: "What Nimara does instead",
+              title: "What Nimāra does instead",
               measures: [
                 { label: "Display face", value: "Editorial serif" },
                 { label: "Wordmark", value: "Roman capitals" },
@@ -139,7 +139,7 @@ export const nimaraPilatesStudy: StudyDoc = {
             {
               date: "9 April 2026",
               label: "Renamed to Nimara",
-              note: "The name that held. The wordmark work starts here",
+              note: "The name that held, still without its macron. The wordmark work starts here",
               pivot: true,
             },
             {
@@ -458,7 +458,7 @@ export const nimaraPilatesStudy: StudyDoc = {
         {
           kind: "prose",
           paragraphs: [
-            "The palette holds a single accent. The category's habitual mistake is to carry three sage tones, a deep, a mid and a light, which produces a palette indistinguishable from every other studio's. Nimara carries one. Hover and emphasis states are made with opacity rather than with a second green, which is the discipline that keeps the system tight as it grows.",
+            "The palette holds a single accent. The category's habitual mistake is to carry three sage tones, a deep, a mid and a light, which produces a palette indistinguishable from every other studio's. Nimāra carries one. Hover and emphasis states are made with opacity rather than with a second green, which is the discipline that keeps the system tight as it grows.",
             "Four tokens were removed during the lock rather than kept for safety. The mid sage that eighteen of the forty audited studios share went first. A soft mist green went with it, on the grounds that softness should come from alpha. A second warm neutral was collapsed into oak, because two warm neutrals was one too many.",
           ],
         },
@@ -572,7 +572,7 @@ export const nimaraPilatesStudy: StudyDoc = {
         {
           kind: "image",
           src: "/portfolio/study/nimara-pilates/classes.webp",
-          alt: "The Nimara classes page, showing the programme",
+          alt: "The Nimāra classes page, showing the programme",
           caption:
             "Headings in Newsreader, body and metadata in DM Sans, and sentence case everywhere. The only capitals on the page belong to the wordmark and the eyebrow labels",
           width: 2880,
@@ -694,7 +694,7 @@ export const nimaraPilatesStudy: StudyDoc = {
         {
           kind: "image",
           src: "/portfolio/study/nimara-pilates/home-hero.webp",
-          alt: "The Nimara homepage, with the lockup in the header over a photograph of the studio",
+          alt: "The Nimāra homepage, with the lockup in the header over a photograph of the studio",
           caption:
             "The homepage. The room itself behind the lockup, the wordmark in Cinzel with its sub-line, and a hero heading set in Newsreader in sentence case",
           width: 2880,
@@ -703,7 +703,7 @@ export const nimaraPilatesStudy: StudyDoc = {
         {
           kind: "image",
           src: "/portfolio/study/nimara-pilates/timetable.webp",
-          alt: "The Nimara timetable, showing the week with places remaining against each class",
+          alt: "The Nimāra timetable, showing the week with places remaining against each class",
           caption:
             "The timetable, read live from the booking platform. Places remaining are the studio's own figures rather than a number kept by hand, and a session that has gone goes grey",
           width: 2880,
@@ -712,7 +712,7 @@ export const nimaraPilatesStudy: StudyDoc = {
         {
           kind: "image",
           src: "/portfolio/study/nimara-pilates/pricing.webp",
-          alt: "The Nimara pricing page, showing packs and memberships",
+          alt: "The Nimāra pricing page, showing packs and memberships",
           caption:
             "Pricing, read live from the booking platform. Figures are set in DM Sans tabular, and sage does the accent work with no second green anywhere on the page",
           width: 2880,
@@ -721,7 +721,7 @@ export const nimaraPilatesStudy: StudyDoc = {
         {
           kind: "image",
           src: "/portfolio/study/nimara-pilates/studio.webp",
-          alt: "The Nimara studio page, describing the Santa Catalina room",
+          alt: "The Nimāra studio page, describing the Santa Catalina room",
           caption:
             "The studio page. One room, six reformers, and the spacing scale doing most of the work",
           width: 2880,
@@ -730,7 +730,7 @@ export const nimaraPilatesStudy: StudyDoc = {
         {
           kind: "image",
           src: "/portfolio/expose/nimara-mobile.png",
-          alt: "Nimara on a phone",
+          alt: "Nimāra on a phone",
           caption: "The same site at 390 pixels",
           width: 390,
           height: 844,

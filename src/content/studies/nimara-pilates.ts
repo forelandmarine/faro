@@ -43,6 +43,7 @@ export const nimaraPilatesStudy: StudyDoc = {
     "Website design",
     "Development",
     "Four language localisation",
+    "Print artwork",
   ],
   liveUrl: "https://nimarapilates.com",
   fontsHref:
@@ -152,14 +153,20 @@ export const nimaraPilatesStudy: StudyDoc = {
               note: "Fluent British English as the source, with the three translations reworked to match",
             },
             {
-              date: "25 August 2026",
-              label: "Latest commit",
-              note: "Ahead of the studio opening on 10 September",
+              date: "7 September 2026",
+              label: "Opening print goes to press",
+              note: "The opening flyer, the discovery flyer and the window vinyl, all drawn off the same system",
+            },
+            {
+              date: "11 September 2026",
+              label: "The studio opens",
+              note: "Booking, retail and the timetable go live on the site, and the pre-launch copy comes off",
+              pivot: true,
             },
           ],
           summary: [
-            { label: "Commits", value: "353" },
-            { label: "First to latest", value: "21 weeks" },
+            { label: "Commits", value: "402" },
+            { label: "First to opening", value: "23 weeks" },
             { label: "Names", value: "3" },
             { label: "Days to settle", value: "8" },
           ],
@@ -665,7 +672,8 @@ export const nimaraPilatesStudy: StudyDoc = {
           kind: "prose",
           paragraphs: [
             "The site is organised like a small publication rather than a booking funnel: classes, pricing, the studio, the instructors, a journal, a shop and the policy pages, all written in the same register. The studio itself is one room in Santa Catalina with six Elina Pilates Elite reformers, and classes are capped at six places for sixty minutes, so the site never has to claim intimacy that the room cannot deliver.",
-            "Every string exists in English, Spanish, French and German at full parity, held in a translation layer of 1,868 lines. The language switches in place without a reload, and each visitor's choice is remembered.",
+            "Every string exists in English, Spanish, French and German at full parity, held in a translation layer of 1,864 lines. The language switches in place without a reload, and each visitor's choice is remembered.",
+            "The studio opened on 11 September 2026. The pre-launch wording came off on the day, and the timetable now shows the week ahead with places remaining against each class, read live rather than kept by hand.",
           ],
         },
         {
@@ -679,15 +687,25 @@ export const nimaraPilatesStudy: StudyDoc = {
             { label: "Journal", note: "Editorial posts, in all four languages" },
             { label: "Shop", note: "Retail, priced from the studio's booking platform" },
             { label: "Careers and partnerships", note: "Hiring and partnership enquiries" },
+            { label: "Link in bio", note: "A standalone destination for Instagram, without the site chrome" },
             { label: "Policies", note: "Cancellation, privacy and terms, in all four languages" },
           ],
         },
         {
           kind: "image",
           src: "/portfolio/study/nimara-pilates/home-hero.webp",
-          alt: "The Nimara homepage, with the lockup in the header over a hero image",
+          alt: "The Nimara homepage, with the lockup in the header over a photograph of the studio",
           caption:
-            "The homepage. Sand ground, the wordmark in Cinzel with its sub-line, and a hero heading set in Newsreader in sentence case",
+            "The homepage. The room itself behind the lockup, the wordmark in Cinzel with its sub-line, and a hero heading set in Newsreader in sentence case",
+          width: 2880,
+          height: 2000,
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/nimara-pilates/timetable.webp",
+          alt: "The Nimara timetable, showing the week with places remaining against each class",
+          caption:
+            "The timetable, read live from the booking platform. Places remaining are the studio's own figures rather than a number kept by hand, and a session that has gone goes grey",
           width: 2880,
           height: 2000,
         },
@@ -696,7 +714,7 @@ export const nimaraPilatesStudy: StudyDoc = {
           src: "/portfolio/study/nimara-pilates/pricing.webp",
           alt: "The Nimara pricing page, showing packs and memberships",
           caption:
-            "Pricing. Figures are set in DM Sans tabular, and sage does the accent work with no second green anywhere on the page",
+            "Pricing, read live from the booking platform. Figures are set in DM Sans tabular, and sage does the accent work with no second green anywhere on the page",
           width: 2880,
           height: 2000,
         },
@@ -782,7 +800,7 @@ export const nimaraPilatesStudy: StudyDoc = {
         {
           kind: "prose",
           paragraphs: [
-            "The asset library runs to 553 files, organised in eight numbered folders so that anyone asked for a logo can find the right one without asking a designer which version to use. Every permitted colourway exists as a finished file, which is the practical reason the identity has not drifted since it was locked.",
+            "The asset library runs to 565 files, of which 523 sit in eight numbered folders so that anyone asked for a logo can find the right one without asking a designer which version to use. Every permitted colourway exists as a finished file, which is the practical reason the identity has not drifted since it was locked.",
           ],
         },
         {
@@ -791,13 +809,13 @@ export const nimaraPilatesStudy: StudyDoc = {
             {
               title: "Asset library",
               measures: [
-                { label: "01 Marks", value: "147 files" },
-                { label: "02 Wordmarks", value: "65 files" },
-                { label: "03 Lockups, horizontal", value: "101 files" },
-                { label: "04 Lockups, vertical", value: "105 files" },
+                { label: "01 Marks", value: "146 files" },
+                { label: "02 Wordmarks", value: "64 files" },
+                { label: "03 Lockups, horizontal", value: "100 files" },
+                { label: "04 Lockups, vertical", value: "104 files" },
                 { label: "05 Favicons", value: "12 files" },
-                { label: "06 Social", value: "54 files" },
-                { label: "07 Print", value: "22 files" },
+                { label: "06 Social", value: "66 files" },
+                { label: "07 Print", value: "29 files" },
                 { label: "08 App icon", value: "2 files" },
               ],
             },
@@ -808,8 +826,11 @@ export const nimaraPilatesStudy: StudyDoc = {
                 { label: "Compliment slip", value: "210 × 99mm" },
                 { label: "Envelope, DL", value: "220 × 110mm" },
                 { label: "Letterhead", value: "A4" },
-                { label: "Window sticker", value: "350 × 70mm" },
+                { label: "Window sticker, domain and QR", value: "350 × 70mm" },
                 { label: "Window sticker, circular", value: "1 metre" },
+                { label: "Window sticker, opening overlay", value: "860 × 90mm" },
+                { label: "Opening flyer", value: "A5, 3mm bleed" },
+                { label: "Discovery flyer", value: "A5 and A6, 3mm bleed" },
               ],
             },
           ],

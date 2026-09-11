@@ -39,6 +39,27 @@ const STILL = `
 `;
 
 /**
+ * Chat widgets and cookie bars belong on the client's site rather than in a
+ * study plate, so they are hidden for the shot.
+ */
+const HIDE = [
+  "[class*='whatsapp' i]",
+  "[aria-label*='WhatsApp' i]",
+  "[id*='cookie' i]",
+  "[class*='cookie-banner' i]",
+];
+
+/**
+ * Local storage written before the first navigation, per host. This is how a
+ * site's own "seen it, do not show me again" flags get set, which is the
+ * honest way to take a returning visitor's view of a page rather than hiding
+ * a notice the client deliberately ships.
+ */
+const SEED_STORAGE = {
+  "nimarapilates.com": { "nimara-founding-notice-2026-09": "dismissed" },
+};
+
+/**
  * shots: { out, url, selector?, viewportHeight?, scrollTo?, before? }
  *   selector       element crop instead of the viewport
  *   viewportHeight taller viewport for a full section
@@ -104,7 +125,15 @@ const TARGETS = {
     {
       out: "classes",
       url: "https://nimarapilates.com/classes",
-      scrollTo: 500,
+      // The level cards, which carry both faces and the sentence case rule.
+      scrollTo: 1700,
+      viewportHeight: 1000,
+    },
+    {
+      out: "timetable",
+      url: "https://nimarapilates.com/classes",
+      // The week grid, read live from the booking platform.
+      scrollTo: 250,
       viewportHeight: 1000,
     },
     {
@@ -155,11 +184,27 @@ async function shoot(browser, slug, target) {
   const png = path.join(dir, `${target.out}.png`);
 
   try {
+    const seed = SEED_STORAGE[new URL(target.url).hostname.replace(/^www\./, "")];
+    if (seed) {
+      await page.evaluateOnNewDocument((pairs) => {
+        for (const [k, v] of Object.entries(pairs)) {
+          try {
+            localStorage.setItem(k, v);
+          } catch {
+            /* storage can be refused; the shot is still worth taking */
+          }
+        }
+      }, seed);
+    }
+
     await page.goto(target.url, {
       waitUntil: "networkidle2",
       timeout: 45000,
     });
     await page.addStyleTag({ content: STILL });
+    await page.addStyleTag({
+      content: `${HIDE.join(", ")} { display: none !important; }`,
+    });
 
     if (target.scrollTo) {
       await page.evaluate((y) => window.scrollTo(0, y), target.scrollTo);
@@ -225,11 +270,24 @@ console.log(
   `\n${ok.length} captured, ${results.length - ok.length} failed, ` +
     `${Math.round(ok.reduce((a, r) => a + r.bytes, 0) / 1024)}KB total`
 );
-fs.writeFileSync(
-  path.join(OUT, "manifest.json"),
-  JSON.stringify(
-    ok.map(({ slug, out, w, h }) => ({ slug, out, w: w * 2, h: h * 2 })),
-    null,
-    2
-  ) + "\n"
+// A filtered run only re-shoots one project, so merge into the manifest
+// already on disk rather than writing a file that has lost the other three.
+const manifestPath = path.join(OUT, "manifest.json");
+const existing = fs.existsSync(manifestPath)
+  ? JSON.parse(fs.readFileSync(manifestPath, "utf8"))
+  : [];
+const shot = ok.map(({ slug, out, w, h }) => ({ slug, out, w: w * 2, h: h * 2 }));
+const merged = [
+  ...existing.filter(
+    (e) => !shot.some((s) => s.slug === e.slug && s.out === e.out)
+  ),
+  ...shot,
+];
+// Keep the file in the order the TARGETS table declares, so a diff stays readable.
+const order = Object.entries(TARGETS).flatMap(([slug, targets]) =>
+  targets.map((t) => `${slug}/${t.out}`)
 );
+merged.sort(
+  (a, b) => order.indexOf(`${a.slug}/${a.out}`) - order.indexOf(`${b.slug}/${b.out}`)
+);
+fs.writeFileSync(manifestPath, JSON.stringify(merged, null, 2) + "\n");

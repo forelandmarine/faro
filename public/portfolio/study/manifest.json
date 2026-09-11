@@ -61,6 +61,12 @@
   },
   {
     "slug": "nimara-pilates",
+    "out": "timetable",
+    "w": 2880,
+    "h": 2000
+  },
+  {
+    "slug": "nimara-pilates",
     "out": "pricing",
     "w": 2880,
     "h": 2000

@@ -16,7 +16,8 @@ export const RELATED_SITES = [
   {
     name: "Nimara Pilates",
     url: "https://nimarapilates.com",
-    description: "Pilates and yoga studio brand, launching in Mallorca.",
+    description:
+      "Reformer pilates studio in Santa Catalina, Palma de Mallorca.",
   },
   {
     name: "The First Owner's Reference",

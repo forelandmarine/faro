@@ -55,13 +55,13 @@ export const CASE_STUDIES: CaseStudy[] = [
     slug: "nimara-pilates",
     name: "Nimara Pilates",
     url: "https://nimarapilates.com",
-    category: "Web, brand",
+    category: "Web, brand, print",
     vertical: "wellness",
     image: "/portfolio/nimara.png",
     tagline:
-      "Brand identity and launch site for a Mallorca pilates and yoga studio expanding to London and Paris.",
+      "Brand identity, site and print for a reformer pilates studio in Santa Catalina, Palma de Mallorca.",
     brief:
-      "Nimara is a new pilates and yoga brand launching in Mallorca, with London and Paris to follow in the medium term. The site needed to feel calm and considered, and to hold a premium register without slipping into wellness cliché.",
+      "Nimara is a reformer pilates studio in Santa Catalina, which opened on 11 September 2026. The work ran from the name and the identity through to the site, the print artwork and the launch assets. It needed to feel calm and considered, and to hold a premium register without slipping into wellness cliché.",
     problem:
       "Most pilates studios look the same online: terracotta palettes and stock photography of women in athleisure on hardwood floors. Nimara needed to read as a brand that could credibly stand alongside hospitality and beauty houses rather than only other studios.",
     approach: [
@@ -70,15 +70,17 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Directed photography towards editorial stillness rather than fitness energy.",
       "Structured the site to scale from one studio to three without a rebuild.",
       "Launched with four languages at full parity: English, Spanish, French and German, switched in place.",
+      "Drew the print artwork off the same system: stationery, window vinyl, and the opening and discovery flyers.",
     ],
     outcomes: [
       "The brand is visually distinct from every other studio in the local market.",
-      "The founders use the site as the primary asset in landlord and investor conversations.",
-      "The architecture is ready for the multi-location rollout without redesign.",
+      "The studio opened on 11 September 2026 with the timetable, retail and checkout running live on the site.",
+      "The identity has not drifted since it was locked, because every permitted colourway exists as a finished file.",
+      "The architecture is ready for a second and third location without redesign.",
     ],
     stack: ["Next.js", "TypeScript", "Tailwind", "GSAP", "Lenis", "Vercel"],
     year: 2026,
-    role: "Brand identity, design, development",
+    role: "Brand identity, design, development, print artwork",
   },
   {
     slug: "first-owners-reference",

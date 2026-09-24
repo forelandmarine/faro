@@ -43,6 +43,14 @@ const projects = [
     anchor: "Birdham Carpentry & Building, Chichester carpentry and building firm",
     image: "/portfolio/birdham.png",
   },
+  {
+    name: "Watermans",
+    slug: "watermans",
+    url: "watermansagency.com",
+    category: "Superyacht agency, brand and web",
+    anchor: "Watermans, UK superyacht agency",
+    image: "/portfolio/watermans.png",
+  },
 ];
 
 function ProjectPanel({

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
-  Measure the four live client sites.
+  Measure the five live client sites.
 
   Numbers on the study pages should be measured rather than asserted, so this
   loads each site cold, with the cache disabled, and records what actually came
@@ -26,6 +26,7 @@ const SITES = {
   "nimara-pilates": "https://nimarapilates.com/",
   "first-owners-reference": "https://firstownersreference.com/01-reality-of-ownership",
   "birdham-carpentry": "https://birdhamcarpentry.co.uk/",
+  watermans: "https://www.watermansagency.com/",
 };
 
 async function measure(browser, url) {

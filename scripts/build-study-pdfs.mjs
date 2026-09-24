@@ -30,6 +30,7 @@ const STUDIES = [
   { slug: "nimara-pilates" },
   { slug: "first-owners-reference" },
   { slug: "birdham-carpentry" },
+  { slug: "watermans" },
 ];
 
 /*

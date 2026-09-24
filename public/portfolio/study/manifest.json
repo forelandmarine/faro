@@ -100,5 +100,29 @@
     "out": "areas",
     "w": 2880,
     "h": 2000
+  },
+  {
+    "slug": "watermans",
+    "out": "home-hero",
+    "w": 2880,
+    "h": 2000
+  },
+  {
+    "slug": "watermans",
+    "out": "planner",
+    "w": 2880,
+    "h": 2200
+  },
+  {
+    "slug": "watermans",
+    "out": "port",
+    "w": 2880,
+    "h": 2200
+  },
+  {
+    "slug": "watermans",
+    "out": "fees",
+    "w": 2880,
+    "h": 2000
   }
 ]

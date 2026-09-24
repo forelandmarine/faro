@@ -2,7 +2,7 @@
 /*
   Capture the screens used in the study documents.
 
-  Shoots the four live client sites at desktop width, plus element-level detail
+  Shoots the five live client sites at desktop width, plus element-level detail
   crops where a study document makes a claim about typography or a component
   and ought to show it rather than assert it.
 
@@ -169,6 +169,33 @@ const TARGETS = {
     {
       out: "areas",
       url: "https://birdhamcarpentry.co.uk/areas/chichester",
+      viewportHeight: 1000,
+    },
+  ],
+  watermans: [
+    {
+      out: "home-hero",
+      url: "https://www.watermansagency.com/",
+      viewportHeight: 1000,
+    },
+    {
+      out: "planner",
+      url: "https://www.watermansagency.com/plan/",
+      viewportHeight: 1100,
+    },
+    {
+      out: "port",
+      url: "https://www.watermansagency.com/falmouth/",
+      viewportHeight: 1100,
+      // The pilot-book template from the pilotage notes into the tide table.
+      before: `(() => {
+        const h = [...document.querySelectorAll("h2")].find((e) => e.textContent.trim() === "Pilotage");
+        if (h) window.scrollTo(0, h.getBoundingClientRect().top + window.scrollY - 110);
+      })()`,
+    },
+    {
+      out: "fees",
+      url: "https://www.watermansagency.com/fees/",
       viewportHeight: 1000,
     },
   ],

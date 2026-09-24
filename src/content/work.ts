@@ -153,6 +153,34 @@ export const CASE_STUDIES: CaseStudy[] = [
     year: 2026,
     role: "Naming, brand identity, design, development",
   },
+  {
+    slug: "watermans",
+    name: "Watermans",
+    url: "https://www.watermansagency.com",
+    category: "Brand, web, planning tool",
+    vertical: "marine",
+    image: "/portfolio/watermans.png",
+    tagline:
+      "Identity and website for a UK superyacht agency, set out as a pilot book with an arrival planner at its centre.",
+    brief:
+      "Watermans is the UK arrivals arm of Foreland Marine, a superyacht agency for London, the Solent and the south west. It books berths, arranges pilotage and bridge lifts, and clears yachts in and out with Border Force. The commission was the mark, the visual language and the website, written for a captain planning a UK visit from abroad.",
+    problem:
+      "A captain arriving somewhere unfamiliar needs to know where the yacht can lie, who takes the pilot, whether the bridge lifts, what has to be filed and by when, and what the call will cost. The answers exist, in port guides, tariffs and notices to mariners, but they are spread across a dozen publications. The brief was a site that brings them together for each port, with every figure sourced and dated.",
+    approach: [
+      "Took the mark from the International Code of Signals: flag H, I have a pilot on board, drawn on a staff at the line weight of the Foreland lighthouse.",
+      "Named the colour tokens after the parts of a chart and kept blue for deadlines and links only, with hero photography run as a navy duotone.",
+      "Set the whole site in one typeface, Archivo, using its width axis: wide for headings, as a transom is lettered, and narrow for labels, as a port notice is.",
+      "Built an arrival planner that returns berths, notice deadlines and charges from the published tariffs, and put all nine ports on one pilot-book template.",
+    ],
+    outcomes: [
+      "Live on watermansagency.com with nine port pages, the planner, published fees and a dated notices page.",
+      "Every figure on the site sits in a source file with the date it was checked, so the annual tariff update is one file.",
+      "Structured data, preview cards and answer-engine files were in place on the day the domain went live.",
+    ],
+    stack: ["Next.js", "TypeScript", "Tailwind", "Admiralty API", "Resend", "Vercel"],
+    year: 2026,
+    role: "Brand identity, design, development, content",
+  },
 ];
 
 export function getCaseStudy(slug: string) {

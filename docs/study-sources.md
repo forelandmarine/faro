@@ -1,6 +1,6 @@
 # Study document sources
 
-The four briefing documents at `/work/<slug>/study` state a lot of measurements.
+The five briefing documents at `/work/<slug>/study` state a lot of measurements.
 This file records where each figure came from, so any of them can be checked or
 corrected later. The rule applied throughout: every number is either read from
 the client repository or measured from the shipped asset. Nothing was written
@@ -14,7 +14,7 @@ rather than editing figures by hand.
 
 | Command | What it does |
 |---|---|
-| `npm run capture:screens` | Shoots the four live sites at 1440px, converts to WebP |
+| `npm run capture:screens` | Shoots the five live sites at 1440px, converts to WebP |
 | `npm run capture:rejected` | Rasterises the rejected identity sketches with their original webfonts |
 | `npm run measure` | Loads each live site cold and writes `src/content/studies/measurements.json` |
 | `npm run pdf` | Renders each study page to a downloadable A4 PDF |
@@ -205,3 +205,39 @@ The stone tone exists at two values. `lib/brand.ts` carries `#A9A18E`, which
 computes to 2.20 to 1 on paper. `tailwind.config.ts` carries `#726A5A` at 4.58,
 with a comment recording that it was darkened to meet AA. The site ships the
 darkened value, so the study document uses it and flags the discrepancy.
+
+## Watermans
+
+| Section | Source |
+|---|---|
+| Palette, token names, duotone, band densities, measures | `watermans/src/app/globals.css` |
+| Typeface, width axis | `src/app/layout.tsx`, `.display`, `.meta`, `.figure-num` in globals.css |
+| Type scale | `globals.css` and the clamp values in `ui.tsx`, `Port.tsx`, `app/page.tsx` |
+| Mark geometry | `src/components/Mark.tsx` |
+| Lockup measurement | `src/components/Header.tsx`, `useLockup` |
+| Favicon | `src/app/icon.svg` |
+| Port template order | `src/components/Port.tsx` |
+| Planner rules and tariff | `src/lib/arrival.ts`, PLA Rates and Charges 2025, checked 21 September 2026 |
+| Live data | `src/lib/lifts.ts`, `src/lib/tide.ts`, `src/components/SavvyChart.tsx` |
+| Timeline, fonts and palettes tried | `git log`, and `layout.tsx` and `globals.css` read at each commit |
+
+Flag: viewBox `0 0 40 48`. Staff `x 4, y 2 to 46`, stroke 2.6, round caps, so
+ink `x 2.7 to 5.3`, `y 0.7 to 47.3`. Flag rectangle `x 4 to 38, y 4 to 27`,
+stroke 2.4, so outer edge `x 2.8 to 39.2, y 2.8 to 28.2`, 36.4 by 25.4. Whole
+ink box 36.5 by 46.6. Computed from the stroke geometry rather than parsed path
+data, because the mark is drawn from a line and two rectangles. The two SVG
+files in `public/portfolio/expose/marks/` reproduce `Mark.tsx` with the CSS
+variables resolved to their hex values.
+
+Font families loaded across the history (13): IBM Plex Sans, IBM Plex Mono,
+Libre Caslon Text, Libre Caslon Display, Archivo Narrow, Nunito Sans, DM Sans,
+DM Mono, Newsreader, Schibsted Grotesk, Archivo, Public Sans, Libre Franklin.
+Ten distinct type settings between 21 September 13:19 and 22 September 20:58.
+
+The repository README still describes the 21 September Foreland Group rebuild
+(Nunito Sans, navy ground). It is out of date; the study page says so and uses
+the tokens in `globals.css`.
+
+Signal red is used in two places: the fly of the flag and the status rule in
+`EnquiryForm.tsx`. The study page states both.
+

@@ -29,6 +29,7 @@ Content on faro.is may be summarised, quoted, or cited by AI answer engines and 
 - Nimāra Pilates, also written Nimara Pilates, reformer pilates studio in Palma de Mallorca: https://faro.is/work/nimara-pilates (live at https://nimarapilates.com)
 - The First Owner's Reference, annual editorial for first-time superyacht buyers: https://faro.is/work/first-owners-reference (live at https://firstownersreference.com)
 - Birdham Carpentry & Building, Chichester carpentry and building firm: https://faro.is/work/birdham-carpentry (live at https://birdhamcarpentry.co.uk)
+- Watermans, UK superyacht agency for London, the Solent and the south west: https://faro.is/work/watermans (live at https://www.watermansagency.com)
 
 ## Design and build notes
 
@@ -46,6 +47,7 @@ Each is also available as a downloadable A4 PDF from its page.
 - Nimāra: https://faro.is/work/nimara-pilates/study
 - The First Owner's Reference: https://faro.is/work/first-owners-reference/study
 - Birdham Carpentry & Building: https://faro.is/work/birdham-carpentry/study
+- Watermans: https://faro.is/work/watermans/study
 
 ## Founder
 

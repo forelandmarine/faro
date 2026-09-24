@@ -82,6 +82,14 @@ const CARDS = [
     url: "https://birdhamcarpentry.co.uk/",
     phone: "birdham-mobile",
   },
+  {
+    out: "watermans",
+    url: "https://www.watermansagency.com/",
+    phone: "watermans-mobile",
+    // The layout runs to within 48px of the window edge, so a 16:10 plate
+    // loses the lockup to the 4:3 frame. Shot at 4:3 instead.
+    card: { width: 1440, height: 1080 },
+  },
 ];
 
 async function shoot(browser, card, { size, dir, name }) {
@@ -133,7 +141,7 @@ const browser = await puppeteer.launch({
 
 for (const card of CARDS) {
   if (filter && !card.out.includes(filter)) continue;
-  await shoot(browser, card, { size: CARD, dir: OUT, name: card.out });
+  await shoot(browser, card, { size: card.card ?? CARD, dir: OUT, name: card.out });
   if (card.phone) {
     await shoot(browser, card, {
       size: PHONE,

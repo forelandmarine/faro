@@ -7,11 +7,11 @@ import { CASE_STUDIES } from "@/content/work";
 export const metadata: Metadata = {
   title: "Work · Faro Creative",
   description:
-    "Selected work from Faro Creative: superyacht consultancy, wellness studio, editorial publication, carpentry and building firm.",
+    "Selected work from Faro Creative: superyacht consultancy, wellness studio, editorial publication, carpentry and building firm, superyacht agency.",
   openGraph: {
     title: "Work · Faro Creative",
     description:
-      "Selected work from Faro Creative: superyacht consultancy, wellness studio, editorial publication, carpentry and building firm.",
+      "Selected work from Faro Creative: superyacht consultancy, wellness studio, editorial publication, carpentry and building firm, superyacht agency.",
     url: "/work",
   },
   alternates: { canonical: "/work" },

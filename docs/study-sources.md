@@ -241,3 +241,15 @@ the tokens in `globals.css`.
 Signal red is used in two places: the fly of the flag and the status rule in
 `EnquiryForm.tsx`. The study page states both.
 
+Vector set (added 25 September 2026): `watermans/brand/build.py` draws the
+marks and lockups with the type shaped by HarfBuzz and outlined from
+`brand/fonts/Archivo.ttf`. Option B (`mark-staff.svg`, 100 unit square):
+staff `x 12 to 17, y 8 to 92`; flag block `x 16.5 to 91, y 8 to 56`; white
+`x 17 to 51.8`, red `x 51.5 to 86`, both `y 13 to 51`, so a 5 unit border on
+the top, bottom and fly, and no rule between the halves (commit e39cbb2).
+Lockup type: WATERMANS wght 560, wdth 112, tracking 0.14; YACHT AGENTS wght
+450, wdth 112, tracking 0.34. The stacked lockup (`stacked-staff.svg`) is the
+email signature logo, served as `public/sig/lockup.png`. The three SVGs and
+the options sheet on the study page are copied from `brand/` unchanged. The
+full signature is not shown because it carries a director's mobile number.
+

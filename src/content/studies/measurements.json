@@ -1,52 +1,52 @@
 {
   "foreland-marine": {
     "url": "https://forelandmarine.com/refit",
-    "domContentLoaded": 141,
-    "load": 268,
-    "firstContentfulPaint": 220,
-    "largestContentfulPaint": 220,
+    "domContentLoaded": 163,
+    "load": 232,
+    "firstContentfulPaint": 196,
+    "largestContentfulPaint": 252,
     "domNodes": 437,
     "transferKB": 1463,
     "requests": 39
   },
   "nimara-pilates": {
     "url": "https://nimarapilates.com/",
-    "domContentLoaded": 275,
-    "load": 429,
-    "firstContentfulPaint": 288,
-    "largestContentfulPaint": 288,
+    "domContentLoaded": 282,
+    "load": 487,
+    "firstContentfulPaint": 364,
+    "largestContentfulPaint": 364,
     "domNodes": 298,
     "transferKB": 1391,
     "requests": 61
   },
   "first-owners-reference": {
     "url": "https://firstownersreference.com/01-reality-of-ownership",
-    "domContentLoaded": 148,
-    "load": 629,
-    "firstContentfulPaint": 280,
-    "largestContentfulPaint": 640,
+    "domContentLoaded": 266,
+    "load": 266,
+    "firstContentfulPaint": 256,
+    "largestContentfulPaint": 256,
     "domNodes": 798,
     "transferKB": 1834,
     "requests": 49
   },
   "birdham-carpentry": {
     "url": "https://birdhamcarpentry.co.uk/",
-    "domContentLoaded": 143,
-    "load": 629,
-    "firstContentfulPaint": 212,
-    "largestContentfulPaint": 416,
-    "domNodes": 304,
-    "transferKB": 1238,
-    "requests": 34
+    "domContentLoaded": 162,
+    "load": 433,
+    "firstContentfulPaint": 200,
+    "largestContentfulPaint": 456,
+    "domNodes": 303,
+    "transferKB": 1234,
+    "requests": 33
   },
   "watermans": {
     "url": "https://www.watermansagency.com/",
-    "domContentLoaded": 175,
-    "load": 359,
-    "firstContentfulPaint": 196,
-    "largestContentfulPaint": 384,
-    "domNodes": 299,
-    "transferKB": 1627,
-    "requests": 53
+    "domContentLoaded": 304,
+    "load": 444,
+    "firstContentfulPaint": 380,
+    "largestContentfulPaint": 416,
+    "domNodes": 312,
+    "transferKB": 1633,
+    "requests": 54
   }
 }

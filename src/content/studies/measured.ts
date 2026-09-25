@@ -21,7 +21,7 @@ type Measurement = {
 const DATA = measurements as Record<string, Measurement>;
 
 /** The date the current measurement run was taken. */
-export const MEASURED_ON = "24 September 2026";
+export const MEASURED_ON = "25 September 2026";
 
 function weight(m: Measurement): Measure[] {
   return [

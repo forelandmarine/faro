@@ -45,6 +45,7 @@ export const watermansStudy: StudyDoc = {
     "Arrival planner",
     "Pilotage content",
     "Search and answer engines",
+    "Email signature",
   ],
   liveUrl: "https://www.watermansagency.com",
   fontsHref:
@@ -141,10 +142,21 @@ export const watermansStudy: StudyDoc = {
               label: "Live on watermansagency.com",
               note: "With structured data, preview cards and the answer-engine files",
             },
+            {
+              date: "24 Sep 18:31",
+              label: "The mark drawn as vectors, in four options",
+              note: "Type outlined from Archivo. Option B, the flag on its staff, went into the email signature",
+              pivot: true,
+            },
+            {
+              date: "24 Sep 19:43",
+              label: "The homepage hero carries the name and the office line",
+              note: "Watermans set over the photograph, with the London telephone and WhatsApp at its foot",
+            },
           ],
           summary: [
-            { label: "Commits", value: "170" },
-            { label: "Elapsed", value: "3d 3h 35m" },
+            { label: "Commits", value: "184" },
+            { label: "Elapsed", value: "3d 6h 25m" },
             { label: "Font families", value: "13" },
             { label: "Type settings", value: "10" },
           ],
@@ -252,12 +264,47 @@ export const watermansStudy: StudyDoc = {
           ],
         },
         {
+          kind: "prose",
+          paragraphs: [
+            "The site's flag is drawn in code, which serves the screen but not print, embroidery or email. On 24 September the mark was redrawn as a vector set by a build script, with every letter of the wordmark converted from Archivo to outlines so the files render identically without the font installed. The script produced four options from one flag geometry: the flag alone, the flag flush to the head of a staff, the staff and flag sheared forward as in a breeze, and the flag reversed out of a night roundel.",
+            "Option B was taken forward. The flag is set flush to the head of the staff with a solid ink border all round, 5 units on a 100 unit square, and no rule between the white and red halves, so the flag reads as one piece of bunting. In the lockups WATERMANS is set in Archivo at weight 560 and width 112 with 0.14em tracking, and YACHT AGENTS beneath it at weight 450, tracked at 0.34em in soundings grey.",
+          ],
+        },
+        {
+          kind: "marks",
+          tiles: [
+            {
+              label: "Vector mark, option B",
+              note: "The flag flush to the head of the staff, bordered all round",
+              src: "/portfolio/expose/marks/watermans-mark-staff.svg",
+              bg: CHART,
+            },
+            {
+              label: "Stacked lockup",
+              note: "The logo on the email signature, with the type outlined from Archivo",
+              src: "/portfolio/expose/marks/watermans-stacked.svg",
+              bg: CHART,
+              wide: true,
+              height: 140,
+            },
+          ],
+        },
+        {
+          kind: "image",
+          src: "/portfolio/study/watermans/mark-options.webp",
+          alt: "Four options for the Watermans mark and horizontal lockup, each shown on white and on night",
+          caption:
+            "The options sheet as the build script drew it. A, the flag alone. B, the flag on its staff, which was taken forward. C, sheared forward. D, reversed out of a roundel",
+          width: 2000,
+          height: 1311,
+        },
+        {
           kind: "sizes",
           src: flag.src,
           widths: [12, 16, 24, 32, 48, 96],
           bg: CHART,
           caption:
-            "The mark at working sizes. The outline carries the white half, so below about 16 pixels the stroke begins to close the hoist and the flag reads as a red square on a staff. The favicon is therefore a separate drawing: the flag on a night square with the white half filled solid and a heavier 3 unit staff, so it holds at 16 pixels.",
+            "The site's line-art flag at working sizes. The outline carries the white half, so below about 16 pixels the stroke begins to close the hoist and the flag reads as a red square on a staff. The favicon is therefore a separate drawing: the flag on a night square with the white half filled solid and a heavier 3 unit staff, so it holds at 16 pixels.",
         },
         {
           kind: "misuse",
@@ -266,7 +313,7 @@ export const watermansStudy: StudyDoc = {
           ink: INK,
           items: [
             { kind: "stretch", label: "Never scaled on one axis" },
-            { kind: "rotate", label: "The staff stands upright. A flag at an angle is a flag being lowered" },
+            { kind: "rotate", label: "The staff stands upright" },
             { kind: "recolour", label: "Ink or white, with signal red. No other colours" },
             { kind: "shadow", label: "Line art. No shadows or gradients" },
           ],
@@ -441,7 +488,7 @@ export const watermansStudy: StudyDoc = {
         {
           kind: "prose",
           paragraphs: [
-            "The homepage opens on a photograph of a yacht alongside in London with the arrival bar laid across its foot: port, length overall, air draught and the date alongside. Those four answers are enough to plan the call, so the first thing a captain can do on the site is start.",
+            "The homepage opens on a photograph of a yacht alongside in London. On desktop the name Watermans is set large at the top left of the photograph, and the London office telephone and a WhatsApp button sit at its foot. The arrival bar lies across the bottom edge: port, length overall, air draught and the date alongside. Those four answers are enough to plan the call, so the first thing a captain can do on the site is either ring or start.",
             "Every port page follows one template, taken from the order a pilot book uses: brief, approach, pilotage, tides, berths, alongside, ashore and events. Running notes are short paragraphs, and anything a captain would look up stays a table. Each page carries a vector nautical chart, the next tides at its own station, and the sources the page was written from.",
           ],
         },
@@ -450,7 +497,7 @@ export const watermansStudy: StudyDoc = {
           src: "/portfolio/study/watermans/home-hero.webp",
           alt: "The Watermans homepage, a yacht alongside at West India Dock in navy duotone with the arrival bar beneath",
           caption:
-            "The homepage. The hero photograph is in the navy duotone and the arrival bar sits across its foot, so the first action on the site is planning a call",
+            "The homepage. The name and the office line are set on the navy duotone, and the arrival bar sits across its foot",
           width: 2880,
           height: 2000,
         },
@@ -593,7 +640,7 @@ export const watermansStudy: StudyDoc = {
           items: [
             "Every port page answers the questions a captain asks in a set of FAQs, shown on the page and marked up, so search engines and answer engines quote the page rather than paraphrase it.",
             "Preview cards are generated for each page on the night ground with the wordmark and the page title, so a link shared in a message says what it opens.",
-            "Photographs are credited on the image and listed with their licences in the repository. Commons downloads are opened and decoded before they ship, because a truncated file can pass a size check.",
+            "Photograph credits and licences are kept with each image in the data and in the repository's credits file, and one setting switches the on-image credits on or off across the site. Commons downloads are opened and decoded before they ship, because a truncated file can pass a size check.",
             "Tables wider than a phone scroll sideways, with the right edge faded as the only cue that there is more.",
           ],
         },

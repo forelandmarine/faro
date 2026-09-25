@@ -167,7 +167,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     problem:
       "A captain arriving somewhere unfamiliar needs to know where the yacht can lie, who takes the pilot, whether the bridge lifts, what has to be filed and by when, and what the call will cost. The answers exist, in port guides, tariffs and notices to mariners, but they are spread across a dozen publications. The brief was a site that brings them together for each port, with every figure sourced and dated.",
     approach: [
-      "Took the mark from the International Code of Signals: flag H, I have a pilot on board, drawn on a staff at the line weight of the Foreland lighthouse.",
+      "Took the mark from the International Code of Signals: flag H, I have a pilot on board, flown from a staff. Drawn in code for the site, and as outlined vectors in four options for print and the email signature.",
       "Named the colour tokens after the parts of a chart and kept blue for deadlines and links only, with hero photography run as a navy duotone.",
       "Set the whole site in one typeface, Archivo, using its width axis: wide for headings, as a transom is lettered, and narrow for labels, as a port notice is.",
       "Built an arrival planner that returns berths, notice deadlines and charges from the published tariffs, and put all nine ports on one pilot-book template.",
@@ -176,6 +176,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Live on watermansagency.com with nine port pages, the planner, published fees and a dated notices page.",
       "Every figure on the site sits in a source file with the date it was checked, so the annual tariff update is one file.",
       "Structured data, preview cards and answer-engine files were in place on the day the domain went live.",
+      "The stacked lockup carries into the office email signature, on the same palette and type as the site.",
     ],
     stack: ["Next.js", "TypeScript", "Tailwind", "Admiralty API", "Resend", "Vercel"],
     year: 2026,
